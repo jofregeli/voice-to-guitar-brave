@@ -55,24 +55,25 @@ voice-to-guitar-brave/
 
 ## Setup
 
-### Option A — Local (recommended if you have a CUDA GPU)
+### Option A — One-command setup (recommended)
 
 ```bash
-# 1. Clone this repo and BRAVE
 git clone https://github.com/jofregeli/voice-to-guitar-brave
-git clone https://github.com/fcaspe/BRAVE
 cd voice-to-guitar-brave
+python scripts/setup.py
+```
 
-# 2. Create a virtual environment
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-venv\Scripts\activate           # Windows
+The setup script handles everything automatically:
+- Creates `venv/` with the correct Python version
+- Installs PyTorch with the right CUDA wheel for your GPU (Blackwell/sm_120+ → cu128, older → cu126, no GPU → CPU)
+- Installs all dependencies with the correct flags to avoid conflicts
+- Patches `acids-rave` for scipy ≥ 1.14 and pytorch-lightning 2.x compatibility
+- Detects ffmpeg and adds it to the venv `activate` script if needed
 
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Install BRAVE in editable mode
-pip install -e ../BRAVE
+Then activate:
+```bash
+source venv/Scripts/activate   # Git Bash on Windows
+source venv/bin/activate       # Linux / macOS
 ```
 
 ### Option B — Docker (for reproducibility)
