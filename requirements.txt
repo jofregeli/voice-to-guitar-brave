@@ -1,11 +1,7 @@
 # Core ML
-torch>=2.1.0
-torchaudio>=2.1.0
-pytorch-lightning>=2.1.0
-
-# RAVE / BRAVE dependencies
-# NOTE: also run: pip install -e path/to/BRAVE (after cloning the BRAVE repo)
-acids-rave>=2.3.0
+# torch, torchaudio, acids-rave, and pytorch-lightning are installed by
+# scripts/setup.py with the correct flags to avoid dependency conflicts.
+# Do not add them here.
 einops>=0.7.0
 
 # Audio processing
