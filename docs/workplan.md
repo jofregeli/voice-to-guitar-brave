@@ -40,15 +40,15 @@
 
 ---
 
-### Week 1 — Mar 27–Apr 2 | Setup + Orientation (6h)
+### Week 1 — Mar 27–Apr 2 | Setup + Orientation
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Clone BRAVE repo, run their demo/example | 2h | ☐ |
-| Verify PyTorch, Docker, Pure Data + `nn~` all work | 1.5h | ☐ |
-| Download GuitarSet (check storage: ~8GB) | 0.5h | ☐ |
-| Skim RAVE paper — concepts only, no math | 1h | ☐ |
-| Initialize git repo + project structure | 1h | ✅ |
+| Task | Status |
+|------|--------|
+| Clone BRAVE repo, run their demo/example | ☐ |
+| Verify PyTorch, Docker, Pure Data + `nn~` all work | ☐ |
+| Download GuitarSet (check storage: ~8GB) | ☐ |
+| Skim RAVE paper — concepts only, no math | ☐ |
+| Initialize git repo + project structure | ✅ |
 
 **Milestone:** BRAVE runs locally. Environment confirmed working. `nn~` works in Pure Data.
 
@@ -56,34 +56,34 @@
 
 ---
 
-### Week 2 — Apr 3–Apr 9 | State of the Art (6h)
+### Week 2 — Apr 3–Apr 9 | State of the Art
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Deep read: RAVE paper (arXiv:2111.05011) | 2h | ☐ |
-| Deep read: BRAVE paper (arXiv:2503.11562) | 1.5h | ☐ |
-| Skim: NSynth + DDSP + TimbreTron | 1h | ☐ |
-| Draft thesis Section 2 (SoA) — bullet points | 1.5h | ☐ |
+| Task | Status |
+|------|--------|
+| Deep read: RAVE paper (arXiv:2111.05011) | ☐ |
+| Deep read: BRAVE paper (arXiv:2503.11562) | ☐ |
+| Skim: NSynth + DDSP + TimbreTron | ☐ |
+| Draft thesis Section 2 (SoA) — bullet points | ☐ |
 
 **Milestone:** Can explain what RAVE/BRAVE does in own words. SoA outline drafted.
 
 ---
 
-### Week 3 — Apr 10–Apr 16 | Dataset Analysis + BRAVE Config (6h)
+### Week 3 — Apr 10–Apr 16 | Dataset Analysis + BRAVE Config
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Download Guitar-TECHS, Groove datasets | 0.5h | ☐ |
-| Explore GuitarSet: listen, check formats, total duration | 1h | ☐ |
-| Write `scripts/preprocess.py` — resample, mono, trim silence | 2h | ☐ |
-| Read BRAVE config files — understand all key parameters | 1.5h | ☐ |
-| **Start thesis writing:** Introduction + SoA first draft | 1h | ☐ |
+| Task | Status |
+|------|--------|
+| Download Guitar-TECHS, Groove datasets | ☐ |
+| Explore GuitarSet: listen, check formats, total duration | ☐ |
+| Write `scripts/preprocess.py` — resample, mono, trim silence | ☐ |
+| Read BRAVE config files — understand all key parameters | ☐ |
+| **Start thesis writing:** Introduction + SoA first draft | ☐ |
 
 **Milestone:** Preprocessed audio ready in `data/processed/`. Config parameters understood.
 
 ---
 
-### Week 4 — Apr 17–Apr 23 | Training Setup (6h)
+### Week 4 — Apr 17–Apr 23 | Training Setup
 
 | Task | Hours | Status |
 |------|-------|--------|
@@ -96,90 +96,90 @@
 
 ---
 
-### Week 5 — Apr 24–Apr 30 | Training Run #1 — Guitar (6h)
+### Week 5 — Apr 24–Apr 30 | Training Run #1 — Guitar
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Monitor training: check loss curves at checkpoints | 2h | ☐ |
-| Listen to intermediate outputs (every 50k steps) | 1h | ☐ |
-| Debug any training issues | 1h | ☐ |
-| **Thesis:** Dataset section + preprocessing description | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Monitor training: check loss curves at checkpoints | ☐ |
+| Listen to intermediate outputs (every 50k steps) | ☐ |
+| Debug any training issues | ☐ |
+| **Thesis:** Dataset section + preprocessing description | ☐ |
 
 **Milestone:** Guitar model training in progress. At least one checkpoint produces guitar-like output.
 
 ---
 
-### Week 6 — May 1–May 7 | Evaluate Guitar Model (6h)
+### Week 6 — May 1–May 7 | Evaluate Guitar Model
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Listen to generated outputs — qualitative assessment | 1h | ☐ |
-| Run evaluation metrics (FAD, mel-spectrogram MSE) | 2h | ☐ |
-| Decide: continue training or adjust config + retrain | 1h | ☐ |
-| **Thesis:** Training section | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Listen to generated outputs — qualitative assessment | ☐ |
+| Run evaluation metrics (FAD, mel-spectrogram MSE) | ☐ |
+| Decide: continue training or adjust config + retrain | ☐ |
+| **Thesis:** Training section | ☐ |
 
 **Milestone:** Can describe what the guitar model does well and poorly. Go/no-go for retraining.
 
 ---
 
-### Week 7 — May 8–May 14 | Training Run #2 + Drums (6h)
+### Week 7 — May 8–May 14 | Training Run #2 + Drums
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Guitar model: extend training or second run (if needed) | 2h | ☐ |
-| Launch drums model training (Groove dataset) | 1h | ☐ |
-| Export final guitar checkpoint for Pure Data deployment | 1h | ☐ |
-| **Thesis:** Results section — first draft | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Guitar model: extend training or second run (if needed) | ☐ |
+| Launch drums model training (Groove dataset) | ☐ |
+| Export final guitar checkpoint for Pure Data deployment | ☐ |
+| **Thesis:** Results section — first draft | ☐ |
 
 **Milestone:** Final guitar model exported. Drums training in progress.
 
 ---
 
-### Week 8 — May 15–May 21 | Pure Data Integration (6h)
+### Week 8 — May 15–May 21 | Pure Data Integration
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Load guitar model via `nn~` in Pure Data | 2h | ☐ |
-| Build PD patch: mic → model → audio out | 2h | ☐ |
-| Test voice-to-guitar live — assess pitch handling | 1h | ☐ |
-| **Thesis:** Real-time system section | 1h | ☐ |
+| Task | Status |
+|------|--------|
+| Load guitar model via `nn~` in Pure Data | ☐ |
+| Build PD patch: mic → model → audio out | ☐ |
+| Test voice-to-guitar live — assess pitch handling | ☐ |
+| **Thesis:** Real-time system section | ☐ |
 
 **Milestone:** Live voice-to-guitar working in Pure Data (quality TBD). Drums model ready.
 
 ---
 
-### Week 9 — May 22–May 28 | Demo + Secondary Experiment (6h)
+### Week 9 — May 22–May 28 | Demo + Secondary Experiment
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Add drums model to Pure Data patch | 1h | ☐ |
-| Polish PD patch: volume, latency, error handling | 1.5h | ☐ |
-| Record demo audio/video for thesis appendix | 1.5h | ☐ |
-| **Thesis:** Abstract + Conclusions first drafts | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Add drums model to Pure Data patch | ☐ |
+| Polish PD patch: volume, latency, error handling | ☐ |
+| Record demo audio/video for thesis appendix | ☐ |
+| **Thesis:** Abstract + Conclusions first drafts | ☐ |
 
 **Milestone:** Demo runs in one command. Both guitar and drums demos recorded.
 
 ---
 
-### Week 10 — May 29–Jun 4 | Thesis Sprint (6h)
+### Week 10 — May 29–Jun 4 | Thesis Sprint
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Assemble all thesis sections into full document | 2h | ☐ |
-| Fill gaps, fix transitions, add figures and diagrams | 2h | ☐ |
-| Send to advisor/peer for feedback | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Assemble all thesis sections into full document | ☐ |
+| Fill gaps, fix transitions, add figures and diagrams | ☐ |
+| Send to advisor/peer for feedback | ☐ |
 
 **Milestone:** Complete first draft submitted for review.
 
 ---
 
-### Week 11 — Jun 5–Jun 12 | Final Polish (6h)
+### Week 11 — Jun 5–Jun 12 | Final Polish
 
-| Task | Hours | Status |
-|------|-------|--------|
-| Incorporate advisor feedback | 2h | ☐ |
-| Final prototype test — ensure demo is reproducible | 2h | ☐ |
-| Submit thesis + code | 2h | ☐ |
+| Task | Status |
+|------|--------|
+| Incorporate advisor feedback | ☐ |
+| Final prototype test — ensure demo is reproducible | ☐ |
+| Submit thesis + code | ☐ |
 
 **Milestone:** ✅ Submitted.
 
