@@ -1,0 +1,52 @@
+# BRAVE / RAVE training configuration — Guitar model
+#
+# HOW TO USE:
+#   This file documents the key parameters you will need to set.
+#   BRAVE uses the same config format as RAVE (gin-config style or CLI flags).
+#   After cloning BRAVE, check their examples/configs/ folder for the actual format.
+#   Adjust values here, then convert to the format BRAVE expects.
+#
+# TRAINING COMMAND (approximate):
+#   rave train --config config/guitar_model.gin \
+#              --name guitar_v1 \
+#              --preprocessed data/processed/guitar
+#
+# Expected training time on RTX 5080: ~12-20 hours
+
+model:
+  name: guitar_v1
+  architecture: BRAVE          # Use BRAVE streaming encoder (not vanilla RAVE)
+
+audio:
+  sample_rate: 44100           # Hz — standard for guitar audio
+  n_signal: 65536              # ~1.5 seconds context window at 44100Hz
+  # NOTE: BRAVE uses a streaming (causal) encoder, so this controls chunk size
+
+encoder:
+  n_band: 16                   # Number of frequency bands in multi-band decomposition
+  latent_size: 16              # Dimensionality of the latent space
+                               # Smaller = faster inference, less quality
+                               # Larger = better quality, slower
+  capacity: 64                 # Model capacity (number of channels)
+                               # Reduce to 32 if VRAM is tight; 64 is default
+
+decoder:
+  capacity: 64
+  # Uses multi-scale STFT loss (same as RAVE)
+
+training:
+  batch_size: 8                # Start here; increase to 16 if VRAM allows on RTX 5080
+  learning_rate: 1.0e-4
+  max_steps: 3000000           # RAVE default; BRAVE may converge earlier
+  kl_warmup_steps: 100000      # Steps before KL loss is fully active
+
+data:
+  preprocessed_path: data/processed/guitar
+  val_split: 0.05              # 5% validation
+
+# NOTES FOR THESIS:
+# - Latent size 16 is the RAVE/BRAVE default; increasing to 32 may improve quality
+#   but will increase latency in the streaming encoder
+# - n_band controls the multi-rate decomposition: more bands = finer frequency
+#   resolution but slower training
+# - Monitor reconstruction loss (spectral) and KL loss separately during training

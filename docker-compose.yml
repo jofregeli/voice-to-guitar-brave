@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  train:
+    build: .
+    # GPU access (requires nvidia-container-toolkit installed on host)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      # Mount data and models from host so they persist outside the container
+      - ./data:/workspace/data
+      - ./models:/workspace/models
+      - ./config:/workspace/config
+      - ./scripts:/workspace/scripts
+      - ./src:/workspace/src
+    # Override with your actual training command, e.g.:
+    # docker-compose run train python scripts/preprocess.py --instrument guitar
+    command: bash
+    stdin_open: true
+    tty: true

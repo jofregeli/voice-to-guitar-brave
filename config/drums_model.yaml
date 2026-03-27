@@ -1,0 +1,46 @@
+# BRAVE / RAVE training configuration — Drums model (secondary experiment)
+#
+# Same architecture as guitar model; drums dataset (Groove) is larger (~13h)
+# so training should be slightly more stable and converge faster qualitatively.
+#
+# The drums model serves as a sanity check:
+# - If this works well → your training pipeline is correct
+# - Compare results to the BRAVE paper's drums experiment
+#
+# TRAINING COMMAND (approximate):
+#   rave train --config config/drums_model.gin \
+#              --name drums_v1 \
+#              --preprocessed data/processed/drums
+
+model:
+  name: drums_v1
+  architecture: BRAVE
+
+audio:
+  sample_rate: 44100
+  n_signal: 65536
+
+encoder:
+  n_band: 16
+  latent_size: 16
+  capacity: 64
+
+decoder:
+  capacity: 64
+
+training:
+  batch_size: 8
+  learning_rate: 1.0e-4
+  max_steps: 3000000
+  kl_warmup_steps: 100000
+
+data:
+  preprocessed_path: data/processed/drums
+  val_split: 0.05
+
+# NOTES FOR THESIS:
+# - Keep drums config identical to guitar config where possible
+# - This makes the comparison between models controlled (same architecture,
+#   different data) — which is cleaner experimental design
+# - Expected result: drums model sounds more convincing than guitar model
+#   (as per the BRAVE paper's own findings for percussive instruments)

@@ -1,0 +1,27 @@
+# Core ML
+torch>=2.1.0
+torchaudio>=2.1.0
+pytorch-lightning>=2.1.0
+
+# RAVE / BRAVE dependencies
+# NOTE: also run: pip install -e path/to/BRAVE (after cloning the BRAVE repo)
+acids-rave>=2.3.0
+einops>=0.7.0
+
+# Audio processing
+librosa>=0.10.0
+soundfile>=0.12.0
+scipy>=1.11.0
+
+# Data / utilities
+numpy>=1.24.0
+tqdm>=4.65.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+
+# Evaluation
+frechet-audio-distance>=0.2.0   # FAD metric (install: pip install frechet_audio_distance)
+
+# Download utilities
+requests>=2.31.0
+zenodo-get>=1.5.0               # For Zenodo datasets (pip install zenodo-get)

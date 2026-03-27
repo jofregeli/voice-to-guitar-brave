@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+venv/
+.env
+.venv/
+
+# Data — never commit audio files or processed datasets
+data/raw/
+data/processed/
+
+# Models — checkpoints can be large, store separately
+models/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+
+# Logs
+runs/
+lightning_logs/
+wandb/
+*.log
+
+# RAVE/BRAVE specific
+*.ckpt          # Model checkpoints (large)
+*.ts            # TorchScript exports (can be very large)
+
+# Audio output files (keep examples/ but not generated audio)
+*.wav
+*.mp3
+*.ogg
+!examples/**/*.wav    # Allow example audio files if any
+
+# Secrets
+.env
+secrets.yaml
