@@ -1,0 +1,11 @@
+#N canvas 100 100 500 350 12;
+#X obj 60 40 adc~ 1;
+#X obj 60 100 nn~ C:/Users/Usuario/Documents/voice-to-guitar-brave/models/percussion.ts;
+#X obj 60 180 dac~;
+#X obj 250 100 print nn~-info;
+#X msg 250 60 get_methods;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 1 0 2 1;
+#X connect 4 0 1 0;
+#X connect 1 1 3 0;
