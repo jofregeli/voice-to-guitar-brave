@@ -110,7 +110,7 @@ def download_dataset(name: str):
             print("    pip install zenodo-get")
             sys.exit(1)
         download_zenodo(ds["zenodo_id"], ds["output_dir"])
-        print(f"  ✓ Download complete: {ds['output_dir']}/")
+        print(f"  [OK] Download complete: {ds['output_dir']}/")
 
     else:
         # Manual download required
