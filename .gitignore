@@ -12,6 +12,7 @@ venv/
 # Data — never commit audio files or processed datasets
 data/raw/
 data/processed/
+data/rave_ready/
 
 # Models — checkpoints can be large, store separately
 models/
