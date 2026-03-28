@@ -3,8 +3,9 @@
 Real-time voice-to-instrument timbre transfer using [BRAVE](https://github.com/fcaspe/BRAVE) and Pure Data.
 
 **Author:** Jofre Geli de Fuenmayor
-**Degree:** Audiovisual Systems Engineerin, UPF
+**Degree:** Audiovisual Systems Engineering, UPF
 **Deadline:** June 12, 2026
+**Platform:** Developed and tested on Windows 11 with an NVIDIA RTX 5080. Linux/macOS adaptation is left as future work.
 
 ---
 
