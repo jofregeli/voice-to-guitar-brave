@@ -14,6 +14,7 @@ venv\Scripts\rave train ^
     --db_path data/rave_ready/guitar ^
     --name guitar_v1 ^
     --channels 1 ^
+    --gpu 0 ^
     --val_every 10000
 
 echo.
