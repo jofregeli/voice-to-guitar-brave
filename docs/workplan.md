@@ -47,14 +47,12 @@
 | Clone BRAVE repo, run their demo/example | ✅ |
 | Verify PyTorch + CUDA work (RTX 5080 confirmed) | ✅ |
 | Automated setup script (`scripts/setup.py`) — reproducible env | ✅ |
-| Test Pure Data + `nn~` | ☐ |
+| Test Pure Data + `nn~` | ✅ |
 | Download GuitarSet (check storage: ~8GB) | ☐ |
 | Skim RAVE paper — concepts only, no math | ☐ |
 | Initialize git repo + project structure | ✅ |
 
-**Milestone:** BRAVE runs locally. Environment confirmed working. `nn~` works in Pure Data.
-
-> **Risk:** `nn~` may not work on Windows without manual setup. Test this first — it's a known pain point.
+**Milestone:** BRAVE runs locally. Environment confirmed working. `nn~` works in Pure Data. ✅
 
 ---
 
@@ -191,7 +189,7 @@
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| `nn~` doesn't work on Windows | Medium | High | Test Week 1; Docker fallback |
+| `nn~` doesn't work on Windows | ~~Medium~~ | ~~High~~ | ✅ Resolved — tested and working on Windows 11 |
 | Guitar model sounds bad | Medium | Medium | It's a known BRAVE limitation — document it, it's thesis content |
 | Pitch rendering issues | High | Medium | Pitch preprocessor (CREPE/pyin) as optional Week 8 add-on |
 | Scope creep | High | Medium | Flag anything new before adding it |
