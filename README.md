@@ -121,7 +121,7 @@ Expected training time on RTX 5080: ~15–20 hours for a good result.
 ## Real-Time Demo (Pure Data)
 
 1. Open Pure Data
-2. Install `nn~` external (see [RAVE releases](https://github.com/acids-ircam/RAVE/releases))
+2. Install `nn~` external from [nn_tilde releases](https://github.com/acids-ircam/nn_tilde/releases) — download `nn_puredata_windows_x64.tar.gz`, extract, copy all files to `C:\Program Files\Pd\extra\`
 3. Open `examples/pd/voice_to_guitar.pd`
 4. Load your trained model checkpoint
 5. Enable audio (Ctrl+Alt+A), select your microphone
