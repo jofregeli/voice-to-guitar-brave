@@ -35,13 +35,14 @@ voice-to-guitar-brave/
 │   ├── workplan.md          # Week-by-week project plan
 │   └── state_of_the_art.md  # Thesis Section 2 draft
 ├── examples/
-│   └── pd/                  # Pure Data patches for real-time demo
-├── models/                  # Trained model checkpoints (not committed to git)
-│   ├── guitar/
-│   └── drums/
+│   ├── pd/                  # Pure Data patches for real-time demo
+│   └── test_nn_tilde.pd     # Minimal nn~ test patch
+├── models/                  # Trained .ts exports (not committed to git)
 ├── scripts/
+│   ├── setup.py             # One-command environment setup
 │   ├── download_data.py     # Download all datasets
-│   └── preprocess.py        # Preprocess audio for BRAVE training
+│   ├── preprocess.py        # Preprocess audio for BRAVE training
+│   └── train_guitar.bat     # Windows: launch/resume guitar model training
 ├── src/
 │   ├── preprocessing/       # Audio preprocessing utilities
 │   └── evaluation/          # Evaluation metrics (FAD, mel distance, etc.)
@@ -97,19 +98,23 @@ docker-compose up --build
 ## Training
 
 ```bash
-# 1. Preprocess audio
+# 1. Download datasets
+python scripts/download_data.py --dataset guitarset
+python scripts/download_data.py --dataset guitartechs
+
+# 2. Preprocess audio
 python scripts/preprocess.py --instrument guitar
-python scripts/preprocess.py --instrument drums
 
-# 2. Train (uses config files in config/)
-# Guitar model
-rave train --config config/guitar_model.gin --name guitar_v1 --preprocessed data/processed/guitar
+# 3. Build LMDB database
+rave preprocess --input_path data/processed/guitar --output_path data/rave_ready/guitar
 
-# Drums model
-rave train --config config/drums_model.gin --name drums_v1 --preprocessed data/processed/drums
+# 4. Train (Windows — auto-resumes from latest checkpoint)
+scripts\train_guitar.bat
 ```
 
-Expected training time on RTX 5080: ~12–24 hours per model.
+The training script uses the `c128_r10` BRAVE config (25M params) with `--gpu 0 --channels 1`.
+Checkpoints save every 10,000 steps in `runs/guitar_v1_*/`.
+Expected training time on RTX 5080: ~15–20 hours for a good result.
 
 ---
 

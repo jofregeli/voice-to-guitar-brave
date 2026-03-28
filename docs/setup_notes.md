@@ -73,27 +73,28 @@ def on_validation_epoch_end(self, out=[]):
 
 ## Training Command
 
+All steps are automated via `scripts/train_guitar.bat` (Windows). It auto-detects and resumes from the latest checkpoint. Manual equivalent:
+
 ```bash
-# Activate venv (includes ffmpeg in PATH)
-source venv/Scripts/activate
+# 1. Preprocess audio (custom script handles path/filter logic)
+python scripts/preprocess.py --instrument guitar
 
-# Preprocess audio
-rave preprocess \
-  --input_path data/raw/guitarset/audio_mono-mic \
-  --output_path data/processed/guitar \
-  --sampling_rate 44100
+# 2. Build LMDB (rave's own preprocessor)
+rave preprocess --input_path data/processed/guitar --output_path data/rave_ready/guitar
 
-# Train (guitar model, ~12-20h on RTX 5080)
+# 3. Train — BRAVE c128_r10 config (25M params, 17.3M without discriminator)
 rave train \
-  --config configs/BRAVE/brave.gin \
+  --config C:/Users/Usuario/Documents/BRAVE/configs/c128_r10.gin \
   --name guitar_v1 \
-  --db_path data/processed/guitar \
+  --db_path data/rave_ready/guitar \
   --channels 1 \
-  --gpu 0
+  --gpu 0 \
+  --val_every 10000
 ```
 
-> **Note:** Always pass `--channels 1` explicitly. The default is 0, which causes
-> a silent zero-dimension model initialization error.
+> **Note:** Always pass `--channels 1`. The default is 0, which silently creates a zero-dimension model.
+> **Note:** Do NOT use `brave.gin` (BRAVE light, 4.9M params) — use `c128_r10.gin` (25M params) for thesis-quality output.
+> **Note:** `rave preprocess` input must be the custom-preprocessed files from `scripts/preprocess.py`, not raw audio directly.
 
 ---
 
