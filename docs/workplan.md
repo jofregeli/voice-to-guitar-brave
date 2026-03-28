@@ -48,7 +48,7 @@
 | Verify PyTorch + CUDA work (RTX 5080 confirmed) | ✅ |
 | Automated setup script (`scripts/setup.py`) — reproducible env | ✅ |
 | Test Pure Data + `nn~` | ✅ |
-| Download GuitarSet (check storage: ~8GB) | ☐ |
+| Download GuitarSet (check storage: ~8GB) | ✅ |
 | Skim RAVE paper — concepts only, no math | ☐ |
 | Initialize git repo + project structure | ✅ |
 
