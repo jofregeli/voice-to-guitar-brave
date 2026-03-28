@@ -26,7 +26,7 @@ import numpy as np
 import soundfile as sf  # audio saving
 from tqdm import tqdm   # progress bar
 
-# ── Configuration ─────────────────────────────────────────────────────────────
+# - Configuration -
 
 TARGET_SR = 44100       # Sample rate expected by RAVE/BRAVE
 TARGET_CHANNELS = 1     # Mono
@@ -42,24 +42,25 @@ MIN_DURATION_SEC = 1.0
 # Input directories per instrument
 INPUT_DIRS = {
     "guitar": [
-        "data/raw/guitarset/audio_mono-mic",   # GuitarSet microphone recordings
-        "data/raw/guitartechs/DI",             # Guitar-TECHS direct injection
+        "data/raw/guitarset",      # GuitarSet mic recordings (flat directory)
+        "data/raw/guitartechs",    # Guitar-TECHS (recursive, DI channel only)
     ],
     "drums": [
-        "data/raw/groove/audio",               # Groove MIDI Dataset audio
+        "data/raw/groove/audio",   # Groove MIDI Dataset audio
     ],
 }
 
-# File filter for guitar: only use solo (monophonic) GuitarSet files
-# GuitarSet solo files contain '_solo' in the filename
+# File filter per directory
+# GuitarSet: only solo (monophonic) files ? filenames contain '_solo'
+# Guitar-TECHS: only direct-input channel ? path contains 'directinput'
 GUITAR_FILTER = {
-    "data/raw/guitarset/audio_mono-mic": lambda p: "_solo" in p.stem,
-    "data/raw/guitartechs/DI": lambda p: True,  # Use all Guitar-TECHS DI files
+    "data/raw/guitarset": lambda p: "_solo" in p.stem,
+    "data/raw/guitartechs": lambda p: "directinput" in str(p),
 }
 
 OUTPUT_DIR_TEMPLATE = "data/processed/{instrument}"
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# - Helpers -
 
 def find_audio_files(directory: Path, extension=(".wav", ".mp3", ".flac", ".ogg")):
     """Recursively find all audio files in a directory."""
@@ -94,7 +95,7 @@ def preprocess_audio(input_path: Path, output_path: Path, sr: int = TARGET_SR):
     return True
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# - Main -
 
 def main():
     parser = argparse.ArgumentParser(
@@ -129,7 +130,7 @@ def main():
         raw_dir = Path(raw_dir_str)
 
         if not raw_dir.exists():
-            print(f"  ⚠ Input directory not found: {raw_dir}")
+            print(f"  [WARN] Input directory not found: {raw_dir}")
             print(f"    Run: python scripts/download_data.py --dataset {args.instrument}")
             continue
 
@@ -147,7 +148,7 @@ def main():
             output_path = output_dir / rel_path.with_suffix(".wav")
 
             if args.dry_run:
-                print(f"    [DRY RUN] {input_path} → {output_path}")
+                print(f"    [DRY RUN] {input_path} -> {output_path}")
                 continue
 
             try:
