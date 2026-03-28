@@ -10,7 +10,7 @@ echo To check on training later, look in runs\guitar_v1\
 echo.
 
 venv\Scripts\rave train ^
-    --config BRAVE ^
+    --config C:\Users\Usuario\Documents\BRAVE\configs\c128_r10.gin ^
     --db_path data/rave_ready/guitar ^
     --name guitar_v1 ^
     --channels 1 ^
