@@ -19,6 +19,9 @@ import sys
 import subprocess
 from pathlib import Path
 
+# Use the zenodo_get from the same Python environment running this script
+ZENODO_GET = [sys.executable, "-m", "zenodo_get"]
+
 # ── Dataset definitions ───────────────────────────────────────────────────────
 
 DATASETS = {
@@ -61,7 +64,7 @@ DATASETS = {
 def check_zenodo_get():
     """Check that zenodo_get is installed."""
     try:
-        subprocess.run(["zenodo_get", "--help"], capture_output=True, check=True)
+        subprocess.run(ZENODO_GET + ["--help"], capture_output=True, check=True)
         return True
     except (subprocess.CalledProcessError, FileNotFoundError):
         return False
@@ -70,9 +73,9 @@ def check_zenodo_get():
 def download_zenodo(zenodo_id: str, output_dir: str):
     """Download a Zenodo record using zenodo_get."""
     os.makedirs(output_dir, exist_ok=True)
-    print(f"  Downloading Zenodo record {zenodo_id} → {output_dir}/")
+    print(f"  Downloading Zenodo record {zenodo_id} -> {output_dir}/")
     result = subprocess.run(
-        ["zenodo_get", zenodo_id, "-o", output_dir],
+        ZENODO_GET + [zenodo_id, "-o", output_dir],
         check=True,
     )
     return result.returncode == 0
@@ -94,7 +97,8 @@ def download_dataset(name: str):
 
     # Check if already downloaded
     out_path = Path(ds["output_dir"])
-    if out_path.exists() and any(out_path.iterdir()):
+    real_files = [f for f in out_path.iterdir() if f.name != ".gitkeep"] if out_path.exists() else []
+    if real_files:
         print(f"  Directory {out_path} already has files. Skipping download.")
         print("  (Delete the directory if you want to re-download.)")
         return
