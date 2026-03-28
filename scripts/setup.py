@@ -133,6 +133,8 @@ def step_install_dependencies():
     run([PIP, "install", "acids-rave==2.3.1", "--no-deps"])
     # pytorch-lightning 2.x (the pinned 1.9 doesn't detect modern GPUs)
     run([PIP, "install", "pytorch-lightning>=2.0", "--no-deps"])
+    # zenodo-get for dataset downloads
+    run([PIP, "install", "zenodo-get"])
     print("  [OK]   Dependencies installed")
 
 
