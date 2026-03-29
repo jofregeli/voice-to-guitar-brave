@@ -73,7 +73,7 @@
 
 | Task | Status |
 |------|--------|
-| Download Guitar-TECHS, Groove datasets | ☐ |
+| Download Guitar-TECHS, Groove datasets | ✅ |
 | Explore GuitarSet: listen, check formats, total duration | ☐ |
 | Write `scripts/preprocess.py` — resample, mono, trim silence | ☐ |
 | Read BRAVE config files — understand all key parameters | ☐ |
