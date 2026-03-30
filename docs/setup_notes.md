@@ -6,7 +6,6 @@
 |-----------|---------|
 | OS | Windows 11 |
 | Python | 3.14.3 |
-| GPU | NVIDIA RTX 5080 (sm_120, 16GB VRAM) |
 | CUDA driver | 13.2 |
 | PyTorch | 2.11.0+cu128 |
 | acids-rave | 2.3.1 |
