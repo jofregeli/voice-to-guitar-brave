@@ -14,7 +14,6 @@
 | Real-time I/O | Pure Data + nn~ external |
 | Guitar dataset | GuitarSet (solo/mic) + Guitar-TECHS (DI) = ~6.7h, CC BY 4.0 |
 | Drums dataset | Groove MIDI Dataset audio, ~13h, CC BY 4.0 |
-| GPU | NVIDIA RTX 5080 (local, 24/7 access) |
 | Framework | Python, PyTorch, Docker |
 
 ---
@@ -40,12 +39,12 @@
 
 ---
 
-### Week 1 — Mar 27–Apr 2 | Setup + Orientation
+### Week 1 | Setup + Orientation
 
 | Task | Status |
 |------|--------|
 | Clone BRAVE repo, run their demo/example | ✅ |
-| Verify PyTorch + CUDA work (RTX 5080 confirmed) | ✅ |
+| Verify PyTorch + CUDA work | ✅ |
 | Automated setup script (`scripts/setup.py`) — reproducible env | ✅ |
 | Test Pure Data + `nn~` | ✅ |
 | Download GuitarSet (check storage: ~8GB) | ✅ |
@@ -56,7 +55,7 @@
 
 ---
 
-### Week 2 — Apr 3–Apr 9 | State of the Art
+### Week 2 | State of the Art
 
 | Task | Status |
 |------|--------|
@@ -69,7 +68,7 @@
 
 ---
 
-### Week 3 — Apr 10–Apr 16 | Dataset Analysis + BRAVE Config
+### Week 3 | Dataset Analysis + BRAVE Config
 
 | Task | Status |
 |------|--------|
@@ -83,7 +82,7 @@
 
 ---
 
-### Week 4 — Apr 17–Apr 23 | Training Setup
+### Week 4 | Training Setup
 
 | Task | Hours | Status |
 |------|-------|--------|
@@ -96,7 +95,7 @@
 
 ---
 
-### Week 5 — Apr 24–Apr 30 | Training Run #1 — Guitar
+### Week 5 | Training Run #1 — Guitar
 
 | Task | Status |
 |------|--------|
@@ -109,7 +108,7 @@
 
 ---
 
-### Week 6 — May 1–May 7 | Evaluate Guitar Model
+### Week 6 | Evaluate Guitar Model
 
 | Task | Status |
 |------|--------|
@@ -122,7 +121,7 @@
 
 ---
 
-### Week 7 — May 8–May 14 | Training Run #2 + Drums
+### Week 7 | Training Run #2 + Drums
 
 | Task | Status |
 |------|--------|
@@ -135,7 +134,7 @@
 
 ---
 
-### Week 8 — May 15–May 21 | Pure Data Integration
+### Week 8 | Pure Data Integration
 
 | Task | Status |
 |------|--------|
@@ -148,7 +147,7 @@
 
 ---
 
-### Week 9 — May 22–May 28 | Demo + Secondary Experiment
+### Week 9 | Demo + Secondary Experiment
 
 | Task | Status |
 |------|--------|
@@ -161,7 +160,7 @@
 
 ---
 
-### Week 10 — May 29–Jun 4 | Thesis Sprint
+### Week 10 | Thesis Sprint
 
 | Task | Status |
 |------|--------|
@@ -173,7 +172,7 @@
 
 ---
 
-### Week 11 — Jun 5–Jun 12 | Final Polish
+### Week 11 | Final Polish
 
 | Task | Status |
 |------|--------|
