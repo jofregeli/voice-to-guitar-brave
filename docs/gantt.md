@@ -11,7 +11,7 @@
 | **Environment setup** | ✅ | | | | | | | | | | |
 | **Dataset download + preprocessing** | ✅ | | | | | | | | | | |
 | **Guitar model training** | ✅ | ▶ | ▶ | ▶ | ▶ | | | | | | |
-| **State of the Art (reading)** | ▶ | ▶ | | | | | | | | | |
+| **State of the Art** | ▶ | ▶ | | | | | | | | | |
 | **Thesis: Introduction + SoA** | | ▶ | ▶ | | | | | | | | |
 | **Evaluate guitar model** | | | | | ▶ | ▶ | | | | | |
 | **Drums model training** | | | | | | | ▶ | | | | |
