@@ -1,7 +1,5 @@
 # State of the Art — Thesis Section 2 Draft
 
-> **Status:** Working draft. Rewrite in your own words before submission.
-> Edit freely — this is a starting point, not a final text.
 
 ---
 
