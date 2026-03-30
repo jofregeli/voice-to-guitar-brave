@@ -29,17 +29,6 @@
 
 ## Task List
 
-### Completed (ahead of schedule)
-- [x] Development environment: Python, PyTorch CUDA, acids-rave, all compatibility patches
-- [x] Automated setup script (`scripts/setup.py`) — reproducible on any Windows machine
-- [x] Pure Data + nn~ external — tested and working on Windows 11
-- [x] Dataset download: GuitarSet, Guitar-TECHS, Groove MIDI Dataset
-- [x] Audio preprocessing pipeline (`scripts/preprocess.py`) — 2.9h of guitar audio at 44100 Hz mono
-- [x] BRAVE model configuration — selected c128_r10 (25M params, 128x compression, 953ms receptive field)
-- [x] Guitar model training launched — currently at ~1M steps, entering Phase 2 (adversarial)
-- [x] TensorBoard monitoring — loss curves visible and decreasing
-- [x] GitHub repository organized and reproducible
-
 ### In Progress
 - [ ] Reading: RAVE paper (arXiv:2111.05011)
 - [ ] Reading: BRAVE paper (arXiv:2503.11562)
