@@ -6,7 +6,7 @@
 
 ## Timeline Overview
 
-| Task | W1 Mar27 | W2 Apr3 | W3 Apr10 | W4 Apr17 | W5 Apr24 | W6 May1 | W7 May8 | W8 May15 | W9 May22 | W10 May29 | W11 Jun5 |
+| Task | W1| W2 | W3 | W4 | W5 | W6 | W7 | W8 | W9 | W10 | W11 |
 |------|----------|---------|----------|----------|----------|---------|---------|----------|----------|-----------|----------|
 | **Environment setup** | ✅ | | | | | | | | | | |
 | **Dataset download + preprocessing** | ✅ | | | | | | | | | | |
@@ -76,8 +76,8 @@
 | Milestone | Target | Status |
 |-----------|--------|--------|
 | Environment + pipeline working | Week 1 | ✅ Done |
-| Guitar model training started | Week 1 | ✅ Done (3 weeks ahead) |
-| Guitar model Phase 2 (GAN active) | Week 5 | ✅ Done (4 weeks ahead) |
+| Guitar model training started | Week 1 | ✅ Done |
+| Guitar model Phase 2 (GAN active) | Week 5 | ✅ Done |
 | Guitar model evaluation | Week 6 | Pending |
 | Live voice-to-guitar demo | Week 8 | Pending |
 | Complete thesis first draft | Week 10 | Pending |
