@@ -118,9 +118,10 @@ rave.RAVE:
         'feature_matching': 10
         }
 
-# FIXED: beta=0 during Phase 1 so encoder learns to encode before KL kicks in.
-# Ramps from 0 to 1.0 over 1M steps, reaching full KL weight as Phase 2 starts.
+# FIXED: beta=0.0001 (effectively zero) during Phase 1 so encoder learns to encode before KL kicks in.
+# Cannot use exactly 0 — BetaWarmupCallback uses log-space interpolation (math.log(0) crashes).
+# 0.0001 gives log(0.0001)=-9.2 which ramps to log(1.0)=0 over 1M steps — negligible KL until Phase 2.
 rave.BetaWarmupCallback:
-    initial_value = 0.
+    initial_value = 0.0001
     target_value = 1.
     warmup_len = 1000000
