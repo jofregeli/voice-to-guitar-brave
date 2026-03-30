@@ -74,12 +74,12 @@
 | Task | Status |
 |------|--------|
 | Download Guitar-TECHS, Groove datasets | ✅ |
-| Explore GuitarSet: listen, check formats, total duration | ☐ |
-| Write `scripts/preprocess.py` — resample, mono, trim silence | ☐ |
-| Read BRAVE config files — understand all key parameters | ☐ |
+| Explore GuitarSet: listen, check formats, total duration | ✅ |
+| Write `scripts/preprocess.py` — resample, mono, trim silence | ✅ |
+| Read BRAVE config files — understand all key parameters | ✅ |
 | **Start thesis writing:** Introduction + SoA first draft | ☐ |
 
-**Milestone:** Preprocessed audio ready in `data/processed/`. Config parameters understood.
+**Milestone:** Preprocessed audio ready in `data/processed/`. Config parameters understood. ✅
 
 ---
 
@@ -87,12 +87,12 @@
 
 | Task | Hours | Status |
 |------|-------|--------|
-| Finalize BRAVE config for guitar model | 2h | ☐ |
-| Launch training run — verify no errors, first 15 min | 1.5h | ☐ |
-| Set up logging / loss curve monitoring | 1h | ☐ |
+| Finalize BRAVE config for guitar model | 2h | ✅ |
+| Launch training run — verify no errors, first 15 min | 1.5h | ✅ |
+| Set up logging / loss curve monitoring | 1h | ✅ |
 | **Thesis:** Methodology section — architecture description | 1.5h | ☐ |
 
-**Milestone:** Training running without errors. First loss values look reasonable.
+**Milestone:** Training running without errors. First loss values look reasonable. ✅
 
 ---
 
