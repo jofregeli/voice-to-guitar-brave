@@ -103,7 +103,7 @@ rave train \
 **Diagnosis:** TensorBoard `regularization` metric showed KL divergence steadily decreasing from 0.5 → 0.25 throughout training. The KL pressure from step 1 (beta=0.1) prevented the encoder/decoder from learning a meaningful latent space before regularization kicked in — a classic VAE posterior collapse.
 
 **Fix:** Created `config/c128_r10_beta_fixed.gin` with:
-- `initial_value = 0.` — no KL during Phase 1 (reconstruction only)
+- `initial_value = 0.0001` — effectively zero KL during Phase 1 (cannot use exactly 0: BetaWarmupCallback uses log-space interpolation, so math.log(0) crashes immediately)
 - `target_value = 1.` — full KL weight at Phase 2
 - `warmup_len = 1000000` — ramps up over the full Phase 1 duration
 
