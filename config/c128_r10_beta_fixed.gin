@@ -118,10 +118,26 @@ rave.RAVE:
         'feature_matching': 10
         }
 
-# FIXED: beta=0.0001 (effectively zero) during Phase 1 so encoder learns to encode before KL kicks in.
-# Cannot use exactly 0 — BetaWarmupCallback uses log-space interpolation (math.log(0) crashes).
-# 0.0001 gives log(0.0001)=-9.2 which ramps to log(1.0)=0 over 1M steps — negligible KL until Phase 2.
+# FIXED beta schedule — two problems in the original c128_r10.gin:
+#
+# Problem 1: initial_value = 0.1 (constant from step 1)
+#   This causes posterior collapse: the encoder collapses to the prior before the
+#   decoder learns to use the latent space. Symptom: KL steadily decreasing in TensorBoard.
+#
+# Problem 2 (this fix): initial_value = 0.0001, target_value = 0.1, warmup_len = 1000000
+#   - initial_value = 0.0001: effectively zero KL at step 0 (cannot use 0 exactly —
+#     BetaWarmupCallback uses log-space interpolation, math.log(0) crashes).
+#   - target_value = 0.1: matches the BRAVE paper's evaluated constant beta=0.1
+#     (c128_r10.gin design intent), but now with proper warmup. RAVE v2/v3 use 0.05.
+#     1.0 would be dangerously high and could destabilize Phase 2 onset.
+#   - warmup_len = 1000000: ramps through all of Phase 1. After 1M steps beta is
+#     locked at target_value=0.1 for Phase 2 and beyond.
+#
+# Beta trajectory (log-space interpolation):
+#   step 0:       beta = 0.0001
+#   step 500,000: beta ≈ 0.003
+#   step 1,000,000+: beta = 0.1 (Phase 2 starts here, locked)
 rave.BetaWarmupCallback:
     initial_value = 0.0001
-    target_value = 1.
+    target_value = 0.1
     warmup_len = 1000000
