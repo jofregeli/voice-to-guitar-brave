@@ -12,7 +12,7 @@
 | Secondary task | Beatbox → Drums (sanity check + secondary demo) |
 | Model | BRAVE (streaming RAVE) |
 | Real-time I/O | Pure Data + nn~ external |
-| Guitar dataset | GuitarSet (solo/mic) + Guitar-TECHS (DI) = ~6.7h, CC BY 4.0 |
+| Guitar dataset | GuitarSet (solo/mic) + Guitar-TECHS (DI) = 2.88h (206 files), CC BY 4.0 |
 | Drums dataset | Groove MIDI Dataset audio, ~13h, CC BY 4.0 |
 | Framework | Python, PyTorch, Docker |
 
@@ -48,7 +48,7 @@
 | Automated setup script (`scripts/setup.py`) — reproducible env | ✅ |
 | Test Pure Data + `nn~` | ✅ |
 | Download GuitarSet (check storage: ~8GB) | ✅ |
-| Skim RAVE paper — concepts only, no math | ☐ |
+| Skim RAVE paper — concepts only, no math | ✅ |
 | Initialize git repo + project structure | ✅ |
 
 **Milestone:** BRAVE runs locally. Environment confirmed working. `nn~` works in Pure Data. ✅
@@ -59,7 +59,7 @@
 
 | Task | Status |
 |------|--------|
-| Deep read: RAVE paper (arXiv:2111.05011) | ☐ |
+| Deep read: RAVE paper (arXiv:2111.05011) | ✅ |
 | Deep read: BRAVE paper (arXiv:2503.11562) | ☐ |
 | Skim: NSynth + DDSP + TimbreTron | ☐ |
 | Draft thesis Section 2 (SoA) — bullet points | ☐ |
