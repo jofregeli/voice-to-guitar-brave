@@ -30,7 +30,7 @@
 ## Task List
 
 ### In Progress
-- [ ] Reading: RAVE paper (arXiv:2111.05011)
+- [x] Reading: RAVE paper (arXiv:2111.05011)
 - [ ] Reading: BRAVE paper (arXiv:2503.11562)
 - [ ] Guitar model training guitar_v2 — Phase 1 (fixed beta, restarted after diagnosing posterior collapse in v1)
 
@@ -66,7 +66,7 @@
 |-----------|--------|--------|
 | Environment + pipeline working | Week 1 | ✅ Done |
 | Guitar model training started | Week 1 | ✅ Done |
-| Guitar model Phase 2 (GAN active) | Week 5 | ⚠ guitar_v1 had posterior collapse — retraining as guitar_v2 with fixed beta |
+| Guitar model Phase 2 (GAN active) | Week 2 (~Apr 2) | ⚠ guitar_v1 had posterior collapse — guitar_v2 restarted Mar 31 with fixed beta (0.0001→0.1 over 1M steps). Phase 1 ends ~Apr 1 evening. |
 | Guitar model evaluation | Week 6 | Pending |
 | Live voice-to-guitar demo | Week 8 | Pending |
 | Complete thesis first draft | Week 10 | Pending |
