@@ -94,7 +94,7 @@ rave train \
 > **Note:** Always pass `--channels 1`. The default is 0, which silently creates a zero-dimension model.
 > **Note:** Do NOT use `brave.gin` (BRAVE light, 4.9M params) — use `config/c128_r10_beta_fixed.gin` (25M params) for thesis-quality output.
 > **Note:** `rave preprocess` input must be the custom-preprocessed files from `scripts/preprocess.py`, not raw audio directly.
-> **Note:** Do NOT use the original `c128_r10.gin` from the BRAVE repo — it has `BetaWarmupCallback initial_value=0.1` which causes posterior collapse (encoder ignores input, decoder outputs fixed average sound). Use `config/c128_r10_beta_fixed.gin` which sets `initial_value=0, target_value=1, warmup_len=1000000`.
+> **Note:** Do NOT use the original `c128_r10.gin` from the BRAVE repo — it has `BetaWarmupCallback initial_value=0.1` (constant, no warmup) which causes posterior collapse. Use `config/c128_r10_beta_fixed.gin`: `initial_value=0.0001, target_value=0.1, warmup_len=1000000`.
 
 ## Posterior Collapse — Diagnosis and Fix (guitar_v1)
 
@@ -103,11 +103,18 @@ rave train \
 **Diagnosis:** TensorBoard `regularization` metric showed KL divergence steadily decreasing from 0.5 → 0.25 throughout training. The KL pressure from step 1 (beta=0.1) prevented the encoder/decoder from learning a meaningful latent space before regularization kicked in — a classic VAE posterior collapse.
 
 **Fix:** Created `config/c128_r10_beta_fixed.gin` with:
-- `initial_value = 0.0001` — effectively zero KL during Phase 1 (cannot use exactly 0: BetaWarmupCallback uses log-space interpolation, so math.log(0) crashes immediately)
-- `target_value = 1.` — full KL weight at Phase 2
-- `warmup_len = 1000000` — ramps up over the full Phase 1 duration
+- `initial_value = 0.0001` — effectively zero KL at step 0 (cannot use exactly 0: BetaWarmupCallback uses log-space interpolation, so math.log(0) crashes immediately)
+- `target_value = 0.1` — matches the BRAVE paper's intended constant beta=0.1 for c128_r10, reached at end of Phase 1 and held through Phase 2. (Setting 1.0 would be too aggressive and could destabilize Phase 2 onset; RAVE v2/v3 use 0.05 for reference.)
+- `warmup_len = 1000000` — ramps through all of Phase 1; beta is locked at 0.1 from step 1M onward
+
+Beta trajectory: 0.0001 (step 0) → ~0.003 (step 500k) → 0.1 (step 1M+)
 
 Retraining as `guitar_v2` from scratch with fixed config.
+
+**TensorBoard health check for guitar_v2:**
+- `regularization` should be near 0 early, gradually rising to ~0.1 range by step 1M. If it collapses toward 0 again → posterior collapse recurring.
+- `distance` (reconstruction loss) should decrease steadily through Phase 1.
+- `fidelity_95` should stabilize well below 128 (the latent size) — values around 10-30 are healthy.
 
 ---
 
