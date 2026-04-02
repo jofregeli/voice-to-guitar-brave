@@ -6,7 +6,8 @@ call venv\Scripts\activate.bat
 echo.
 echo Starting BRAVE guitar model training...
 echo Logs will appear below. Do NOT close this window.
-echo To check on training later, look in runs\guitar_v2\
+echo To check on training later, look in runs\guitar_v2_*\
+echo TensorBoard: venv\Scripts\tensorboard --logdir runs\guitar_v2_3415d67484
 echo.
 
 :: Find the latest checkpoint for guitar_v2 only
