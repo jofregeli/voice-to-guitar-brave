@@ -1,5 +1,5 @@
 #N canvas 932 235 500 400 12;
-#X obj 60 100 nn~ C:/Users/Usuario/Documents/voice-to-guitar-brave/models/guitar_v1_3415d67484.ts forward;
+#X obj 60 100 nn~ C:/Users/Usuario/Documents/voice-to-guitar-brave/models/guitar_v2_3415d67484.ts forward;
 #X obj 60 200 dac~;
 #X obj 200 40 osc~ 220;
 #X obj 60 150 *~ 0.5;
