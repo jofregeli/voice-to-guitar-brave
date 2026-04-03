@@ -31,8 +31,8 @@
 
 ### In Progress
 - [x] Reading: RAVE paper (arXiv:2111.05011)
-- [ ] Reading: BRAVE paper (arXiv:2503.11562)
-- [ ] Guitar model training guitar_v2 — Phase 1 (fixed beta, restarted after diagnosing posterior collapse in v1)
+- [ ] Reading: BRAVE paper (arXiv:2503.11562) — in progress
+- [x] Guitar model training guitar_v2 — Phase 1 complete, Phase 2 (GAN) running (~1.18M steps, healthy metrics confirmed)
 
 ### Next (Weeks 2–4)
 - [ ] Read: NSynth, DDSP, TimbreTron (skim)
@@ -66,7 +66,7 @@
 |-----------|--------|--------|
 | Environment + pipeline working | Week 1 | ✅ Done |
 | Guitar model training started | Week 1 | ✅ Done |
-| Guitar model Phase 2 (GAN active) | Week 2 (~Apr 2) | ⚠ guitar_v1 had posterior collapse — guitar_v2 restarted Mar 31 with fixed beta (0.0001→0.1 over 1M steps). Phase 1 ends ~Apr 1 evening. |
+| Guitar model Phase 2 (GAN active) | Week 2 (~Apr 2) | ✅ Phase 2 running since ~Apr 1. Metrics healthy: KL stable at 0.6, loss_dis decreasing, pred_real rising, pred_fake falling. Next test: epoch ~6250 (~Apr 5). |
 | Guitar model evaluation | Week 6 | Pending |
 | Live voice-to-guitar demo | Week 8 | Pending |
 | Complete thesis first draft | Week 10 | Pending |
