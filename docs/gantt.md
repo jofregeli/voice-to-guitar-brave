@@ -31,7 +31,7 @@
 
 ### In Progress
 - [x] Reading: RAVE paper (arXiv:2111.05011)
-- [ ] Reading: BRAVE paper (arXiv:2503.11562) — in progress
+- [x] Reading: BRAVE paper (arXiv:2503.11562)
 - [x] Guitar model training guitar_v2 — Phase 1 complete, Phase 2 (GAN) running (~1.18M steps, healthy metrics confirmed)
 
 ### Next (Weeks 2–4)

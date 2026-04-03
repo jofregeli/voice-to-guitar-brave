@@ -60,7 +60,7 @@
 | Task | Status |
 |------|--------|
 | Deep read: RAVE paper (arXiv:2111.05011) | ✅ |
-| Deep read: BRAVE paper (arXiv:2503.11562) | ☐ |
+| Deep read: BRAVE paper (arXiv:2503.11562) | ✅ |
 | Skim: NSynth + DDSP + TimbreTron | ☐ |
 | Draft thesis Section 2 (SoA) — bullet points | ☐ |
 
