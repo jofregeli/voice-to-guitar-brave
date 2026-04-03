@@ -88,11 +88,13 @@ docker-compose up --build
 
 ## Datasets
 
-| Dataset | Instrument | Duration | License | Download |
-|---------|-----------|----------|---------|----------|
-| [GuitarSet](https://zenodo.org/records/3371780) | Acoustic guitar | ~3h | CC BY 4.0 | `python scripts/download_data.py --dataset guitarset` |
-| [Guitar-TECHS](https://zenodo.org/records/14963133) | Electric guitar | ~5.2h | CC BY 4.0 | `python scripts/download_data.py --dataset guitartechs` |
-| [Groove MIDI Dataset](https://magenta.tensorflow.org/datasets/groove) | Drums | ~13h | CC BY 4.0 | `python scripts/download_data.py --dataset groove` |
+| Dataset | Instrument | Raw duration | Used for training | Filter applied | License | Download |
+|---------|-----------|-------------|-------------------|----------------|---------|----------|
+| [GuitarSet](https://zenodo.org/records/3371780) | Acoustic guitar | ~3h | ~2.5h | Solo mic recordings only (`_solo_mic`) | CC BY 4.0 | `python scripts/download_data.py --dataset guitarset` |
+| [Guitar-TECHS](https://zenodo.org/records/14963133) | Electric guitar | ~5.2h | ~0.4h | Direct input channel only (`directinput`) | CC BY 4.0 | `python scripts/download_data.py --dataset guitartechs` |
+| [Groove MIDI Dataset](https://magenta.tensorflow.org/datasets/groove) | Drums | ~13h | ~13h | No filter | CC BY 4.0 | `python scripts/download_data.py --dataset groove` |
+
+**Total guitar training data after filtering: 2.88h (206 files)**
 
 ---
 
@@ -115,7 +117,7 @@ scripts\train_guitar.bat
 
 The training script uses the `c128_r10` BRAVE config (25M params) with `--gpu 0 --channels 1`.
 Checkpoints save every 10,000 steps in `runs/guitar_v1_*/`.
-Expected training time on RTX 5080: ~15–20 hours for a good result.
+Expected training time on RTX 5080: ~30h for Phase 1 (1M steps), ~60h for Phase 2 (2M steps). Total ~90h for a complete model.
 
 ---
 
