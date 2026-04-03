@@ -66,7 +66,7 @@
 |-----------|--------|--------|
 | Environment + pipeline working | Week 1 | ✅ Done |
 | Guitar model training started | Week 1 | ✅ Done |
-| Guitar model Phase 2 (GAN active) | Week 2 (~Apr 2) | ✅ Phase 2 running since ~Apr 1. Metrics healthy: KL stable at 0.6, loss_dis decreasing, pred_real rising, pred_fake falling. Next test: epoch ~6250 (~Apr 5). |
+| Guitar model Phase 2 (GAN active) | Week 2 | ✅ Phase 2 running since ~Apr 1. Metrics healthy: KL stable at 0.6, loss_dis decreasing, pred_real rising, pred_fake falling. Next test: epoch ~6250 (~Apr 5). |
 | Guitar model evaluation | Week 6 | Pending |
 | Live voice-to-guitar demo | Week 8 | Pending |
 | Complete thesis first draft | Week 10 | Pending |
