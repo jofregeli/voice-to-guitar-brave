@@ -1,0 +1,133 @@
+# BRAVE guitar_v3 config — LATENT_SIZE reduced from 128 to 16
+#
+# Why: guitar_v2 had partial posterior collapse. Total KL stabilised at 0.6
+# across 128 dimensions (~0.005 nats/dim), meaning almost no information was
+# encoded. The decoder output barely changed with different inputs.
+#
+# With LATENT_SIZE=16, each dimension MUST carry useful information or
+# reconstruction suffers. The IIL published guitar model (guitar_iil_*.ts)
+# uses z16 for the same reason: guitar timbre has limited degrees of freedom
+# (brightness, pick style, harmonics) that fit in 16 dimensions.
+#
+# All other parameters identical to c128_r10_beta_fixed.gin.
+
+from __gin__ import dynamic_registration
+
+import rave
+from rave import pqmf
+from rave import core
+from rave import blocks
+from rave import discriminator
+from rave import dataset
+
+import cached_conv as cc
+import torch
+
+cc.get_padding.mode = 'causal'
+
+SAMPLING_RATE = 44100
+CAPACITY = 64
+N_BAND = 16
+LATENT_SIZE = 16
+RATIOS = [2, 2, 2, 1]
+PHASE_1_DURATION = 1000000
+
+# CORE CONFIGURATION
+core.AudioDistanceV1:
+    multiscale_stft = @core.MultiScaleSTFT
+    log_epsilon = 1e-7
+
+core.MultiScaleSTFT:
+    scales = [2048, 1024, 512, 256, 128]
+    sample_rate = %SAMPLING_RATE
+    magnitude = True
+
+dataset.split_dataset.max_residual = 1000
+
+# CONVOLUTION CONFIGURATION
+cc.Conv1d.bias = False
+cc.ConvTranspose1d.bias = False
+
+# PQMF
+pqmf.CachedPQMF:
+    attenuation = 100
+    n_band = %N_BAND
+
+blocks.normalization.mode = 'weight_norm'
+
+# ENCODER
+blocks.Encoder:
+    data_size = %N_BAND
+    capacity = %CAPACITY
+    latent_size = %LATENT_SIZE
+    ratios = %RATIOS
+    sample_norm = False
+    repeat_layers = 1
+
+variational/blocks.Encoder.n_out = 2
+
+blocks.VariationalEncoder:
+    encoder = @variational/blocks.Encoder
+
+# DECODER
+blocks.Generator:
+    latent_size = %LATENT_SIZE
+    capacity = %CAPACITY
+    data_size = %N_BAND
+    ratios = %RATIOS
+    loud_stride = 1
+    use_noise = False
+
+blocks.ResidualStack:
+    kernel_sizes = [3]
+    dilations_list = [[3, 1], [9, 1], [27, 1], [45, 1], [63, 1]]
+
+blocks.NoiseGenerator:
+    ratios = [4, 4, 4]
+    noise_bands = 5
+
+# DISCRIMINATOR
+discriminator.ConvNet:
+    in_size = 1
+    out_size = 1
+    capacity = %CAPACITY
+    n_layers = 4
+    stride = 4
+
+scales/discriminator.ConvNet:
+    conv = @torch.nn.Conv1d
+    kernel_size = 15
+
+discriminator.MultiScaleDiscriminator:
+    n_discriminators = 3
+    convnet = @scales/discriminator.ConvNet
+
+feature_matching/core.mean_difference:
+    norm = 'L1'
+
+# MODEL ASSEMBLING
+rave.RAVE:
+    latent_size = %LATENT_SIZE
+    pqmf = @pqmf.CachedPQMF
+    sampling_rate = %SAMPLING_RATE
+    encoder = @blocks.VariationalEncoder
+    decoder = @blocks.Generator
+    discriminator = @discriminator.MultiScaleDiscriminator
+    phase_1_duration = %PHASE_1_DURATION
+    gan_loss = @core.hinge_gan
+    valid_signal_crop = False
+    feature_matching_fun = @feature_matching/core.mean_difference
+    num_skipped_features = 0
+    audio_distance = @core.AudioDistanceV1
+    multiband_audio_distance = @core.AudioDistanceV1
+    weights = {
+        'feature_matching': 10
+        }
+
+# Beta schedule — same as guitar_v2 (worked correctly, KL rose as expected).
+# The problem in v2 was LATENT_SIZE=128, not the beta schedule.
+# Beta trajectory: 0.0001 (step 0) → ~0.003 (step 500k) → 0.1 (step 1M+)
+rave.BetaWarmupCallback:
+    initial_value = 0.0001
+    target_value = 0.1
+    warmup_len = 1000000
