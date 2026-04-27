@@ -118,6 +118,53 @@ Retraining as `guitar_v2` from scratch with fixed config.
 
 ---
 
+## Training History — What Worked, What Didn't
+
+| Version | Dataset | Latent | Outcome | Lesson |
+|---------|---------|--------|---------|--------|
+| v1 | mixed 5.79h | 128 | Posterior collapse | Need beta warmup |
+| v2 | mixed 5.79h | 128 | KL/dim too low (0.005 nats) | LATENT_SIZE too large |
+| v3 | mixed 5.79h | 16 | KL=0.65, quiet noise + faint response | Generator partial collapse |
+| v4 | clean 3.05h mic only | 16 | KL=0.80, silence > signal | **Discriminator dominated**, less data made it worse |
+| v5 | mixed 11h + augment | 16 | _in progress_ | More data + GAN balance |
+
+**Key insight from v3→v4:** Cleaner data (removing DI) didn't help — actually made it worse. Less data = discriminator memorizes faster = generator can't compete. **Quantity + diversity matters more than purity.**
+
+---
+
+## guitar_v5 Config (Current Best Approach)
+
+After four failed attempts, v5 makes targeted changes for the **specific failure mode** observed in v3/v4: discriminator domination during Phase 2 GAN training.
+
+**Dataset (~11h):**
+- GuitarSet (3.05h, mic'd acoustic) — full set, both mic positions
+- Guitar-TECHS (2.74h, DI electric)
+- IDMT-SMT-Guitar dataset4 (4.35h, continuous excerpts, mixed guitars)
+- IDMT-SMT-Guitar dataset2 (1.02h, technique runs)
+
+**Config changes** (`config/c16_r10_v5_balanced.gin` vs v4 baseline):
+- `PHASE_1_DURATION` 1M → 1.5M (more reconstruction training before GAN starts)
+- `target_value` 0.1 → 0.05 (less aggressive KL, matches RAVE v2 default)
+- `feature_matching` weight 10 → 30 (stronger perceptual loss vs adversarial)
+- Discriminator `capacity` 64 → 32 (half-size, weaker D)
+- Discriminator `n_layers` 4 → 3 (shallower D)
+
+**Training command additions** (`scripts/train_guitar_v5.bat`):
+- `--augment compress` — random non-linear amplification
+- `--augment gain` — random gain variation
+- `--augment mute` — random batch muting
+
+These augmentations are RAVE-recommended (community wisdom) for stability and generalization.
+
+**Expected training time:** ~120h on RTX 5080 (longer than v3/v4 due to extended Phase 1).
+
+**Mid-training health checks:**
+- `regularization` should rise during Phase 1 and hold ≥0.5 in Phase 2
+- `pred_real - pred_fake` gap should stay below ~3 (vs v4's 5.6 — that was discriminator domination)
+- `multiband_spectral_distance` may spike at Phase 2 start (normal) but should not stay elevated for 500k+ steps
+
+---
+
 ## ffmpeg
 
 Installed via `winget install --id Gyan.FFmpeg`. Path added to `venv/Scripts/activate`.

@@ -12,7 +12,7 @@
 | Secondary task | Beatbox → Drums (sanity check + secondary demo) |
 | Model | BRAVE (streaming RAVE) |
 | Real-time I/O | Pure Data + nn~ external |
-| Guitar dataset | GuitarSet (solo/mic) + Guitar-TECHS (DI) = 2.88h (206 files), CC BY 4.0 |
+| Guitar dataset (v5) | GuitarSet + Guitar-TECHS + IDMT-SMT-Guitar (datasets 2,4) = ~11h, CC BY 4.0 / CC BY-NC-ND 4.0 |
 | Drums dataset | Groove MIDI Dataset audio, ~13h, CC BY 4.0 |
 | Framework | Python, PyTorch, Docker |
 
@@ -99,12 +99,12 @@
 
 | Task | Status |
 |------|--------|
-| Monitor training: check loss curves at checkpoints | ☐ |
-| Listen to intermediate outputs (every 50k steps) | ☐ |
-| Debug any training issues | ☐ |
+| Monitor training: check loss curves at checkpoints | ✅ |
+| Listen to intermediate outputs (every 50k steps) | ✅ |
+| Debug any training issues | ✅ |
 | **Thesis:** Dataset section + preprocessing description | ☐ |
 
-**Milestone:** Guitar model training in progress. At least one checkpoint produces guitar-like output.
+**Milestone:** ~~Guitar model training in progress.~~ Four training attempts (v1–v4), all failed in different ways. Diagnosed root causes documented in `docs/setup_notes.md`.
 
 ---
 
@@ -121,16 +121,16 @@
 
 ---
 
-### Week 7 | Training Run #2 + Drums
+### Week 7 | Training Run #5 — Guitar (final attempt)
 
 | Task | Status |
 |------|--------|
-| Guitar model: extend training or second run (if needed) | ☐ |
-| Launch drums model training (Groove dataset) | ☐ |
+| guitar_v5: 11h dataset + GAN-balanced config + augmentations | ⏳ |
+| Launch drums model training (Groove dataset) — deferred until guitar resolved | ☐ |
 | Export final guitar checkpoint for Pure Data deployment | ☐ |
-| **Thesis:** Results section — first draft | ☐ |
+| **Thesis:** Results section — first draft (incl. v1–v4 failure analysis) | ☐ |
 
-**Milestone:** Final guitar model exported. Drums training in progress.
+**Milestone:** Final guitar model exported (or documented v5 failure analysis as TFG contribution). Drums training in progress.
 
 ---
 
