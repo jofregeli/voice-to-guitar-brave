@@ -49,3 +49,4 @@ wandb/
 # Secrets
 .env
 secrets.yaml
+.claude/
