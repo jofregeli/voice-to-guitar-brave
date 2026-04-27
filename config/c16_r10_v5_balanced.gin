@@ -1,0 +1,143 @@
+# BRAVE guitar_v5 config — GAN-balanced with weakened discriminator
+#
+# Why: guitar_v3 and guitar_v4 both failed during Phase 2 (GAN fine-tuning).
+# guitar_v3: amplitude plateaued at 0.04 (quiet noise + faint response)
+# guitar_v4: silence amplitude > signal amplitude (full mode collapse)
+#
+# Diagnosis (from TensorBoard):
+#   - pred_real reached 3.34, pred_fake at -2.31 → discriminator dominating
+#   - The discriminator learned to easily classify real vs fake
+#   - The generator gave up and converged to low-amplitude noise
+#
+# Changes vs guitar_v4 config (c16_r10_beta_fixed.gin):
+#   1. PHASE_1_DURATION: 1M → 1.5M (longer reconstruction before GAN starts)
+#   2. target_value: 0.1 → 0.05 (less aggressive KL regularization)
+#   3. feature_matching weight: 10 → 30 (stronger perceptual loss vs adversarial)
+#   4. Discriminator capacity: 64 → 32 (half size, weaker D)
+#   5. Discriminator n_layers: 4 → 3 (shallower D)
+#
+# Architecture (encoder/decoder/latent) is unchanged from v4 since:
+#   - Phase 1 worked fine in v4 (KL=0.80, encoder responsive)
+#   - The problem was Phase 2 GAN balance, not the autoencoder itself
+
+from __gin__ import dynamic_registration
+
+import rave
+from rave import pqmf
+from rave import core
+from rave import blocks
+from rave import discriminator
+from rave import dataset
+
+import cached_conv as cc
+import torch
+
+cc.get_padding.mode = 'causal'
+
+SAMPLING_RATE = 44100
+CAPACITY = 64
+N_BAND = 16
+LATENT_SIZE = 16
+RATIOS = [2, 2, 2, 1]
+PHASE_1_DURATION = 1500000
+
+# CORE CONFIGURATION
+core.AudioDistanceV1:
+    multiscale_stft = @core.MultiScaleSTFT
+    log_epsilon = 1e-7
+
+core.MultiScaleSTFT:
+    scales = [2048, 1024, 512, 256, 128]
+    sample_rate = %SAMPLING_RATE
+    magnitude = True
+
+dataset.split_dataset.max_residual = 1000
+
+# CONVOLUTION CONFIGURATION
+cc.Conv1d.bias = False
+cc.ConvTranspose1d.bias = False
+
+# PQMF
+pqmf.CachedPQMF:
+    attenuation = 100
+    n_band = %N_BAND
+
+blocks.normalization.mode = 'weight_norm'
+
+# ENCODER
+blocks.Encoder:
+    data_size = %N_BAND
+    capacity = %CAPACITY
+    latent_size = %LATENT_SIZE
+    ratios = %RATIOS
+    sample_norm = False
+    repeat_layers = 1
+
+variational/blocks.Encoder.n_out = 2
+
+blocks.VariationalEncoder:
+    encoder = @variational/blocks.Encoder
+
+# DECODER
+blocks.Generator:
+    latent_size = %LATENT_SIZE
+    capacity = %CAPACITY
+    data_size = %N_BAND
+    ratios = %RATIOS
+    loud_stride = 1
+    use_noise = False
+
+blocks.ResidualStack:
+    kernel_sizes = [3]
+    dilations_list = [[3, 1], [9, 1], [27, 1], [45, 1], [63, 1]]
+
+blocks.NoiseGenerator:
+    ratios = [4, 4, 4]
+    noise_bands = 5
+
+# DISCRIMINATOR — weakened to balance against generator
+# capacity 64→32, n_layers 4→3
+discriminator.ConvNet:
+    in_size = 1
+    out_size = 1
+    capacity = 32
+    n_layers = 3
+    stride = 4
+
+scales/discriminator.ConvNet:
+    conv = @torch.nn.Conv1d
+    kernel_size = 15
+
+discriminator.MultiScaleDiscriminator:
+    n_discriminators = 3
+    convnet = @scales/discriminator.ConvNet
+
+feature_matching/core.mean_difference:
+    norm = 'L1'
+
+# MODEL ASSEMBLING
+# feature_matching weight 10→30 — stronger perceptual loss
+rave.RAVE:
+    latent_size = %LATENT_SIZE
+    pqmf = @pqmf.CachedPQMF
+    sampling_rate = %SAMPLING_RATE
+    encoder = @blocks.VariationalEncoder
+    decoder = @blocks.Generator
+    discriminator = @discriminator.MultiScaleDiscriminator
+    phase_1_duration = %PHASE_1_DURATION
+    gan_loss = @core.hinge_gan
+    valid_signal_crop = False
+    feature_matching_fun = @feature_matching/core.mean_difference
+    num_skipped_features = 0
+    audio_distance = @core.AudioDistanceV1
+    multiband_audio_distance = @core.AudioDistanceV1
+    weights = {
+        'feature_matching': 30
+        }
+
+# Beta schedule — target_value 0.1→0.05 (RAVE v2 default, less aggressive)
+# Lower beta keeps more information in the latent during Phase 2
+rave.BetaWarmupCallback:
+    initial_value = 0.0001
+    target_value = 0.05
+    warmup_len = 1500000
