@@ -5,9 +5,10 @@ call venv\Scripts\activate.bat
 
 echo.
 echo Starting BRAVE guitar_v5 training...
-echo Dataset: GuitarSet + Guitar-TECHS + IDMT-SMT-Guitar (dataset2+4) ~11h
+echo Dataset: GuitarSet + Guitar-TECHS + IDMT-SMT-Guitar dataset4 ~16h
 echo Config: c16_r10_v5_balanced.gin (weakened discriminator, longer Phase 1)
-echo Augmentations: compress, gain, mute (RAVE-recommended for stability)
+echo NOTE: --augment flags removed (torchaudio.sox_effects no longer available
+echo in our torchaudio version, breaks RAVE's augmentation code)
 echo Logs will appear below. Do NOT close this window.
 echo To check on training later, look in runs\guitar_v5_*\
 echo TensorBoard: venv\Scripts\tensorboard --logdir runs\
@@ -20,9 +21,6 @@ if defined CKPT (
     echo Resuming from checkpoint: %CKPT%
     venv\Scripts\rave train ^
         --config config\c16_r10_v5_balanced.gin ^
-        --augment compress ^
-        --augment gain ^
-        --augment mute ^
         --db_path data/rave_ready/guitar_v5 ^
         --name guitar_v5 ^
         --channels 1 ^
@@ -33,9 +31,6 @@ if defined CKPT (
     echo No checkpoint found, starting from scratch.
     venv\Scripts\rave train ^
         --config config\c16_r10_v5_balanced.gin ^
-        --augment compress ^
-        --augment gain ^
-        --augment mute ^
         --db_path data/rave_ready/guitar_v5 ^
         --name guitar_v5 ^
         --channels 1 ^
