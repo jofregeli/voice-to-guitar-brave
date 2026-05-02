@@ -3,7 +3,7 @@
 #X obj 60 230 dac~;
 #X obj 250 140 print nn~-info;
 #X msg 250 100 get_methods;
-#X obj 60 100 nn~ C:/Users/Usuario/Documents/voice-to-guitar-brave/models/guitar_v4.ts forward;
+#X obj 60 100 nn~ C:/Users/Usuario/Documents/voice-to-guitar-brave/models/guitar_v5.ts forward;
 #X obj 60 175 *~ 30;
 #X connect 0 0 4 0;
 #X connect 3 0 4 0;
