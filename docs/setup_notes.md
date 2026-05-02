@@ -122,46 +122,62 @@ Retraining as `guitar_v2` from scratch with fixed config.
 
 | Version | Dataset | Latent | Outcome | Lesson |
 |---------|---------|--------|---------|--------|
-| v1 | mixed 5.79h | 128 | Posterior collapse | Need beta warmup |
-| v2 | mixed 5.79h | 128 | KL/dim too low (0.005 nats) | LATENT_SIZE too large |
-| v3 | mixed 5.79h | 16 | KL=0.65, quiet noise + faint response | Generator partial collapse |
-| v4 | clean 3.05h mic only | 16 | KL=0.80, silence > signal | **Discriminator dominated**, less data made it worse |
-| v5 | mixed 11h + augment | 16 | _in progress_ | More data + GAN balance |
+| guitar_v1 | mixed 5.79h | 128 | Posterior collapse | Need beta warmup |
+| guitar_v2 | mixed 5.79h | 128 | KL/dim too low (0.005 nats) | LATENT_SIZE too large |
+| guitar_v3 | mixed 5.79h | 16 | KL=0.65, quiet noise + faint response | Generator partial collapse |
+| guitar_v4 | clean 3.05h mic only | 16 | KL=0.80, silence > signal (gap=5.6) | **Discriminator dominated** — less data made it worse |
+| guitar_v5 | mixed 16h, weak D | 16 | pred_real=−0.9, pred_fake=−1.7 (gap=0.8) | **Discriminator collapsed** — weakening went too far |
+| **drums_v1** | Groove 10.86h | 16 | _in progress_ | BRAVE-paper defaults; drums already proven at 2.8h |
 
-**Key insight from v3→v4:** Cleaner data (removing DI) didn't help — actually made it worse. Less data = discriminator memorizes faster = generator can't compete. **Quantity + diversity matters more than purity.**
+**Key insights from the guitar series:**
+- v3→v4: Cleaner data (removing DI) didn't help — actually made it worse. Less data = discriminator memorizes faster = generator can't compete. **Quantity + diversity matters more than purity.**
+- v4→v5: Halving discriminator capacity went too far. v4 had pred_real=+3.34 (D too strong); v5 has pred_real=−0.9 (D can't classify real audio at all). There is no obvious Goldilocks setting and we've run out of training budget for guitar.
+
+**Decision (May 3 2026):** Pivot to drums. The BRAVE paper proved drums works at 2.8h; we have 10.86h (4× more). Default config, no architectural tweaks. Guitar findings become a documented research contribution (failure taxonomy + diagnostic methodology).
 
 ---
 
-## guitar_v5 Config (Current Best Approach)
+## Noise-Floor Heterogeneity (guitar dataset analysis)
 
-After four failed attempts, v5 makes targeted changes for the **specific failure mode** observed in v3/v4: discriminator domination during Phase 2 GAN training.
+The professor flagged that the guitar corpus mixed line-out (DI) and microphone recordings, which would introduce inconsistent noise floors. Quantitative confirmation via `scripts/analyze_noise_floor.py` (5th-percentile of 100 ms RMS windows, per source):
 
-**Dataset (~11h):**
-- GuitarSet (3.05h, mic'd acoustic) — full set, both mic positions
-- Guitar-TECHS (2.74h, DI electric)
-- IDMT-SMT-Guitar dataset4 (4.35h, continuous excerpts, mixed guitars)
-- IDMT-SMT-Guitar dataset2 (1.02h, technique runs)
+| Source | Recording method | N files | Noise floor (dBFS) |
+|--------|------------------|---------|---------------------|
+| GuitarSet | mic'd acoustic | 360 | −46.5 |
+| Guitar-TECHS | line-out DI | 52 | −67.2 |
+| IDMT dataset4 / acoustic_mic | mic'd acoustic | 128 | −57.8 |
+| IDMT dataset4 / acoustic_pickup | acoustic pickup | 128 | −53.3 |
+| IDMT dataset4 / Career SG | electric DI | 123 | −82.4 |
+| IDMT dataset4 / Ibanez 2820 | electric DI | 128 | −71.5 |
 
-**Config changes** (`config/c16_r10_v5_balanced.gin` vs v4 baseline):
-- `PHASE_1_DURATION` 1M → 1.5M (more reconstruction training before GAN starts)
-- `target_value` 0.1 → 0.05 (less aggressive KL, matches RAVE v2 default)
-- `feature_matching` weight 10 → 30 (stronger perceptual loss vs adversarial)
-- Discriminator `capacity` 64 → 32 (half-size, weaker D)
-- Discriminator `n_layers` 4 → 3 (shallower D)
+**Spread: 35.8 dB** — two orders of magnitude in amplitude between cleanest and noisiest. This exceeds the typical dynamic variation within a single guitar performance and is therefore likely encoded as a salient feature of the latent space. Acknowledged as a known limitation; future work could restrict training to a single recording method or apply explicit noise-floor normalisation.
 
-**Training command additions** (`scripts/train_guitar_v5.bat`):
-- `--augment compress` — random non-linear amplification
-- `--augment gain` — random gain variation
-- `--augment mute` — random batch muting
+---
 
-These augmentations are RAVE-recommended (community wisdom) for stability and generalization.
+## drums_v1 Config (Current Run)
 
-**Expected training time:** ~120h on RTX 5080 (longer than v3/v4 due to extended Phase 1).
+**Dataset:** Groove MIDI Dataset audio, 1090 files, 10.86h, mono 16-bit @ 44100 Hz.
+- Consolidated to `data/raw/drums_v1_combined/` after librosa-based stereo→mono conversion
+- 991 originally stereo files, 6 originally 24-bit, all normalised in one pass
+
+**Config:** `config/c16_r10_beta_fixed.gin` (BRAVE paper paradigm — no v5 tweaks)
+- LATENT_SIZE = 16, RATIOS = [2,2,2,1], CAPACITY = 64
+- Discriminator at default (capacity=64, n_layers=4)
+- PHASE_1_DURATION = 1M (paper default)
+- Beta warmup 0.0001 → 0.1 over 1M steps
+- Causal convolutions for streaming/realtime
+
+**Why default config for drums:**
+- BRAVE paper proved this exact paradigm at 2.8h drums; we have 4× more data
+- Drums is transient/percussive — easier latent space than melodic guitar
+- No reason to deviate from a known-working setup
+
+**Expected training time:** ~90h on RTX 5080 (3M total steps).
 
 **Mid-training health checks:**
-- `regularization` should rise during Phase 1 and hold ≥0.5 in Phase 2
-- `pred_real - pred_fake` gap should stay below ~3 (vs v4's 5.6 — that was discriminator domination)
-- `multiband_spectral_distance` may spike at Phase 2 start (normal) but should not stay elevated for 500k+ steps
+- `regularization` should rise during Phase 1 and hold during Phase 2
+- `pred_real - pred_fake` gap should stay between ~1 and ~3 (signs of GAN balance)
+- If gap > 5 → discriminator dominating (v4 mode); if both negative → discriminator collapse (v5 mode)
 
 ---
 

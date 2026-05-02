@@ -8,8 +8,8 @@
 
 | Decision | Choice |
 |----------|--------|
-| Primary task | Voice → Guitar (timbre transfer) |
-| Secondary task | Beatbox → Drums (sanity check + secondary demo) |
+| Primary task | Voice → Instrument resynthesis (drums as primary demo, guitar as failure-analysis case study) |
+| Secondary task | _was_ Beatbox → Drums; promoted to primary after guitar v1–v5 all failed |
 | Model | BRAVE (streaming RAVE) |
 | Real-time I/O | Pure Data + nn~ external |
 | Guitar dataset (v5) | GuitarSet + Guitar-TECHS + IDMT-SMT-Guitar (datasets 2,4) = ~11h, CC BY 4.0 / CC BY-NC-ND 4.0 |
@@ -121,29 +121,32 @@
 
 ---
 
-### Week 7 | Training Run #5 — Guitar (final attempt)
+### Week 7 | Pivot — Guitar v5 failed, Drums takes the demo slot
 
 | Task | Status |
 |------|--------|
-| guitar_v5: 11h dataset + GAN-balanced config + augmentations | ⏳ |
-| Launch drums model training (Groove dataset) — deferred until guitar resolved | ☐ |
-| Export final guitar checkpoint for Pure Data deployment | ☐ |
-| **Thesis:** Results section — first draft (incl. v1–v4 failure analysis) | ☐ |
+| guitar_v5: 16h dataset + weakened discriminator | ✅ failed (D collapsed, gap=0.8) |
+| Stop guitar_v5; document v1–v5 failure analysis | ✅ |
+| Quantify noise-floor heterogeneity in guitar dataset | ✅ |
+| Validate, consolidate, preprocess Groove drums (10.86h) | ✅ |
+| Launch drums_v1 training (BRAVE-paper defaults, no tweaks) | ⏳ |
+| **Thesis:** Results section — guitar failure taxonomy | ☐ |
 
-**Milestone:** Final guitar model exported (or documented v5 failure analysis as TFG contribution). Drums training in progress.
+**Milestone:** Drums training launched. Guitar findings frozen as a documented research contribution (failure taxonomy + diagnostic methodology). Reframed thesis: BRAVE for voice-to-instrument resynthesis with two case studies (guitar — characterising failures; drums — successful prototype).
 
 ---
 
-### Week 8 | Pure Data Integration
+### Week 8 | Pure Data Integration (drums-first)
 
 | Task | Status |
 |------|--------|
-| Load guitar model via `nn~` in Pure Data | ☐ |
-| Build PD patch: mic → model → audio out | ☐ |
-| Test voice-to-guitar live — assess pitch handling | ☐ |
+| Load drums_v1 model via `nn~` in Pure Data | ☐ |
+| Build PD patch: mic → drums model → audio out | ☐ |
+| Test voice/beatbox-to-drums live | ☐ |
+| (Stretch) Final guitar attempt with lessons from drums | ☐ |
 | **Thesis:** Real-time system section | ☐ |
 
-**Milestone:** Live voice-to-guitar working in Pure Data (quality TBD). Drums model ready.
+**Milestone:** Live voice-to-drums working in Pure Data. Drums becomes the demonstrable prototype; guitar findings are presented as research contribution.
 
 ---
 
