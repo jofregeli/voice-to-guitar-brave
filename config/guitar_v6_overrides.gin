@@ -1,0 +1,23 @@
+# guitar_v6 overrides — applied on top of official RAVE v2.gin + causal.gin
+#
+# Strategy: trust the community-validated v2 architecture (which already
+# includes update_discriminator_every=4, MultiPeriod+MultiScale combined
+# discriminator, EncoderV2/GeneratorV2 with amplitude_modulation, and
+# valid_signal_crop=True — all features missing from our previous custom
+# configs). Only override two values where we have strong evidence that
+# v2's defaults are wrong for our specific dataset:
+#
+#   1. LATENT_SIZE: v2 default is 128. Our v2 (custom) showed this gives
+#      KL/dim of 0.005 nats — encoder doesn't use the latent space. The
+#      IIL pretrained guitar model uses z16 for the same dataset scale.
+#
+#   2. PHASE_1_DURATION: v2 default is 1M. With our 16-hour mixed-source
+#      corpus (more heterogeneous than typical RAVE training data), giving
+#      reconstruction more time before the GAN starts is conservative.
+#
+# Beta schedule kept at v2 defaults (initial=1e-6, target=5e-2,
+# warmup=20000) — the steep warmup combined with v2's amplitude_modulation
+# generator hasn't been tried in our setup. Worth trusting the proven recipe.
+
+LATENT_SIZE = 16
+PHASE_1_DURATION = 1500000
