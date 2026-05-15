@@ -1,0 +1,113 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+\section{System Architecture}
+\label{sec:method_arch}
+
+% TODO: Block diagram (figure) of the full system:
+%   mic -> ADC -> nn~ (BRAVE) -> gain -> DAC -> speakers
+% Describe each block briefly.
+% State the design constraint: sub-10ms end-to-end latency.
+% Explain how causal convolutions in BRAVE enable streaming.
+
+\subsection{BRAVE in one paragraph}
+% TODO: Streaming-RAVE extension; causal padding; PQMF multi-band
+% decomposition; multi-scale STFT reconstruction loss; latent VAE
+% with KL regularisation; Phase 2 GAN refinement via multi-scale
+% discriminator.
+
+\subsection{Real-Time Deployment Constraints}
+% TODO: Why Pure Data + nn~. The nn~ external loads TorchScript-exported
+% models and runs forward() per audio buffer. Block size 64 samples at
+% 44.1kHz = 1.45ms processing window. Causal-only architecture (no
+% lookahead) keeps total latency below 10ms.
+
+\section{Training Paradigm}
+\label{sec:method_training}
+
+\subsection{Two-Phase Training}
+% TODO: Phase 1 = reconstruction (encoder + decoder, MS-STFT loss + KL).
+% Phase 2 = adversarial refinement (decoder vs discriminator).
+% Explain why this works: stable reconstruction first, then perceptual polish.
+
+\subsection{Beta Schedule and Posterior Collapse}
+% TODO: KL weight beta controls regularisation vs reconstruction trade-off.
+% Constant beta from step 0 collapses the posterior (guitar_v1 failure).
+% Log-space warmup from 1e-4 to target over Phase 1 prevents this.
+% Reference BRAVE paper / our v1 vs v2 comparison.
+
+\subsection{Latent Size Selection}
+% TODO: BRAVE default = 128. Our v2 with 128 produced 0.005 nats/dim
+% (effectively unused). IIL pretrained guitar uses 16. We use 16
+% (proven empirically in v3-v6).
+
+\section{Datasets and Preprocessing}
+\label{sec:method_data}
+
+\subsection{Guitar Corpus}
+% TODO: Table of sources, durations, recording methods, totals.
+% GuitarSet (3.05h mic'd), Guitar-TECHS (~2h DI mono after filtering
+% out stereo files), IDMT-SMT-Guitar dataset4 (4.35h, mixed mic/pickup/DI),
+% IDMT-SMT-Guitar dataset2 (1.02h, removed due to 24-bit incompatibility).
+% Final: ~9.4h after cleanup. LMDB n_seconds = 57665 (data augmented
+% via overlapping windows during preprocessing).
+
+\subsection{Drums Corpus}
+% TODO: Groove MIDI Dataset audio. 1090 files, ~10.86h after stereo-to-mono
+% conversion. Acoustic drums (vs BRAVE paper's electronic drums).
+
+\subsection{Preprocessing Pipeline}
+% TODO: Steps:
+%   1. Walk source directories, find WAV files.
+%   2. Validate (librosa.load); skip empty or corrupt files.
+%   3. Stereo -> mono via librosa mono=True.
+%   4. Resample to 44.1kHz if needed.
+%   5. Save as PCM_16 to consolidated directory.
+%   6. rave preprocess --no-lazy to build LMDB.
+% Note the failure modes discovered along the way:
+%   - 24-bit audio files silently deadlock rave preprocess.
+%   - Stereo files do the same.
+%   - __MACOSX/ metadata .wav files (empty) hang rave preprocess.
+% These are documented as practical findings.
+
+\subsection{Noise-Floor Analysis}
+\label{sec:noise_floor}
+% TODO: Reproduce the noise-floor table from setup_notes.md.
+% Method: 5th percentile of 100ms RMS windows, per source.
+% Result: 35.8 dB spread across recording methods.
+% Implication: encoder will encode recording method as a latent feature.
+
+\section{Diagnostic Methodology}
+\label{sec:method_diagnostics}
+
+\subsection{TensorBoard Metrics}
+% TODO: What each metric means and what healthy looks like.
+% regularization (KL): rises through Phase 1, plateaus in Phase 2.
+% multiband_spectral_distance: drops through Phase 1, briefly spikes
+%   at Phase 2 onset (GAN disrupts reconstruction), then settles.
+% pred_real / pred_fake: discriminator confidence. Gap < 3 = healthy,
+%   gap > 5 = discriminator dominance (failure indicator).
+% loss_dis, loss_gen: balance shows GAN health.
+
+\subsection{Python Diagnostic Test}
+% TODO: We pass five distinct inputs through the trained model and
+% compare encoder latents and decoder outputs:
+%   - silence
+%   - sine 220 Hz, sine 440 Hz, sine 880 Hz
+%   - frequency sweep 100 - 2000 Hz
+%   - random noise
+%
+% Metrics:
+%   - Encoder differentiation: pairwise mean absolute difference of latents.
+%   - Decoder responsiveness: pairwise mean absolute difference of outputs.
+%   - Output amplitude (signal vs silence): a healthy model produces less
+%     output for silence than for signal.
+%
+% This test takes about 30 seconds per checkpoint and is run after each
+% training iteration.
+
+\subsection{Reconstruction Test}
+% TODO: We pass real training-distribution audio (guitar from GuitarSet)
+% through the model and compare input vs output amplitude and STFT
+% magnitude correlation. A working autoencoder should retain amplitude
+% and show STFT correlation > 0.3.

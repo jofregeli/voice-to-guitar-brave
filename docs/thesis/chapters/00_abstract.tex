@@ -1,0 +1,14 @@
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This thesis investigates real-time voice-to-instrument resynthesis using BRAVE (Bravely Realtime Audio Variational autoEncoder), a streaming extension of RAVE designed for live performance. The proposed system allows a performer to sing or speak into a microphone and hear the audio resynthesised through a learned instrument latent space with sub-10\,ms latency, deployed in Pure Data through the \texttt{nn\textasciitilde} external. Two instruments are explored: guitar (primary) and drums (secondary, replicating the BRAVE paper's evaluation setup).
+
+The work covers the complete pipeline: curation of a $\sim$16-hour guitar corpus combining GuitarSet, Guitar-TECHS, and IDMT-SMT-Guitar, plus a $\sim$10-hour drum corpus from the Groove MIDI Dataset; LMDB preprocessing; and training of streaming-causal variational autoencoders with 16-dimensional latent space, multi-band PQMF decomposition, and a multi-scale adversarial discriminator.
+
+A central contribution is the empirical characterisation of training failures specific to small-dataset BRAVE training. Across six guitar training iterations, distinct failure modes are identified and corrected: (i) posterior collapse from premature KL regularisation, fixed via log-space beta warmup; (ii) partial collapse from oversized latent dimensions, fixed by reducing latent size from 128 to 16; (iii) adversarial mode collapse from discriminator dominance, addressed through architectural changes in the official RAVE~v2 configuration (\texttt{update\_discriminator\_every}, multi-period discriminator, amplitude-modulating generator).
+
+Each iteration is tracked through TensorBoard metrics (KL divergence, multi-scale spectral distance, discriminator pred\_real/pred\_fake) and Python diagnostic tests (encoder responsiveness, output amplitude, silence response). For example, v4's adversarial mode collapse was identified by output amplitude (0.0045) falling below silence amplitude (0.017) and a pred\_real–pred\_fake gap of 5.6 indicating discriminator dominance. The system is evaluated both qualitatively, through live listening in Pure Data, and quantitatively against these metrics. Beyond the working prototype, the diagnostic methodology and failure taxonomy presented here offer practical guidance for future researchers applying RAVE-family architectures under limited-data conditions.
+
+\vspace{1cm}
+\noindent\textbf{Keywords:} neural audio synthesis, variational autoencoder, real-time audio, timbre transfer, voice conversion, BRAVE, RAVE, Pure Data
+\clearpage

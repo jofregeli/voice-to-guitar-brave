@@ -1,0 +1,122 @@
+\chapter{Results and Evaluation}
+\label{ch:results}
+
+\section{Working Prototypes}
+\label{sec:results_prototypes}
+
+\subsection{Drums Real-Time System}
+\label{sec:results_drums}
+% TODO: drums_v1 ep755 in Pure Data. Subjective: responds clearly to voice
+% and beatbox input. Quantitative metrics (paste from session diagnostics):
+%   Encoder differentiation: latent diff = 2.40 for random-noise inputs.
+%   Decoder responsiveness: forward diff = 0.0045 between distinct inputs.
+%   Silence handling: silence amplitude 0.004 < signal amplitude 0.003 only
+%     marginally; the model produces drum-like output regardless of input
+%     but varies recognisably with the input's transient content.
+% Latency: sub-10 ms measured (see Section \ref{sec:impl_realtime}).
+% Note: drums_v2 (with official v2 architecture) trained later — append
+% its metrics here.
+
+\subsection{Guitar Autoencoder (in-distribution)}
+\label{sec:results_guitar_ae}
+% TODO: guitar_v6_best (epoch 1935, version_4 of guitar_v6_bbcc6d36c3).
+% When fed real guitar audio from GuitarSet:
+%   Output amplitude ratio: 0.36-1.17 across samples.
+%   STFT magnitude correlation: 0.5+ on at least one test sample.
+%   Subjective listening: recognisable as guitar; pluck-like attacks and
+%     identifiable note content; degraded compared to input.
+% This is the first model in the series that demonstrably works as a
+% guitar autoencoder. Include reconstruction WAV examples in Appendix B.
+
+\section{Failure Taxonomy across Six Guitar Iterations}
+\label{sec:results_failures}
+
+% TODO: For each version, a sub-subsection with:
+%   - Configuration (dataset, latent size, special changes)
+%   - Failure observation (perceptual + metric)
+%   - Diagnostic test (TensorBoard graphs, Python diagnostic outputs)
+%   - Lesson carried forward
+% A summary table at the end consolidates the taxonomy.
+
+\subsection{guitar\_v1: Posterior Collapse}
+% Beta=0.1 constant from step 0 -> KL decreasing -> encoder ignored.
+% Diagnosis via TensorBoard regularisation curve (drops 0.5 -> 0.25).
+% Python test: encoder diff = 1.25 between silence and 440 Hz sine,
+% but decoder output diff = 0.006 (decoder ignores latent).
+% Fix carried forward: log-space beta warmup.
+
+\subsection{guitar\_v2: Partial Collapse from Oversized Latent}
+% LATENT_SIZE = 128, beta warmup correct. Total KL plateaued at ~0.6 i.e.
+% 0.005 nats/dim. Encoder using almost none of the capacity.
+% Diagnosis: Python test forward diff = 0.003 -> decoder ignores latent
+% variation. Output amplitude only 0.012 = 60x quieter than input.
+% Fix carried forward: LATENT_SIZE = 16.
+
+\subsection{guitar\_v3: Partial GAN Collapse}
+% LATENT_SIZE = 16. KL rose to 0.65 (0.04 nats/dim - much better).
+% Encoder responding (forward diff = 0.042 at peak). But Phase 2 GAN
+% pushed amplitude down and never recovered. Output was quiet
+% noise that responded slightly to input but did not sound like guitar.
+
+\subsection{guitar\_v4: Discriminator Dominance}
+% Cleaner mic-only 3.05h dataset. KL = 0.80. But Phase 2 collapsed
+% completely:
+%   pred_real = 3.34, pred_fake = -2.31, gap = 5.65.
+%   Output amplitude (0.0045) < silence amplitude (0.017).
+% The decoder gave up; it produced more sound for silence than for
+% signal -- a textbook adversarial mode collapse.
+% Counter-intuitive lesson: cleaner data made the failure WORSE because
+% the discriminator could memorise more easily.
+
+\subsection{guitar\_v5: Discriminator Over-Weakening}
+% Reduced discriminator capacity 64 -> 32, layers 4 -> 3. Hoped to
+% prevent v4-style dominance. Instead the discriminator collapsed:
+%   pred_real = -0.90, pred_fake = -1.70, gap = 0.80.
+% Discriminator labels real audio as fake. Generator has no useful
+% adversarial gradient.
+
+\subsection{guitar\_v6: Official RAVE v2 + Causal}
+% Abandoned custom c16_r10. Used official v2.gin + causal.gin with
+% two minimal overrides (LATENT_SIZE = 16, PHASE_1_DURATION = 1.5M).
+% Phase 1 produced normalised latent (mean = 0.11, std = 0.82). Phase 2
+% gap peaked at 11.88 then DECREASED to 8.55 then plateaued around
+% 5-9 -- the FIRST training in our series where the GAN gap reversed
+% direction. The model is a working guitar autoencoder.
+% Voice input: still produces constant noise -- but for a different
+% reason (decoder mode collapse on OOD input, not GAN failure).
+% This is the critical scientific distinction: the architecture works,
+% the input domain mismatch does not.
+
+\subsection{Summary Table}
+% TODO: 6-row table with columns:
+% Version | Dataset | Latent | Outcome | Key Metric | Lesson
+
+\section{Voice Input as Out-of-Distribution}
+\label{sec:results_voice_ood}
+
+% TODO: This is the most important section for explaining why
+% voice-to-guitar failed even with a working guitar autoencoder.
+%
+% Quantitative test on guitar_v6:
+%   - Input "voice 220 Hz with formants": encoder latent z mean = -550,
+%     std = 2484 (vastly out of distribution from training data where
+%     z mean is near 0 and std near 1).
+%   - The encoder extrapolates outside the trained manifold.
+%   - The decoder produces near-zero or near-constant output for these
+%     extrapolated latents.
+%
+% Interpretation: BRAVE is trained to reconstruct guitar. Voice, while
+% it has pitched content, has a fundamentally different spectral
+% envelope (formants, vocal tract resonances). The encoder maps voice
+% to latent points outside the guitar manifold, where the decoder is
+% not trained to produce meaningful output.
+%
+% This is a known limitation in the timbre-transfer literature; we
+% confirm it quantitatively for our specific BRAVE + guitar setup.
+
+\section{Real-Time Performance}
+\label{sec:results_latency}
+
+% TODO: Measured latency in Pure Data. Block size 64 at 44.1 kHz = 1.45 ms.
+% Plus driver buffer ~5 ms (WASAPI). Plus model forward < 1 ms. Total ~7 ms.
+% Confirms the BRAVE design target of sub-10 ms.

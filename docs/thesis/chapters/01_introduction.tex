@@ -1,0 +1,59 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Motivation}
+\label{sec:motivation}
+
+% TODO: Personal motivation — why this topic, why now.
+% Hooks to consider:
+% - Live performance has long sought tools that let one performer's body
+%   drive multiple instrument timbres.
+% - Recent advances in neural audio synthesis (RAVE, BRAVE) have brought
+%   real-time, sub-10ms-latency timbre transfer within reach of consumer GPUs.
+% - Voice is the most accessible instrumental "controller" for any performer.
+% - The intersection of real-time, neural, and live-performable is the gap
+%   this project explores.
+
+\section{Goals and Scope}
+\label{sec:goals}
+
+% TODO: The concrete deliverable.
+% - A live Pure Data system in which voice/beatbox drives an instrument
+%   timbre at sub-10ms latency.
+% - Two case studies: guitar (primary, melodic/tonal target) and drums
+%   (secondary, transient/percussive target).
+% - Quantitative diagnostic methodology for evaluating RAVE-family models
+%   during and after training.
+% - Documented failure analysis when the approach does not converge.
+
+\section{Contributions}
+\label{sec:contributions}
+
+% TODO: Crisp bullet-style list of contributions.
+% Suggested:
+% 1. A working voice-to-drums prototype in Pure Data, sub-10ms latency.
+% 2. A working guitar autoencoder demonstrating the architecture on
+%    in-distribution input.
+% 3. A six-iteration failure taxonomy for small-dataset RAVE training,
+%    each iteration instrumented with TensorBoard and Python diagnostics.
+% 4. A noise-floor analysis (35.8\,dB spread) quantifying recording-method
+%    heterogeneity across publicly available guitar datasets.
+% 5. An empirical demonstration that the official RAVE v2 architecture
+%    (update_discriminator_every, MultiPeriod discriminator,
+%    amplitude_modulation generator) eliminates the discriminator-dominance
+%    failure mode observed in custom configurations.
+
+\section{Document Structure}
+\label{sec:structure}
+
+% TODO: One paragraph mapping the rest of the document.
+% Chapter 2 reviews related work in neural audio synthesis,
+% timbre transfer, and dataset curation.
+% Chapter 3 describes the methodology (system architecture, training
+% paradigm, datasets, diagnostic protocol).
+% Chapter 4 details the implementation (training pipeline, real-time
+% deployment, evaluation tooling).
+% Chapter 5 presents results across the six guitar iterations and the
+% drums experiments, with quantitative diagnostics and qualitative
+% evaluation.
+% Chapter 6 concludes and lays out future work.

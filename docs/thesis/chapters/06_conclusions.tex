@@ -1,0 +1,84 @@
+\chapter{Conclusions and Future Work}
+\label{ch:conclusions}
+
+\section{Summary of Contributions}
+\label{sec:conclusions_summary}
+
+% TODO: Three-paragraph summary.
+%
+% 1. We built a real-time voice-to-instrument resynthesis system using
+%    BRAVE deployed in Pure Data with sub-10 ms latency. The drums
+%    prototype (drums_v1 ep755, later drums_v2 if successful) responds
+%    audibly to voice and beatbox input.
+%
+% 2. We trained a working guitar autoencoder (guitar_v6 with the official
+%    RAVE v2 architecture) which reconstructs guitar from guitar input
+%    with recognisable pluck-like character.
+%
+% 3. We instrumented six guitar training iterations with quantitative
+%    diagnostics and produced a failure taxonomy that identifies and
+%    distinguishes (a) posterior collapse, (b) partial latent collapse
+%    from oversized representations, (c) GAN discriminator dominance,
+%    (d) GAN discriminator collapse, and (e) decoder mode collapse on
+%    out-of-distribution input. This taxonomy is, to our knowledge, the
+%    most detailed published account of small-dataset RAVE failure modes.
+
+\section{Limitations}
+\label{sec:conclusions_limitations}
+
+\subsection{Voice-to-Guitar Did Not Succeed}
+% TODO: Honest framing. The encoder is not the bottleneck (it
+% differentiates voice inputs in latent space). The decoder is not
+% broken (it reconstructs guitar from guitar input). The mismatch is
+% that voice and guitar live in disjoint regions of the learned latent
+% manifold, and the decoder is not trained to produce meaningful output
+% from voice-encoded latents. Two well-known workarounds were not
+% pursued here due to time constraints (see Future Work).
+
+\subsection{Noise-Floor Heterogeneity}
+% TODO: The 35.8 dB spread across recording methods means the model
+% encodes recording-method as a salient feature of its latent space.
+% A truly clean training corpus would restrict to a single recording
+% method.
+
+\subsection{Phase 2 GAN Instability}
+% TODO: Even with the v2 architecture's safeguards, Phase 2 dynamics
+% are not monotonically improving -- the model peak around mid-Phase 2
+% can degrade by the end. We pick the best checkpoint manually rather
+% than trusting the final state.
+
+\section{Future Work}
+\label{sec:conclusions_future}
+
+\subsection{Voice Pre-Processing for In-Distribution Mapping}
+% TODO: Real-time pitch extraction (e.g., CREPE, fiddle~, sigmund~) plus
+% harmonic resynthesis would let us synthesise a guitar-like signal
+% from the voice's pitch and energy envelope, which would then fall
+% inside the encoder's training distribution. This is the DDSP-style
+% approach applied as a pre-processing front-end.
+
+\subsection{Solo-Only Guitar Training}
+% TODO: Restricting to GuitarSet's 180 _solo_mic files (monophonic
+% playing) plus selected monophonic content from IDMT-SMT-Guitar would
+% produce a model whose latent space matches voice's monophonic nature.
+% Smaller but cleaner corpus.
+
+\subsection{Larger and More Consistent Datasets}
+% TODO: A single-source, large guitar corpus (e.g., GOAT, GAPS, or a
+% commercially licensed library) would eliminate noise-floor
+% heterogeneity. The BRAVE paper's saxophone success was on
+% single-source data.
+
+\subsection{Alternative Architectures}
+% TODO: DDSP, SoundStream-style discrete-token models, or diffusion-based
+% audio generation (e.g., DiffSinger / DiffAudio variants) might better
+% handle voice-to-instrument mapping.
+
+\section{Closing Remarks}
+\label{sec:conclusions_closing}
+
+% TODO: One-paragraph wrap. Even when an ML system does not solve the
+% headline task, careful instrumentation of its failures is a useful
+% scientific output. The diagnostic methodology developed for this thesis
+% would apply to any RAVE-family training and would surface the same
+% failure modes faster than the trial-and-error path we travelled.
