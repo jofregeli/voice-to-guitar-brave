@@ -1,0 +1,10 @@
+# drums_v2 overrides — same approach as guitar_v6 but for drums
+#
+# Strategy: BRAVE paper proved drums works with their architecture at 2.8h.
+# We have 10.86h. The current drums_v1 used our custom c16_r10 config
+# (same as the failed guitar_v3/v4) — never tried official v2.
+#
+# Apply the exact same overrides that worked for guitar_v6:
+
+LATENT_SIZE = 16
+PHASE_1_DURATION = 1500000
