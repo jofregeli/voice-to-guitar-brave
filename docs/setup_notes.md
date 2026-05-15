@@ -127,13 +127,21 @@ Retraining as `guitar_v2` from scratch with fixed config.
 | guitar_v3 | mixed 5.79h | 16 | KL=0.65, quiet noise + faint response | Generator partial collapse |
 | guitar_v4 | clean 3.05h mic only | 16 | KL=0.80, silence > signal (gap=5.6) | **Discriminator dominated** — less data made it worse |
 | guitar_v5 | mixed 16h, weak D | 16 | pred_real=−0.9, pred_fake=−1.7 (gap=0.8) | **Discriminator collapsed** — weakening went too far |
-| **drums_v1** | Groove 10.86h | 16 | _in progress_ | BRAVE-paper defaults; drums already proven at 2.8h |
+| **guitar_v6** | mixed 16h, **official v2+causal** | 16 | Working guitar autoencoder; voice still OOD | v2 architecture (update_disc_every=4, MultiPeriod D, amp_mod gen) finally fixed GAN dominance |
+| drums_v1 | Groove 10.86h, custom config | 16 | ep755 responds to voice/beatbox; usable prototype but noisy | Same custom-config issues as guitar v3-v4 |
+| **drums_v2** | Groove 10.86h, **official v2+causal** | 16 | _in progress (started May 15)_ | Apply v6 learnings to drums for cleaner prototype |
 
 **Key insights from the guitar series:**
 - v3→v4: Cleaner data (removing DI) didn't help — actually made it worse. Less data = discriminator memorizes faster = generator can't compete. **Quantity + diversity matters more than purity.**
 - v4→v5: Halving discriminator capacity went too far. v4 had pred_real=+3.34 (D too strong); v5 has pred_real=−0.9 (D can't classify real audio at all). There is no obvious Goldilocks setting and we've run out of training budget for guitar.
 
 **Decision (May 3 2026):** Pivot to drums. The BRAVE paper proved drums works at 2.8h; we have 10.86h (4× more). Default config, no architectural tweaks. Guitar findings become a documented research contribution (failure taxonomy + diagnostic methodology).
+
+**Decision (May 9 2026):** drums_v1 ep755 confirmed responsive to voice in PD. Final guitar attempt (guitar_v6) using the official RAVE v2 + causal configs instead of our custom c16_r10. Key differences in v2: `update_discriminator_every=4` (D updates 4× slower than G), MultiPeriod + MultiScale combined discriminator, EncoderV2/GeneratorV2 with `amplitude_modulation=True`, `valid_signal_crop=True`. Two overrides on top: `LATENT_SIZE=16`, `PHASE_1_DURATION=1.5M`.
+
+**Result (May 15 2026):** guitar_v6 trained to completion (epoch 2511, ~step 2.98M). Working guitar autoencoder confirmed by listening: input guitar → recognisable guitar reconstruction (pluck character preserved). pred_real/pred_fake gap peaked at 11.88 around step 2M then **reversed direction** to 8.55 — the FIRST time in our series the GAN gap reverted, confirming `update_discriminator_every=4` works on a longer timescale. **Best checkpoint is `version_4 epoch 1935`**, exported as `models/guitar_v6_best.ts`; the final ep 2511 had slightly degraded reconstruction. Voice input still produces constant noise — the encoder differentiates voice (latent diffs 1.27–6.89) but voice latents fall outside the trained guitar manifold and the decoder produces near-constant low-energy output for them. This is the "decoder mode collapse on OOD input" failure, structurally distinct from the GAN failures.
+
+**Decision (May 15 2026):** Train drums_v2 with the same official v2 + causal configs (`config/drums_v2_overrides.gin`). drums_v1 used the problematic custom config; v2 architecture should produce a cleaner drums prototype. Run starts May 15 evening, expected finish May 19–20. After drums_v2, no further training — focus on thesis writing (~4 weeks until June 12 deadline).
 
 ---
 

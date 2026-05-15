@@ -136,17 +136,28 @@
 
 ---
 
-### Week 8 | Pure Data Integration (drums-first)
+### Week 8 | guitar_v6 + drums prototype testing
 
 | Task | Status |
 |------|--------|
-| Load drums_v1 model via `nn~` in Pure Data | ☐ |
-| Build PD patch: mic → drums model → audio out | ☐ |
-| Test voice/beatbox-to-drums live | ☐ |
-| (Stretch) Final guitar attempt with lessons from drums | ☐ |
-| **Thesis:** Real-time system section | ☐ |
+| Load drums_v1 ep755 in Pure Data; confirm voice/beatbox response | ✅ |
+| guitar_v6 with official RAVE v2 + causal configs | ✅ completed (epoch 2511, working autoencoder) |
+| Quantify voice-as-OOD failure (encoder vs decoder responsibility split) | ✅ |
+| Pick best v6 checkpoint (version_4 ep 1935) as canonical guitar model | ✅ |
+| **Thesis:** Set up LaTeX scaffold | ✅ |
 
-**Milestone:** Live voice-to-drums working in Pure Data. Drums becomes the demonstrable prototype; guitar findings are presented as research contribution.
+**Milestone:** Two working models: drums_v1 (voice-to-drums prototype) and guitar_v6_best (in-distribution guitar autoencoder). Voice-to-guitar OOD failure quantified.
+
+---
+
+### Week 9 | drums_v2 (final experiment) + thesis sprint
+
+| Task | Status |
+|------|--------|
+| Launch drums_v2 with v2+causal config (cleaner prototype) | ⏳ |
+| **Thesis:** Introduction + State of the Art (largely done) | ☐ |
+| **Thesis:** Methodology section | ☐ |
+| Send progress email to professors | ☐ |
 
 ---
 
