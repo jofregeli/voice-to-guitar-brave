@@ -147,6 +147,18 @@ Neural audio synthesis is now advancing thanks to key models such as WaveNet \pa
 
 The launch of RAVE \parencite{caillon2021rave} revolutionized the field by facilitating high-quality synthesis even on easily accessible CPUs to normal users. BRAVE \parencite{caspe2025brave} goes a step further with a causal transmission architecture aimed at creating interactive and responsive music in real-time. However, converting voice to instrument is quite difficult when the source and destination timbres are very different acoustically. For example, plucked string instruments, such as the guitar, have a sharp percussive attack and an exponentially decaying envelope, which is very different from the sustained, formant-rich structure of the human voice. This work investigates if causal transmission systems can achieve voice-to-guitar resynthesis which sounds perceptually convincing to human ears, with a latency of 10\,ms or less so it is usable in live performance. Addressing this cross-modal mismatch is crucial to the enhancement of music interfaces that enable human vocal intuition to be the foundation for machine synthesis.
 
+\section{Research Questions}\label{sec:research_questions}
+
+The motivation above frames a problem domain rather than a tightly defined investigation. To make the scope of the work explicit and to give the methodology of Chapter~\ref{chap:methodology} and the evaluation of Chapter~\ref{chap:results} something concrete to answer, the project is organised around three research questions:
+
+\begin{description}
+\item[RQ1 \textnormal{(Feasibility).}] Can a streaming-causal variational autoencoder of the RAVE/BRAVE family be trained on small, open instrument corpora (under twenty hours per instrument) to operate as a real-time autoencoder at sub-10\,ms end-to-end latency on a single consumer GPU, using a reproducible Windows-based toolchain?
+\item[RQ2 \textnormal{(Cross-modal generalisation).}] Does an instrument-domain-only autoencoder's learned latent manifold generalise to out-of-distribution vocal excitation at inference time, in the absence of any paired voice-to-instrument training data?
+\item[RQ3 \textnormal{(Failure diagnosis).}] What training instabilities and degenerate behaviours emerge under these constrained training conditions, and to what extent can each be diagnosed from in-training metrics and synthetic-input probes alone, without recourse to formal perceptual evaluation?
+\end{description}
+
+RQ1 and RQ3 are answered constructively across the iteration sequence reported in Chapter~\ref{chap:results}: a working in-distribution guitar autoencoder is obtained and five distinct training-failure modes are isolated. RQ2 is answered negatively, in a qualified form: instrument-only training did not yield perceptually convincing voice-to-instrument resynthesis on the small open corpora used here, and the IRCAM percussion baseline (\S\ref{sec:ircam_baseline}) suggests this is a training-recipe and data-scale limitation rather than an architectural impossibility.
+
 \section{Objectives and Scope}\label{sec:objectives}
 
 To address the research question, this project defines a general objective to design and evaluate a streaming neural resynthesis pipeline for expressive voice-driven instrumental synthesis. The investigation is organised according to the following specific objectives:
@@ -169,20 +181,20 @@ The approach combined iterative system implementation with structured diagnostic
 \item \textbf{Training procedure:} Models were trained under a two-step procedure: an independent representation learning phase optimising a multi-scale STFT loss, followed by adversarial fine-tuning intended to improve perceptual naturalness.
 \item \textbf{Deployment:} The trained TorchScript models were integrated into Pure Data through the \texttt{nn\textasciitilde} external, supporting live vocal interaction at a 64-sample block size.
 \item \textbf{Quantitative evaluation:} The main focus was using end-to-end latency benchmarks together with synthetic-input diagnostic probes (\S\ref{sec:diagnostic_method}). The degree of alignment between input and output Short-Time Fourier Transform (STFT) magnitudes was also considered as a metric for spectral reconstruction closeness.
-\item \textbf{Qualitative testing:} The author carried out listening tests to evaluate phonetic plausibility and flexibility for live vocal control.
+\item \textbf{Qualitative testing:} Listening evaluation at each checkpoint was conducted informally by the author. No formal MUSHRA or MOS test with multiple participants was administered; the implications of this evaluation design are stated explicitly in \S\ref{sec:diagnostic_method} and \S\ref{sec:method_limitations} rather than deferred to the conclusions.
 \end{enumerate}
 
-\section{Contributions}\label{sec:contributions}
+\section{Original Contributions}\label{sec:contributions}
 
-Deployment and assessment have produced the following technological and methodological contributions:
+The following are the original contributions of this work. Each is grounded in the experimental evidence reported in Chapter~\ref{chap:results} and the methodological framework of Chapter~\ref{chap:methodology}:
 
 \begin{itemize}
-\item \textbf{Voice-to-drums diagnostic study.} A documented Pure Data setup demonstrating limited transient response of instrument-trained BRAVE models to vocal input. The numerical diagnostic indicates that drums\_v1's decoder responsiveness fell below the 0.01 health threshold (forward difference $=0.0045$; see \S\ref{sec:drums}), contributing evidence that vocal input remains out-of-distribution for both guitar and drums BRAVE models trained on small corpora.
-\item \textbf{Guitar autoencoder confirmation.} A working autoencoder, achieved using the official RAVE v2 architecture within a causal framework, for in-distribution input. It serves as a reference point for cross-modal evaluation.
-\item \textbf{Failure taxonomy.} A systematic account of five distinct training failure modes observed across the iteration sequence --- posterior collapse (v1), latent underutilisation (v2), discriminator dominance / generator mode collapse (v3, v4, drums\_v2), discriminator collapse (v5), and out-of-distribution decoder behaviour (v6, drums\_v1).
-\item \textbf{Dataset heterogeneity exploration.} A numerical investigation revealing noise-floor variability across public guitar datasets that appears likely to be encoded in the latent space as a salient feature (\S\ref{sec:noise_floor}).
-\item \textbf{Structural stabilisation.} Empirical evidence that the official RAVE v2 architectural features --- including the 4:1 generator-to-discriminator update ratio and multi-period discriminators \parencite{kong2020hifigan} --- appeared necessary to prevent adversarial mode collapse in the guitar case, although the drums\_v2 iteration suggests they are not sufficient under all training conditions (see \S\ref{sec:drums}).
-\item \textbf{External-baseline validation.} A side-by-side diagnostic comparison with the official ACIDS-IRCAM percussion model (\S\ref{sec:ircam_baseline}) indicating that the OOD limitation observed in our models is likely a training-recipe rather than an architectural failure.
+\item \textbf{Original contribution 1 --- Failure-mode taxonomy.} A systematic, evidence-anchored account of five distinct training-failure modes observed across an eight-iteration training sequence: posterior collapse (v1), latent underutilisation (v2), discriminator dominance / generator mode collapse (v3, v4, drums\_v2), discriminator collapse (v5), and out-of-distribution decoder behaviour (v6, drums\_v1). To the author's knowledge, no published RAVE/BRAVE study traces this many distinct failure modes within a single training programme.
+\item \textbf{Original contribution 2 --- Calibration of the STFT-magnitude-correlation diagnostic.} A cross-checkpoint calibration study (\S\ref{sec:stft_calibration}, Table~\ref{tab:stft_calibration}) showing that the STFT-magnitude-correlation metric initially proposed as a working acceptance heuristic does not robustly discriminate working autoencoders from collapsed ones, because collapsed checkpoints produce trivially correlated near-silent outputs. This is a methodological finding that constrains how the metric should be used in future replication work.
+\item \textbf{Original contribution 3 --- External-baseline disentanglement.} A side-by-side diagnostic comparison between drums\_v1 and the official ACIDS-IRCAM percussion checkpoint (\S\ref{sec:ircam_baseline}) measured under identical conditions in Pure Data, isolating the observed OOD limitation as a training-recipe and dataset-scale issue rather than an architectural impossibility.
+\item \textbf{Original contribution 4 --- Working in-distribution guitar autoencoder.} A streaming-causal RAVE v2 guitar autoencoder (\texttt{guitar\_v6\_best.ts}) recovered from a sequence of failed iterations, used as the reference point against which cross-modal vocal input is evaluated.
+\item \textbf{Original contribution 5 --- Dataset-heterogeneity quantification.} A noise-floor analysis (\S\ref{sec:noise_floor}, Table~\ref{tab:noise_floor}) measuring a 35.8\,dB spread across six recording paths within the consolidated guitar corpus, with documented implications for what features the encoder is likely to internalise as salient.
+\item \textbf{Original contribution 6 --- Open, reproducible Windows pipeline.} A version-controlled training, evaluation, and deployment pipeline (preprocessing, four \texttt{acids-rave} compatibility patches, training launchers, diagnostic and figure-generation scripts, Pure Data patches) released alongside this thesis so that the eight reported iterations can be re-run on commodity Windows hardware.
 \end{itemize}
 
 \section{Document Structure}\label{sec:doc_structure}
@@ -471,6 +483,17 @@ IDMT-SMT-Guitar dataset~4 \parencite{kehling2014idmt} & Mixed: acoustic\_mic, ac
 
 \section{Diagnostic Methodology}\label{sec:diagnostic_method}
 
+\paragraph{What the evaluation can and cannot establish.} Before describing the diagnostic protocols, it is important to state plainly what evaluation evidence this work does and does not produce. The evaluation framework is built from three classes of measurement: (i)~in-training scalar metrics tracked through TensorBoard, (ii)~synthetic-input responsiveness probes computed on each candidate checkpoint, and (iii)~reconstruction comparison on in-distribution audio. These three classes establish whether the optimisation is healthy, whether the encoder differentiates inputs, and whether the decoder produces audible non-degenerate output. They do not establish, by themselves, whether the resulting audio is perceptually convincing. Two design choices in particular shape the strength of the perceptual claims that can be made:
+
+\begin{enumerate}
+\item \textbf{No formal listening test was conducted.} Listening evaluation at each checkpoint was performed informally by the author. No MUSHRA, MOS, ABX, or panel-based comparison with multiple participants was administered. Where the text refers to ``working'', ``perceptually recognisable'', or ``degraded'' reconstruction, this reflects single-evaluator judgments rather than population-level perceptual quality.
+\item \textbf{The STFT-magnitude-correlation criterion is empirical, not validated.} A magnitude-STFT correlation above 0.3 is adopted as a working heuristic, derived from informal listening on a small set of checkpoints rather than from a published normative threshold. \S\ref{sec:stft_calibration} shows that this metric in fact does not robustly discriminate working autoencoders from collapsed ones across the full iteration sequence; output amplitude and listening assessment retain the operational role.
+\end{enumerate}
+
+These limitations are not relegated to the conclusions: they constrain how the results in Chapter~\ref{chap:results} should be read, and the contribution claimed by this work (Original Contribution~2, \S\ref{sec:contributions}) consists in part of stating and quantifying the limit of the STFT-correlation criterion rather than concealing it. The remainder of this section describes the protocols themselves.
+
+\medskip
+
 In this thesis, \textit{failure modes} refer to systematic deviations that prevent stable or perceptually meaningful resynthesis. For analytical clarity they are grouped into two overlapping categories: \textit{training instabilities}, which describe optimisation-dynamic failures observable during training (posterior collapse, discriminator dominance), and \textit{degenerate behaviours}, which describe pathological output characteristics observable after training (latent underutilisation, output amplitude degeneration). The diagnostic framework is designed to detect both categories through in-training diagnostics monitored continuously through TensorBoard, post-training evaluation metrics computed on each candidate checkpoint, and reconstruction validation on in-distribution audio.
 
 \paragraph{In-training diagnostics.} During training, five primary TensorBoard scalars are tracked:
@@ -500,7 +523,25 @@ Thirdly, the $[0.05, 0.3]$ amplitude band used as a sanity check is an engineeri
 
 Fourthly, no formal perceptual evaluation (such as MUSHRA or MOS testing) was conducted, due to the exploratory and iterative nature of the experiments and because many intermediate models failed basic reconstruction criteria before formal perceptual comparison would have been meaningful. Listening evaluation was conducted informally by the author at each checkpoint.
 
-Together, these protocols allow each training iteration in Chapter~\ref{chap:results} to be evaluated against consistent quantitative criteria, while remaining transparent about what those criteria do and do not measure. The implementation details that operationalise this methodology --- software environment, compatibility patches, training scripts, and Pure Data deployment patches --- are described in the following chapter.
+Together, these protocols allow each training iteration in Chapter~\ref{chap:results} to be evaluated against consistent quantitative criteria, while remaining transparent about what those criteria do and do not measure.
+
+\section{Methodological Assumptions and Limitations}\label{sec:method_limitations}
+
+The methodology described in this chapter rests on a number of working assumptions whose limits delimit the scope of the claims that Chapter~\ref{chap:results} can support. These are stated up front rather than deferred to the conclusions, complementing the evaluation caveats already given in \S\ref{sec:diagnostic_method}.
+
+\paragraph{Cross-modal generalisation assumption.} The system is trained as an instrument-domain autoencoder and is required to generalise to a categorically different excitation signal (voice) at inference time. There is no theoretical guarantee that an autoencoder trained only on guitar or drums will represent vocal input meaningfully in latent space. The project proceeds under the working assumption that learned latent representations carry sufficient spectral-temporal generality to admit at least partial cross-modal mapping. The failure of this assumption on the small open corpora used here is itself one of the documented findings (\S\ref{sec:drums}, \S\ref{sec:ircam_baseline}).
+
+\paragraph{Dataset scale.} The guitar corpus (\textasciitilde 9~h raw, \textasciitilde 16~h after RAVE's overlap segmentation) is small by contemporary generative-audio standards; several published RAVE demonstrations use corpora an order of magnitude larger. Whether the failure modes observed in this work persist at greater dataset scale is not investigated, and replication on larger corpora is identified as future work (\S\ref{sec:future_work}).
+
+\paragraph{Dataset heterogeneity.} The guitar corpus mixes microphone-captured acoustic, pickup-captured acoustic, and direct-input electric recordings. The noise-floor analysis of \S\ref{sec:noise_floor} quantifies a 35.8\,dB spread between source conditions. The work does not control for this heterogeneity by restricting training to a single capture path, and the resulting latent representation almost certainly encodes recording method as a salient feature.
+
+\paragraph{Single-evaluator perceptual judgments.} As stated at the head of \S\ref{sec:diagnostic_method}, listening evaluation was conducted informally by the author. Claims of ``working'' or ``recognisable'' reconstruction throughout Chapter~\ref{chap:results} reflect a single trained ear rather than statistically validated perceptual quality. Formal perceptual evaluation with multiple listeners is identified as future work (\S\ref{sec:future_work}).
+
+\paragraph{Analytic rather than calibrated latency.} The end-to-end latency reported in Table~\ref{tab:latency_budget} is an analytic sum of component latencies (block size, model forward, reported driver buffers), not a calibrated loopback measurement. The estimate is internally consistent with the pipeline design but should not be taken as a precise empirical figure; calibrated loopback measurement is identified as future work.
+
+\paragraph{Single workstation, single trial per configuration.} Each configuration was trained once. Stochastic variation across seeds was not characterised. Where this matters --- particularly for adversarial training, which is known to be seed-sensitive --- the observed outcomes should be read as representative of the configuration under one realisation rather than as a population statistic.
+
+The implementation details that operationalise this methodology --- software environment, compatibility patches, training scripts, and Pure Data deployment patches --- are described in the following chapter.
 
 % ============================================================================
 %  CHAPTER 4 -- IMPLEMENTATION
