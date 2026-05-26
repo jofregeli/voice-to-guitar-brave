@@ -11,7 +11,7 @@
 %  and ensure tfg_dtic_upf.cls and logo_upf.png are in the same folder.
 % ============================================================================
 
-\documentclass[a4paper,11pt,twoside]{book}
+\documentclass[a4paper,11pt,oneside,openany]{book}
 
 % --- Encoding and language ---------------------------------------------------
 \usepackage[T1]{fontenc}
@@ -19,7 +19,7 @@
 \usepackage[main=english,catalan,spanish]{babel}
 
 % --- Page geometry (matches tfg_dtic_upf log: ~2.5cm margins, twoside) -------
-\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm,twoside]{geometry}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
 
 % --- Fonts and microtypography -----------------------------------------------
 \usepackage{times}
@@ -36,6 +36,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,calc,shapes.geometric}
 
 % --- Code listings -----------------------------------------------------------
 \usepackage{listings}
@@ -48,6 +50,7 @@
 }
 
 % --- Bibliography (APA, biblatex+biber) --------------------------------------
+\usepackage{csquotes}
 \usepackage[backend=biber,style=apa,sortcites=true,sorting=nyt]{biblatex}
 \addbibresource{references.bib}
 
@@ -71,7 +74,7 @@
 \newcommand{\thesisTitle}{BRAVE-Based Real-Time Voice-to-Instrument Resynthesis}
 \newcommand{\thesisSubtitle}{System Design, Training Diagnostics, and Failure Analysis}
 \newcommand{\thesisAuthor}{Jofre Geli de Fuenmayor}
-\newcommand{\thesisAdvisor}{[Director]}
+\newcommand{\thesisAdvisor}{Lonce Wyse \& Xavier Lizarraga}
 \newcommand{\thesisInstitution}{Universitat Pompeu Fabra}
 \newcommand{\thesisFaculty}{Escola Superior Polit\`ecnica}
 \newcommand{\thesisDegree}{Grau en Enginyeria de Sistemes Audiovisuals}
@@ -235,18 +238,20 @@ Considered consecutively, these architectures form a distinct evolutionary path.
 \centering
 \caption{A concise comparison of the architectures analysed in \S\ref{sec:nas_arch}. Latency is the end-to-end audio-to-audio delay as measured and reported by respective authors on their cited hardware configurations; entries without a directly measurable latency are qualitatively discussed.}
 \label{tab:arch_comparison}
-\small
-\begin{tabularx}{\textwidth}{lcccXXX}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm}ccXXXX@{}}
 \toprule
-\textbf{Model} & \textbf{Real-time} & \textbf{Causal} & \textbf{Latency} & \textbf{Pitch conditioning} & \textbf{Latent representation} & \textbf{Main limitation for live voice-driven use} \\
+\textbf{Model} & \textbf{Real-time} & \textbf{Causal} & \textbf{Latency} & \textbf{Pitch conditioning} & \textbf{Latent representation} & \textbf{Main limitation for live voice use} \\
 \midrule
-WaveNet (2016) & No & Yes (autoreg.) & Minutes per second of audio & Optional (linguistic) & None (direct waveform) & Sample-by-sample generation prohibits live use \\
-NSynth (2017) & No & Yes (autoreg.) & Minutes per second of audio & None & 16-D temporal embedding & Restricted to isolated notes \\
-DDSP (2020) & Yes & No & Real-time capable; bounded by pitch tracker & Explicit F0 + loudness & Explicit DSP control parameters & External pitch tracker on critical path \\
+WaveNet (2016) & No & Yes & Minutes per second of audio & Optional (linguistic) & None (direct waveform) & Sample-by-sample generation prohibits live use \\
+NSynth (2017) & No & Yes & Minutes per second of audio & None & 16-D temporal embedding & Restricted to isolated notes \\
+DDSP (2020) & Yes & No & Real-time; bounded by pitch tracker & Explicit F0 + loudness & Explicit DSP control parameters & External pitch tracker on critical path \\
 TimbreTron (2018) & No & No & Offline (CQT + WaveNet vocoder) & Implicit via CQT & CQT spectrogram & Spectrogram-domain inference too slow \\
 RAVE (2021) & Yes & No & $\sim$50\,ms reported & Implicit & Learned VAE latent & Non-causal context limits perceptual immediacy \\
 \textbf{BRAVE (2025)} & \textbf{Yes} & \textbf{Yes} & $<10$\,ms reported & Implicit & Learned VAE latent (causal) & Shorter temporal context can degrade pitch at extremes \\
-Diffusion family (2023--2024) & No & No & Seconds to minutes per generated second & Text / class / melody & Latent diffusion & Inference cost prohibits streaming use \\
+Diffusion family (2023--2024) & No & No & Seconds to minutes per second of audio & Text / class / melody & Latent diffusion & Inference cost prohibits streaming use \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -322,8 +327,50 @@ The real-time resynthesis pipeline operates as a low-latency end-to-end stream f
 
 \begin{figure}[H]
 \centering
-\framebox[\textwidth][c]{\rule{0pt}{2cm}[Block diagram: Mic $\rightarrow$ ADC $\rightarrow$ Pure Data (nn$\sim$ + BRAVE) $\rightarrow$ Gain $\rightarrow$ DAC $\rightarrow$ Speakers]}
-\caption{Block diagram of the real-time resynthesis pipeline. Latency contributions per stage are listed in Table~\ref{tab:latency_budget}.}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.45cm and 0.45cm,
+    box/.style={rectangle, draw, rounded corners=2pt, minimum width=1.6cm, minimum height=0.95cm, align=center, font=\small},
+    host/.style={rectangle, draw, rounded corners=2pt, minimum height=0.95cm, align=center, font=\small, fill=gray!8},
+    sub/.style={rectangle, draw, rounded corners=2pt, minimum width=1.5cm, minimum height=0.8cm, align=center, font=\footnotesize, fill=blue!8},
+    lat/.style={font=\footnotesize\itshape, gray, align=center},
+    arrow/.style={-{Latex[length=2mm]}, thick}
+]
+% Top row: external signal path
+\node[box] (mic)  {Microphone};
+\node[box, right=of mic]  (adc)  {ADC};
+\node[host, right=of adc, minimum width=5.6cm] (pd) {Pure Data host (\texttt{nn\textasciitilde} external)};
+\node[box, right=of pd]   (gain) {Gain};
+\node[box, right=of gain] (dac)  {DAC};
+\node[box, right=of dac]  (spk)  {Speakers};
+
+\draw[arrow] (mic)  -- (adc);
+\draw[arrow] (adc)  -- (pd);
+\draw[arrow] (pd)   -- (gain);
+\draw[arrow] (gain) -- (dac);
+\draw[arrow] (dac)  -- (spk);
+
+% Latency annotations
+\node[lat, below=0.1cm of adc]  {1.45\,ms};
+\node[lat, below=0.1cm of dac]  {$\sim$2.5\,ms};
+\node[lat, above=0.1cm of adc]  {$\sim$2.0\,ms};
+
+% BRAVE internals
+\node[sub, below=2.0cm of pd.south, xshift=-1.95cm] (enc) {Encoder\\\footnotesize(causal)};
+\node[sub, right=of enc, fill=blue!18] (z) {$z\in\mathbb{R}^{16}$};
+\node[sub, right=of z]   (dec) {Decoder\\\footnotesize(causal)};
+
+\draw[arrow] (enc) -- (z);
+\draw[arrow] (z)   -- (dec);
+
+\node[draw, dashed, rounded corners=3pt, fit=(enc)(dec), inner sep=0.35cm, label={[font=\small\itshape]above:BRAVE causal autoencoder ($<$1\,ms forward, RTX 5080)}] (brave) {};
+
+% Connect Pure Data host to BRAVE
+\draw[arrow, dashed] ($(pd.south) + (-1.5cm,0)$) -- node[right, font=\scriptsize]{$x(t)$} (enc.north);
+\draw[arrow, dashed] (dec.north) -- node[right, font=\scriptsize]{$\hat{x}(t)$} ($(pd.south) + (1.5cm,0)$);
+
+\end{tikzpicture}}
+\caption{Block diagram of the real-time voice-to-instrument resynthesis pipeline. The Pure Data host invokes the BRAVE causal autoencoder via the \texttt{nn\textasciitilde} external; the encoder maps each block of audio $x(t)$ to a 16-dimensional latent $z$ and the decoder regenerates $\hat{x}(t)$ in the target-instrument timbre. Latency contributions per stage are listed in Table~\ref{tab:latency_budget}.}
 \label{fig:block_diagram}
 \end{figure}
 
@@ -392,7 +439,9 @@ The performance of RAVE-family models depends heavily on the quantity, diversity
 \centering
 \caption{Composition of the guitar training corpus after format filtering (mono, 16-bit PCM, 44.1\,kHz). The IDMT-SMT-Guitar dataset~2 was excluded because its 24-bit files were incompatible with the LMDB construction stage, as discussed under the preprocessing pipeline. After preprocessing, the resulting LMDB reports \texttt{n\_seconds = 57665} ($\sim$16\,h); the higher figure reflects overlapping segmentation rather than additional source audio.}
 \label{tab:guitar_corpus}
-\begin{tabular}{lllc}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xll@{}}
 \toprule
 \textbf{Source} & \textbf{Recording method} & \textbf{Raw duration} & \textbf{File count} \\
 \midrule
@@ -402,7 +451,7 @@ IDMT-SMT-Guitar dataset~4 \parencite{kehling2014idmt} & Mixed: acoustic\_mic, ac
 \midrule
 \textbf{Total raw} & --- & $\sim$9\,h & 899 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \paragraph{Drums corpus.} The drums corpus is drawn from the Groove MIDI Dataset \parencite{gillick2019groove}, totalling approximately 10.86 hours after stereo-to-mono conversion. Groove substantially exceeds the dataset scales used in several published RAVE and BRAVE demonstrations, reducing the risk of dataset-size-induced training instabilities; the inclusion of diverse tempos and rhythmic patterns across multiple professional drummers is also designed to improve the robustness of the learned latent representation across transient-rich percussive events.
@@ -498,8 +547,9 @@ Training was managed through the \texttt{.gin} configuration system, which allow
 \centering
 \caption{Configuration evolution across guitar iterations and the two drums iterations. Each row identifies the main change introduced and the failure mode it addressed.}
 \label{tab:configs}
-\small
-\begin{tabularx}{\textwidth}{llXX}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
 \textbf{Iteration} & \textbf{Configuration} & \textbf{Main change introduced} & \textbf{Motivation} \\
 \midrule
@@ -592,16 +642,18 @@ A focused experiment aimed at balancing the adversarial game was conducted in \t
 \centering
 \caption{Summary of failure modes across the guitar development iterations.}
 \label{tab:failure_summary}
-\begin{tabularx}{\textwidth}{llXX}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{@{}c>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
 \toprule
-\textbf{Iteration} & \textbf{Configuration} & \textbf{Failure mode} & \textbf{Diagnostic signature} \\
+\textbf{Iter.} & \textbf{Configuration} & \textbf{Failure mode} & \textbf{Diagnostic signature} \\
 \midrule
-v1 & Baseline \texttt{c128\_r10.gin} & Posterior collapse & KL falls $0.5 \rightarrow 0.25$; forward diff 0.006 \\
-v2 & $\beta$ warmup applied & Latent underutilisation & KL/dim $\approx 0.005$ nats; forward diff 0.003 \\
-v3 & \texttt{LATENT\_SIZE}$\rightarrow$16 & Phase~2 collapse & Forward diff peaks at 0.042 then degrades \\
-v4 & Mic-only data (3.05\,h) & Adversarial mode collapse & Gap $=5.65$; silence amp $>$ signal amp \\
-v5 & Halved discriminator & Discriminator collapse & \texttt{pred\_real} $=-0.90$; gap $=0.80$ \\
-v6 & Official RAVE v2 base & Working in-distribution autoencoder & STFT correlation calibrated in Table~\ref{tab:stft_calibration}; GAN gap reversal \\
+v1 & Baseline \texttt{c128\_r10.gin} & Posterior collapse & KL falls $0.5\!\rightarrow\!0.25$; forward diff $0.006$ \\
+v2 & $\beta$ warmup applied & Latent underutilisation & KL/dim $\approx 0.005$ nats; forward diff $0.003$ \\
+v3 & \texttt{LATENT\_SIZE}$\rightarrow 16$ & Phase~2 collapse & Forward diff peaks at $0.042$ then degrades \\
+v4 & Mic-only data ($3.05$\,h) & Adversarial mode collapse & Gap $=5.65$; silence amp.\ $>$ signal amp.\ \\
+v5 & Halved discriminator & Discriminator collapse & \texttt{pred\_real}$=-0.90$; gap $=0.80$ \\
+v6 & Official RAVE v2 base & Working in-distribution autoencoder & STFT corr.\ calibrated in Table~\ref{tab:stft_calibration}; GAN-gap reversal \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -629,18 +681,20 @@ To assess whether the STFT magnitude correlation criterion of \S\ref{sec:diagnos
 \centering
 \caption{Cross-checkpoint calibration of the STFT-magnitude-correlation diagnostic. All values are means across $N=8$ GuitarSet samples. Output RMS reflects the energy of the model output relative to the input (mean input RMS $\approx 0.065$).}
 \label{tab:stft_calibration}
-\begin{tabularx}{\textwidth}{lXcccc}
+\footnotesize
+\setlength{\tabcolsep}{6pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}XS[table-format=1.3]S[table-format=1.2]S[table-format=1.2]@{}}
 \toprule
-\textbf{Checkpoint} & \textbf{Diagnostic state} & \textbf{Output RMS} & \textbf{STFT corr (raw)} & \textbf{STFT corr (time-aligned)} \\
+\textbf{Checkpoint} & \textbf{Diagnostic state} & {\textbf{Output RMS}} & {\textbf{STFT (raw)}} & {\textbf{STFT (aligned)}} \\
 \midrule
 guitar\_v1 & Posterior collapse & 0.005 & 0.16 & 0.16 \\
 guitar\_v2 & Latent underutilisation & 0.003 & 0.24 & 0.25 \\
 guitar\_v3 & Phase~2 generator collapse & 0.004 & 0.24 & 0.26 \\
 guitar\_v4 & Adversarial mode collapse & 0.021 & 0.25 & 0.26 \\
 guitar\_v5 & Discriminator collapse & 0.024 & 0.26 & 0.28 \\
-guitar\_v6 Phase 1 (epoch 1499) & Reconstruction-only & 0.041 & 0.19 & 0.21 \\
-\textbf{guitar\_v6 best (epoch 1935)} & \textbf{Working autoencoder (canonical)} & \textbf{0.024} & \textbf{0.16} & \textbf{0.17} \\
-guitar\_v6 final (epoch 2511) & Working, slightly degraded & 0.024 & 0.14 & 0.17 \\
+guitar\_v6 Phase 1 (ep.\ 1499) & Reconstruction-only & 0.041 & 0.19 & 0.21 \\
+\textbf{guitar\_v6 best (ep.\ 1935)} & \textbf{Working autoencoder (canonical)} & \textbf{0.024} & \textbf{0.16} & \textbf{0.17} \\
+guitar\_v6 final (ep.\ 2511) & Working, slightly degraded & 0.024 & 0.14 & 0.17 \\
 \bottomrule
 \end{tabularx}
 \end{table}

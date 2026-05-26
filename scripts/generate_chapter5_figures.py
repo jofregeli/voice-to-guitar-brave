@@ -79,7 +79,7 @@ def figure_5_1():
     ax.plot(steps / 1e6, smooth(kl), color="#c0392b", lw=1.8, label="smoothed")
     ax.set_xlabel("Training step (millions)")
     ax.set_ylabel("KL divergence (regularization)")
-    ax.set_title("Figure 5.1. KL trajectory of guitar_v1 — posterior collapse")
+    ax.set_title("KL trajectory of guitar_v1 — posterior collapse")
     ax.axhline(0.0, color="grey", lw=0.5)
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
@@ -115,7 +115,7 @@ def figure_5_2():
     ax.axhline(0, color="grey", lw=0.5)
     ax.set_xlabel("Training step (millions)")
     ax.set_ylabel("GAN logit gap (pred_real − pred_fake)")
-    ax.set_title("Figure 5.2. Adversarial dynamics across iterations")
+    ax.set_title("Adversarial dynamics across iterations")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     out = FIG_DIR / "figure_5_2_gan_gap_comparison.png"
@@ -144,7 +144,7 @@ def figure_5_3():
     ax.axvline(1.5, color="grey", lw=0.6, ls="--", label="Phase 2 begins")
     ax.set_xlabel("Training step (millions)")
     ax.set_ylabel("GAN logit gap (pred_real − pred_fake)")
-    ax.set_title("Figure 5.3. drums_v2 Phase 2 discriminator dominance reproduction")
+    ax.set_title("drums_v2 Phase 2 discriminator dominance reproduction")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
     out = FIG_DIR / "figure_5_3_drums_v2_gan_widening.png"
@@ -196,7 +196,7 @@ def figure_5_4():
     im1 = librosa.display.specshow(S_out, sr=sr, hop_length=512, y_axis="log", x_axis="time", ax=axes[1])
     axes[1].set_title("Output: guitar_v6 canonical reconstruction (epoch 1935)")
     fig.colorbar(im1, ax=axes[1], format="%+2.0f dB")
-    fig.suptitle(f"Figure 5.4. In-distribution reconstruction example ({Path(sample).name})", y=1.02)
+    fig.suptitle(f"In-distribution reconstruction example ({Path(sample).name})", y=1.02)
     out = FIG_DIR / "figure_5_4_spectrogram_in_dist.png"
     fig.savefig(out)
     plt.close(fig)
@@ -270,7 +270,7 @@ def figure_5_5():
     ax.set_xticks(range(1, len(labels) + 1))
     ax.set_xticklabels(labels, rotation=20, ha="right")
     ax.set_ylabel("Noise floor (dBFS, 5th percentile of 100 ms RMS)")
-    ax.set_title("Figure 5.5. Noise-floor distribution per recording source")
+    ax.set_title("Noise-floor distribution per recording source")
     ax.grid(True, axis="y", alpha=0.3)
     out = FIG_DIR / "figure_5_5_noise_floor.png"
     fig.savefig(out)
