@@ -50,3 +50,31 @@ wandb/
 .env
 secrets.yaml
 .claude/
+.claude-flow/
+
+# LaTeX build artefacts (only the .tex and final .pdf are tracked)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# User calibration audio (personal recordings, not corpus)
+data/user_calibration/
+
+# Stray shell-escape leftovers
+/$
+/$f2
+/-
+/10
+/5$)

@@ -1,140 +1,105 @@
-# Voice-to-Guitar (and Beatbox-to-Drums) — TFG Project
+# BRAVE-Based Real-Time Voice-to-Instrument Resynthesis
 
-Real-time voice-to-instrument timbre transfer using [BRAVE](https://github.com/fcaspe/BRAVE) and Pure Data.
+Bachelor's Thesis (TFG) — Grau en Enginyeria de Sistemes Audiovisuals, Universitat Pompeu Fabra.
 
 **Author:** Jofre Geli de Fuenmayor
-**Degree:** Audiovisual Systems Engineering, UPF
-**Deadline:** June 12, 2026
-**Platform:** Developed and tested on Windows 11. Linux/macOS adaptation is left as future work.
+**Directors:** Lonce Wyse & Xavier Lizarraga
+**Submission:** 12 June 2026
+**Memoir:** [`docs/thesis/thesis.pdf`](docs/thesis/thesis.pdf) ([source](docs/thesis/thesis.tex))
 
 ---
 
-## What This Does
+## Project summary
 
-- Sings/hums into a microphone → outputs realistic **guitar** sound in real-time
-- Beatboxes into a microphone → outputs realistic **drum** sound in real-time (secondary experiment)
-- Runs live with ~5ms latency using BRAVE's streaming encoder + Pure Data's `nn~` external
+A streaming-causal variational autoencoder (BRAVE) is trained to autoencode either guitar or drum audio at sub-10 ms latency and then driven, at inference time, with vocal input as a cross-modal excitation. The work is presented as a **diagnostic study**: six guitar training iterations and two drum iterations are systematically analysed for failure modes (posterior collapse, latent underutilisation, discriminator dominance, discriminator collapse, OOD decoder behaviour), an external IRCAM percussion checkpoint is used as a baseline, and the methodology is calibrated against measured outcomes rather than asserted.
+
+The submitted contribution is the **diagnostic framework, the failure-mode taxonomy, and a working in-distribution guitar autoencoder**, not a complete voice-to-instrument product. The thesis documents both the successful and the unsuccessful experiments honestly, including a methodological finding that the STFT-magnitude-correlation heuristic used in early evaluation does not robustly discriminate working from collapsed checkpoints.
 
 ---
 
-## Project Structure
+## Repository layout
 
 ```
 voice-to-guitar-brave/
-├── config/                  # BRAVE training configuration files
-│   ├── guitar_model.yaml    # Config for guitar model
-│   └── drums_model.yaml     # Config for drums model
-├── data/
-│   ├── raw/                 # Downloaded datasets (not committed to git)
-│   │   ├── guitarset/
-│   │   ├── guitartechs/
-│   │   └── groove/
-│   └── processed/           # Preprocessed audio ready for BRAVE (not committed)
-│       ├── guitar/
-│       └── drums/
-├── docs/
-│   ├── workplan.md          # Week-by-week project plan
-│   └── state_of_the_art.md  # Thesis Section 2 draft
-├── examples/
-│   ├── pd/                  # Pure Data patches for real-time demo
-│   └── test_nn_tilde.pd     # Minimal nn~ test patch
-├── models/                  # Trained .ts exports (not committed to git)
-├── scripts/
-│   ├── setup.py             # One-command environment setup
-│   ├── download_data.py     # Download all datasets
-│   ├── preprocess.py        # Preprocess audio for BRAVE training
-│   └── train_guitar.bat     # Windows: launch/resume guitar model training
-├── src/
-│   ├── preprocessing/       # Audio preprocessing utilities
-│   └── evaluation/          # Evaluation metrics (FAD, mel distance, etc.)
-├── tests/                   # Unit tests
-├── Dockerfile               # Reproducible training environment
-├── docker-compose.yml
-└── requirements.txt
+├── docs/thesis/             # Final memoir: thesis.tex + references.bib + thesis.pdf
+├── docs/                    # Auxiliary docs: scripts_and_pipeline, diagnostic_results, timeline_and_decisions
+├── figures/                 # Production figures used in Chapter 5 (300 DPI)
+├── config/                  # BRAVE .gin training configurations (one per iteration)
+├── scripts/                 # Preprocessing, training, evaluation, figure generation
+│   ├── preprocess.py
+│   ├── analyze_noise_floor.py
+│   ├── guitar_v6_stft_correlation.py
+│   ├── generate_chapter5_figures.py
+│   ├── train_*.bat                # Per-iteration training launchers (Windows)
+│   └── vpt_*.py                   # Path-A vocal-percussion classifier (preliminary)
+├── src/vpt/                 # VPT classifier source (1D-CNN on AVP dataset)
+├── examples/                # Pure Data demo patches (.pd)
+├── PDF Thesis Draft/        # Earlier chapter drafts retained for review history
+├── References/              # Bibliographic PDFs cited by the memoir
+└── runs/, models/, data/    # Training artefacts (gitignored)
 ```
 
 ---
 
-## Setup
+## What was actually produced
 
-### Option A — One-command setup (recommended)
+| Iteration | Status | Notes |
+|---|---|---|
+| guitar_v1 | Diagnostic | Posterior collapse identified — KL falls 0.5 → 0.25 |
+| guitar_v2 | Diagnostic | Latent underutilisation (KL/dim ≈ 0.005 nats) |
+| guitar_v3 | Diagnostic | Phase-2 generator collapse |
+| guitar_v4 | Diagnostic | Adversarial mode collapse |
+| guitar_v5 | Diagnostic | Discriminator collapse |
+| **guitar_v6** | **Canonical model** | Working in-distribution autoencoder; canonical checkpoint at epoch 1935 (mid Phase 2) |
+| drums_v1 | Diagnostic | Partial transient response, below demonstration threshold |
+| drums_v2 | Terminated | Discriminator dominance reproduced; terminated before completion |
+| VPT (Path A) | Preliminary | Vocal-percussion classifier; explored as future work, not pursued |
 
-```bash
+Canonical model export: `models/guitar_v6_best.ts` (TorchScript, loadable by Pure Data's `nn~` external; not committed due to size, regenerable via `rave export`).
+
+---
+
+## Reproduction
+
+Setup (one-shot, Windows 11 with NVIDIA RTX-class GPU):
+
+```powershell
 git clone https://github.com/jofregeli/voice-to-guitar-brave
 cd voice-to-guitar-brave
 python scripts/setup.py
+.\venv\Scripts\activate
 ```
 
-The setup script handles everything automatically:
-- Creates `venv/` with the correct Python version
-- Installs PyTorch with the right CUDA wheel for your GPU (Blackwell/sm_120+ → cu128, older → cu126, no GPU → CPU)
-- Installs all dependencies with the correct flags to avoid conflicts
-- Patches `acids-rave` for scipy ≥ 1.14 and pytorch-lightning 2.x compatibility
-- Detects ffmpeg and adds it to the venv `activate` script if needed
+Data, preprocessing, training, evaluation, and Pure Data deployment are described in detail in [`docs/scripts_and_pipeline.md`](docs/scripts_and_pipeline.md). The thesis's Chapter 4 (Implementation) lists the four `acids-rave 2.3.1` compatibility patches required for current PyTorch/scipy and the exact Pure Data + `nn~` configuration used.
 
-Then activate:
-```bash
-source venv/Scripts/activate   # Git Bash on Windows
-source venv/bin/activate       # Linux / macOS
-```
+To compile the memoir from source:
 
-### Option B — Docker (for reproducibility)
-
-```bash
-docker-compose up --build
+```powershell
+cd docs\thesis
+pdflatex thesis ; biber thesis ; pdflatex thesis ; pdflatex thesis
 ```
 
 ---
 
-## Datasets
+## Datasets used
 
-| Dataset | Instrument | Raw duration | Used for training | Filter applied | License | Download |
-|---------|-----------|-------------|-------------------|----------------|---------|----------|
-| [GuitarSet](https://zenodo.org/records/3371780) | Acoustic guitar | ~3h | ~2.5h | Solo mic recordings only (`_solo_mic`) | CC BY 4.0 | `python scripts/download_data.py --dataset guitarset` |
-| [Guitar-TECHS](https://zenodo.org/records/14963133) | Electric guitar | ~5.2h | ~0.4h | Direct input channel only (`directinput`) | CC BY 4.0 | `python scripts/download_data.py --dataset guitartechs` |
-| [Groove MIDI Dataset](https://magenta.tensorflow.org/datasets/groove) | Drums | ~13h | ~13h | No filter | CC BY 4.0 | `python scripts/download_data.py --dataset groove` |
+| Dataset | Instrument | Used | License |
+|---|---|---|---|
+| [GuitarSet](https://zenodo.org/records/3371780) | Acoustic guitar (mic) | ~3.05 h | CC BY 4.0 |
+| [Guitar-TECHS](https://zenodo.org/records/14963133) | Electric guitar (DI) | ~1.5 h | CC BY 4.0 |
+| [IDMT-SMT-Guitar dataset 4](https://www.idmt.fraunhofer.de/en/publications/datasets/guitar.html) | Mixed acoustic/electric | ~4.35 h | Research-only |
+| [Groove MIDI Dataset](https://magenta.tensorflow.org/datasets/groove) | Drums | ~10.86 h | CC BY 4.0 |
+| [AVP](https://zenodo.org/records/3250230) | Vocal percussion (Path A) | ~3 h | CC BY 4.0 |
 
-**Total guitar training data after filtering: 2.88h (206 files)**
-
----
-
-## Training
-
-```bash
-# 1. Download datasets
-python scripts/download_data.py --dataset guitarset
-python scripts/download_data.py --dataset guitartechs
-
-# 2. Preprocess audio
-python scripts/preprocess.py --instrument guitar
-
-# 3. Build LMDB database
-rave preprocess --input_path data/processed/guitar --output_path data/rave_ready/guitar
-
-# 4. Train (Windows — auto-resumes from latest checkpoint)
-scripts\train_guitar.bat
-```
-
-The training script uses the `c128_r10` BRAVE config (25M params) with `--gpu 0 --channels 1`.
-Checkpoints save every 10,000 steps in `runs/guitar_v1_*/`.
-Expected training time on RTX 5080: ~30h for Phase 1 (1M steps), ~60h for Phase 2 (2M steps). Total ~90h for a complete model.
+Datasets are downloaded via `scripts/download_data.py`; raw audio is never committed.
 
 ---
 
-## Real-Time Demo (Pure Data)
+## Key references
 
-1. Open Pure Data
-2. Install `nn~` external from [nn_tilde releases](https://github.com/acids-ircam/nn_tilde/releases) — download `nn_puredata_windows_x64.tar.gz`, extract, copy all files to `C:\Program Files\Pd\extra\`
-3. Open `examples/pd/voice_to_guitar.pd`
-4. Load your trained model checkpoint
-5. Enable audio (Ctrl+Alt+A), select your microphone
+- Caspe, Shier, Sandler, Saitis & McPherson (2025). *Designing Neural Synthesizers for Low-Latency Interaction*. arXiv:2503.11562 (BRAVE).
+- Caillon & Esling (2021). *RAVE: A variational autoencoder for fast and high-quality neural audio synthesis*. arXiv:2111.05011.
+- Engel, Hantrakul, Gu & Roberts (2020). *DDSP: Differentiable Digital Signal Processing*. ICLR.
+- Wessel & Wright (2002). *Problems and Prospects for Intimate Musical Control of Computers*. Computer Music Journal.
 
----
-
-## Key References
-
-- Caspe et al. (2025). *BRAVE: Bravely Realtime Audio Variational autoEncoder*. arXiv:2503.11562
-- Caillon & Esling (2021). *RAVE: A variational autoencoder for fast and high-quality neural audio synthesis*. arXiv:2111.05011
-- Engel et al. (2020). *DDSP: Differentiable Digital Signal Processing*. ICLR 2020.
-- Engel et al. (2017). *Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders*. ICML 2017.
-- Huang et al. (2018). *TimbreTron: A WaveNet(CycleGAN(CQT(Audio))) Pipeline for Musical Timbre Transfer*. arXiv:1811.09620
+Full bibliography in [`docs/thesis/references.bib`](docs/thesis/references.bib).
