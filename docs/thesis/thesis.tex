@@ -980,7 +980,7 @@ These four patches total fewer than ten lines of changed code. Their effect is v
 
 The full Project Charter is reproduced in the project repository under \texttt{docs/project\_charter.pdf}. Its main elements are summarised in this section.
 
-\paragraph{Project identification.} Title: \emph{BRAVE-Based Real-Time Voice-to-Instrument Resynthesis}. Programme: \thesisDegree, \thesisInstitution, \thesisFaculty. Author: \thesisAuthor. Director: \thesisAdvisor. Period: March 2026 -- June 2026. ECTS: 20 (approximately 500 hours of student work).
+\paragraph{Project identification.} Title: \emph{BRAVE-Based Real-Time Voice-to-Instrument Resynthesis}. Programme: \thesisDegree, \thesisInstitution, \thesisFaculty. Author: \thesisAuthor. Director: \thesisAdvisor. Period: December 2025 -- June 2026 (active iteration cycle: 24 March -- 12 June 2026; see \emph{Project history and scope reset} below). ECTS: 20 (approximately 500 hours of student work).
 
 \paragraph{General objective.} To design, train, deploy and evaluate a streaming neural resynthesis pipeline that maps the human voice to instrument timbres in real time under a sub-10\,ms latency budget, and to document the training instabilities and failure modes that emerge when this task is attempted on limited-scale, heterogeneous public datasets.
 
@@ -1051,11 +1051,17 @@ The full Project Charter is reproduced in the project repository under \texttt{d
   \end{enumerate}
 \end{enumerate}
 
+\section*{Project history and scope reset}
+
+Engagement with the thesis topic began on 3 December 2025 with initial scoping notes and literature reading on neural audio synthesis architectures (RAVE, DDSP, WaveNet, MusicGen). The BRAVE-based approach reported in this thesis was selected in early February 2026 and a first implementation attempt was made shortly afterwards. That attempt encountered persistent environment-compatibility problems --- chiefly the breaking changes in scipy~$\geq$~1.14 and pytorch-lightning~2.x against \texttt{acids-rave}~2.3.1 documented in Chapter~\ref{chap:implementation} (Patches~1--4) --- which made the original toolchain non-functional. A deliberate decision was taken on 24~March~2026 to reset: the environment was rebuilt from scratch, the four \texttt{acids-rave} compatibility patches were derived, and the iteration sequence reported in this thesis was begun under the rebuilt pipeline.
+
+The phase schedule below therefore documents the \emph{active iteration cycle} running from 24~March 2026 to submission. Total elapsed engagement with the topic, including the December--March scoping and environment-rebuild work, spans roughly six months. The compressed twelve-week active cycle is the direct consequence of the restart, not of late initiation, and is also the reason the four \texttt{acids-rave} compatibility patches appear as one of the project's deliverables (\S\ref{sec:env_compat}) rather than as a tacit prerequisite.
+
 \section*{Phase schedule}
 
 \begin{table}[H]
 \centering
-\caption{Three-phase schedule following the UPF TFG guide \parencite{hernandezleo2012tfg}.}
+\caption{Three-phase schedule of the active iteration cycle (24~March -- 12~June 2026), following the UPF TFG guide \parencite{hernandezleo2012tfg}. December 2025 -- 23~March 2026 was an earlier scoping and environment-rebuild phase, described above.}
 \label{tab:phases}
 \begin{tabular}{lccc}
 \toprule
