@@ -241,7 +241,7 @@ def figure_5_5():
             print(f"[5.5] no files for {label}")
             continue
         vals = []
-        for f in files[:200]:  # cap for speed
+        for f in files:  # full per-source set, matching analyze_noise_floor.py
             try:
                 y, file_sr = sf.read(f, dtype="float32", always_2d=False)
                 if y.ndim > 1:
