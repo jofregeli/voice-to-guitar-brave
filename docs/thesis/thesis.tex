@@ -103,22 +103,23 @@
 \frontmatter
 \pagestyle{plain}
 
-% --- Title page --------------------------------------------------------------
+% --- Title page (UPF DTIC template layout) ----------------------------------
+% Layout per the official UPF DTIC cover example: title at top, "Treball Fi
+% de Grau de" + author in the middle, director/degree/year below, UPF logo at
+% the bottom. No institution-text block above the title and no subtitle/date.
 \begin{titlepage}
 \thispagestyle{empty}
 \centering
-\vspace*{1cm}
-% Logo placeholder (uncomment when logo_upf.png is available)
-% \includegraphics[width=0.45\textwidth]{logo_upf.png}\\[2cm]
-{\Large \textsc{\thesisInstitution}\\\thesisFaculty}\\[3cm]
-{\Huge\bfseries \thesisTitle\par}\vspace{0.6cm}
-{\Large\itshape \thesisSubtitle\par}\vspace{3cm}
-{\Large\textbf{\thesisAuthor}}\\[0.2cm]
-Treball Fi de Grau\\
-\thesisDegree\\[1.5cm]
-Director: \thesisAdvisor\\[1.5cm]
-Curs 2025--2026\\[1cm]
-\thesisDate
+\vspace*{4cm}
+{\huge \thesisTitle\par}
+\vspace{4cm}
+{\textsc{\large Treball Fi de Grau de}}\\[0.7cm]
+{\Large \thesisAuthor}\\[3cm]
+Director: \thesisAdvisor\\[0.4cm]
+\thesisDegree\\[0.4cm]
+Curs 2025--2026
+\vfill
+\includegraphics[width=0.55\textwidth]{logo_upf.png}\\[0.5cm]
 \end{titlepage}
 
 % --- Acknowledgements --------------------------------------------------------
