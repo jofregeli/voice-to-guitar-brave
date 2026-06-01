@@ -58,6 +58,15 @@
 \usepackage[titletoc]{appendix}
 \makeindex
 
+% --- Chapter heading format: inline number, no "Chapter N" stacked preamble --
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\Huge\bfseries}
+  {\thechapter.}
+  {0.6em}
+  {}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
 % --- Hyperlinks --------------------------------------------------------------
 \usepackage{hyperref}
 \hypersetup{
@@ -206,7 +215,7 @@ The following are the original contributions of this work. Each is grounded in t
 
 \section{Document Structure}\label{sec:doc_structure}
 
-The thesis is organised into six chapters. Chapter~\ref{chap:sota} reviews the state of the art in neural synthesis and timbre transfer. Chapter~\ref{chap:methodology} details the methodology, focusing on system architecture and training protocols. Chapter~\ref{chap:implementation} describes the implementation of the Pure Data environment and the software pipeline. Chapter~\ref{chap:results} presents the evaluation results, including the failure taxonomy, the external-baseline validation, and the dataset heterogeneity analysis. Chapter~\ref{chap:conclusions} summarises the findings and proposes future work across calibrated latency measurement, formal perceptual evaluation, RAVE v3 architectures, mixed-domain training data, hybrid pipelines, and replication on larger corpora. Technical configurations, the project planning artefacts (Project Charter and Gantt), and code references are provided in Appendix-A through Appendix-D.
+The thesis is organised into six chapters. Chapter~\ref{chap:sota} reviews the state of the art in neural synthesis and timbre transfer. Chapter~\ref{chap:methodology} details the methodology, focusing on system architecture and training protocols. Chapter~\ref{chap:implementation} describes the implementation of the Pure Data environment and the software pipeline. Chapter~\ref{chap:results} presents the evaluation results, including the failure taxonomy, the external-baseline validation, and the dataset heterogeneity analysis. Chapter~\ref{chap:conclusions} summarises the findings and proposes future work across calibrated latency measurement, formal perceptual evaluation, RAVE v3 architectures, mixed-domain training data, hybrid pipelines, and replication on larger corpora. The Pure Data demonstration setup is documented in Appendix-\ref{app:demo_setup}; reference audio samples are listed in Appendix-\ref{app:audio_samples}; configuration files and the four compatibility patches in Appendix-\ref{app:configs}; and the project planning artefacts (Project Charter, Work Breakdown Structure, phase schedule) in Appendix-\ref{app:planning}.
 
 % ============================================================================
 %  CHAPTER 2 -- STATE OF THE ART
@@ -1047,7 +1056,7 @@ The full Project Charter is reproduced in the project repository under \texttt{d
   \item Chapter drafting (Chapters 1--6)
   \item Figure generation (TensorBoard plots, spectrograms, noise floor)
   \item Reference compilation and APA formatting
-  \item Appendix-A through Appendix-D
+  \item Appendix-A (Demo Setup), Appendix-B (Audio Samples), Appendix-C (Configurations and Compatibility Patches), Appendix-D (Project Planning)
   \end{enumerate}
 \item Submission and Defence (Final phase)
   \begin{enumerate}
