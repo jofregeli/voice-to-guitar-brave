@@ -13,16 +13,15 @@
 
 \documentclass[a4paper,11pt,oneside,openany]{book}
 
-% --- Encoding and language ---------------------------------------------------
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+% --- Language (XeLaTeX reads UTF-8 natively; fontenc handled by fontspec) ---
 \usepackage[main=english,catalan,spanish]{babel}
 
-% --- Page geometry (matches tfg_dtic_upf log: ~2.5cm margins, twoside) -------
+% --- Page geometry (matches tfg_dtic_upf log: ~2.5cm margins) ---------------
 \usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
 
-% --- Fonts and microtypography -----------------------------------------------
-\usepackage{times}
+% --- Fonts (XeLaTeX + Times New Roman proper from C:\Windows\Fonts) ---------
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
 \usepackage{microtype}
 
 % --- Math, units, tables, figures --------------------------------------------
