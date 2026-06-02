@@ -46,7 +46,7 @@ For each input we compute:
 
 **Outcome:** Posterior collapse.
 
-**TensorBoard:** `regularization` (KL) decreased steadily from 0.5 → 0.25 throughout training — diagnostic sign of posterior collapse caused by constant high beta from step 0 preventing the encoder/decoder from learning a useful latent space.
+**TensorBoard:** `regularization` (KL) decreased steadily from 0.83 → 0.25 throughout training — diagnostic sign of posterior collapse caused by constant high beta from step 0 preventing the encoder/decoder from learning a useful latent space.
 
 **Python diagnostic:**
 - Encoder differentiates inputs: encoder diff = 1.25 between silence and 440 Hz sine ✓
@@ -264,7 +264,7 @@ The STFT magnitude correlation diagnostic was applied to every checkpoint in the
 
 | Version | Failure mode | Diagnostic signature | Root cause |
 |---|---|---|---|
-| guitar_v1 | Posterior collapse | KL decreasing 0.5→0.25, forward diff = 0.006 | Constant high β from step 0 |
+| guitar_v1 | Posterior collapse | KL decreasing 0.83→0.25, forward diff = 0.006 | Constant high β from step 0 |
 | guitar_v2 | Latent underutilisation | KL/dim ≈ 0.005 nats, output 60× quieter than input | `LATENT_SIZE=128` too large for ~5.4 h corpus |
 | guitar_v3 | Phase 2 generator collapse | Forward diff 0.042 peaks then degrades | Default custom discriminator overpowers generator |
 | guitar_v4 | Adversarial mode collapse | pred_real = 3.34, pred_fake = −2.31, silence amp > signal amp | Less data → easier discriminator memorisation |

@@ -100,7 +100,7 @@ rave train \
 
 **Symptom:** After 1.24M training steps, the exported model produced the same audio output regardless of input (mic muting had no effect). Python inference confirmed encoder was working (diff=1.25 between silence and 440Hz sine) but decoder output was nearly identical (diff=0.006).
 
-**Diagnosis:** TensorBoard `regularization` metric showed KL divergence steadily decreasing from 0.5 → 0.25 throughout training. The KL pressure from step 1 (beta=0.1) prevented the encoder/decoder from learning a meaningful latent space before regularization kicked in — a classic VAE posterior collapse.
+**Diagnosis:** TensorBoard `regularization` metric showed KL divergence steadily decreasing from 0.83 → 0.25 throughout training. The KL pressure from step 1 (beta=0.1) prevented the encoder/decoder from learning a meaningful latent space before regularization kicked in — a classic VAE posterior collapse.
 
 **Fix:** Created `config/c128_r10_beta_fixed.gin` with:
 - `initial_value = 0.0001` — effectively zero KL at step 0 (cannot use exactly 0: BetaWarmupCallback uses log-space interpolation, so math.log(0) crashes immediately)

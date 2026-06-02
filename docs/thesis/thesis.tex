@@ -1,7 +1,7 @@
 % ============================================================================
 %  BRAVE-Based Real-Time Voice-to-Instrument Resynthesis
 %  Final memoir, TFG, Grau en Enginyeria de Sistemes Audiovisuals
-%  Universitat Pompeu Fabra, Escola Superior Politecnica
+%  Universitat Pompeu Fabra, Escola d'Enginyeria
 %  Author: Jofre Geli de Fuenmayor             Submission: 12 June 2026
 %
 %  NOTE: This file mirrors the structure of the UPF DTIC TFG template
@@ -84,7 +84,7 @@
 \newcommand{\thesisAuthor}{Jofre Geli de Fuenmayor}
 \newcommand{\thesisAdvisor}{Lonce Wyse \& Xavier Lizarraga}
 \newcommand{\thesisInstitution}{Universitat Pompeu Fabra}
-\newcommand{\thesisFaculty}{Escola Superior Polit\`ecnica}
+\newcommand{\thesisFaculty}{Escola d'Enginyeria}
 \newcommand{\thesisDegree}{Grau en Enginyeria de Sistemes Audiovisuals}
 \newcommand{\thesisDate}{Juny 2026}
 
@@ -130,18 +130,18 @@ The author would like to thank the project directors, \thesisAdvisor, for guidan
 % --- Abstracts ---------------------------------------------------------------
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-This thesis investigates whether the streaming-causal BRAVE architecture can deliver voice-driven instrument resynthesis at sub-10\,ms latency when trained on heterogeneous, limited-scale public datasets. Six guitar and two drum training iterations were systematically evaluated under a custom diagnostic framework. The principal outcome is a guitar autoencoder that partially reconstructs in-distribution guitar audio --- preserving harmonic structure and onsets, though with limited high-frequency detail --- but does not generalise to voice: vocal input lies outside the guitar training distribution and was not rendered as recognisable guitar by any iteration. Reusing the same configuration template for a drums model did not transfer cleanly. Comparison against the official ACIDS-IRCAM percussion baseline showed it more responsive than the project's drums model by more than two orders of magnitude on the same diagnostic, locating the limitation in training recipe and data scale rather than in the BRAVE architecture. The principal contributions are a five-mode failure taxonomy for RAVE-family models on small corpora, a cross-checkpoint calibration of the STFT-correlation diagnostic that exposes a previously unreported limitation of that metric, and an external-baseline disentanglement of architectural from training-recipe failure.
+This thesis investigates whether the streaming-causal BRAVE architecture can deliver voice-driven instrument resynthesis at sub-10\,ms latency when trained on heterogeneous, limited-scale public datasets. Six guitar and two drum training iterations were evaluated under a custom diagnostic framework. The principal outcome is a guitar autoencoder that partially reconstructs in-distribution audio but does not generalise to voice, which lies outside the training distribution. Reusing the same configuration for a drums model did not transfer cleanly. On the same diagnostic, the official ACIDS-IRCAM percussion baseline was more responsive than the project's drums model by more than two orders of magnitude, locating the limitation in training recipe and data scale rather than in the BRAVE architecture. The principal contributions are a five-mode failure taxonomy for RAVE-family models on small corpora, a cross-checkpoint calibration exposing a limitation of the STFT-correlation diagnostic, and an external-baseline disentanglement of architectural from training-recipe failure.
 
 \chapter*{Resum}
 \addcontentsline{toc}{chapter}{Resum}
 \selectlanguage{catalan}%
-Aquesta tesi investiga si l'arquitectura BRAVE de tipus causal-streaming pot oferir resíntesi d'instruments controlada per veu amb una latència inferior a 10\,ms entrenada sobre conjunts de dades públics, heterogenis i de mida limitada. S'han avaluat sis iteracions de guitarra i dues de bateria sota un marc diagnòstic propi. El resultat principal és un autoencoder de guitarra que reconstrueix parcialment àudio de guitarra en distribució --- preservant l'estructura harmònica i els atacs, tot i que amb un detall limitat a altes freqüències --- però no generalitza a la veu: l'entrada vocal queda fora de la distribució d'entrenament i cap iteració no la va reproduir com a guitarra reconeixible. La reutilització de la mateixa plantilla de configuració per a un model de bateria no es va transferir netament. La comparació amb la línia base oficial ACIDS-IRCAM de percussió la va mostrar més responsiva que el model de bateria del projecte per més de dos ordres de magnitud sobre el mateix diagnòstic, situant la limitació en la recepta d'entrenament i no en l'arquitectura BRAVE. Les contribucions principals són una taxonomia de cinc modes de fallada per a models de la família RAVE en corpus petits, una calibració entre punts de control de la mètrica de correlació espectral que exposa una limitació no documentada prèviament d'aquesta mètrica, i una desambiguació mitjançant línia base externa.
+Aquesta tesi investiga si l'arquitectura BRAVE de tipus causal-streaming pot oferir resíntesi d'instruments controlada per veu amb una latència inferior a 10\,ms entrenada sobre conjunts de dades públics, heterogenis i de mida limitada. S'han avaluat sis iteracions de guitarra i dues de bateria sota un marc diagnòstic propi. El resultat principal és un autoencoder de guitarra que reconstrueix parcialment àudio en distribució, però no generalitza a la veu, que queda fora de la distribució d'entrenament. La reutilització de la mateixa configuració per a un model de bateria no es va transferir netament. Sobre el mateix diagnòstic, la línia base oficial ACIDS-IRCAM de percussió va ser més responsiva que el model de bateria del projecte per més de dos ordres de magnitud, situant la limitació en la recepta d'entrenament i no en l'arquitectura BRAVE. Les contribucions principals són una taxonomia de cinc modes de fallada per a models de la família RAVE en corpus petits, una calibració que exposa una limitació de la mètrica de correlació espectral, i una desambiguació mitjançant una línia base externa.
 \selectlanguage{english}%
 
 \chapter*{Resumen}
 \addcontentsline{toc}{chapter}{Resumen}
 \selectlanguage{spanish}%
-Esta tesis investiga si la arquitectura BRAVE de tipo causal-streaming puede ofrecer resíntesis de instrumentos controlada por voz con una latencia inferior a 10\,ms cuando se entrena sobre conjuntos de datos públicos, heterogéneos y de tamaño limitado. Se evaluaron sistemáticamente seis iteraciones de guitarra y dos de batería bajo un marco diagnóstico propio. El resultado principal es un autoencoder de guitarra que reconstruye parcialmente audio de guitarra en distribución --- preservando la estructura armónica y los ataques, aunque con un detalle limitado en altas frecuencias --- pero no generaliza a la voz: la entrada vocal queda fuera de la distribución de entrenamiento y ninguna iteración la reprodujo como guitarra reconocible. La reutilización de la misma plantilla de configuración para un modelo de batería no se transfirió limpiamente. La comparación con la línea base oficial ACIDS-IRCAM de percusión la mostró más responsiva que el modelo de batería del proyecto por más de dos órdenes de magnitud sobre el mismo diagnóstico, situando la limitación en la receta de entrenamiento y no en la arquitectura BRAVE. Las contribuciones principales son una taxonomía de cinco modos de fallo para modelos de la familia RAVE en corpus pequeños, una calibración entre puntos de control de la métrica de correlación espectral que expone una limitación no documentada previamente de dicha métrica, y una desambiguación mediante línea base externa.
+Esta tesis investiga si la arquitectura BRAVE de tipo causal-streaming puede ofrecer resíntesis de instrumentos controlada por voz con una latencia inferior a 10\,ms cuando se entrena sobre conjuntos de datos públicos, heterogéneos y de tamaño limitado. Se evaluaron seis iteraciones de guitarra y dos de batería bajo un marco diagnóstico propio. El resultado principal es un autoencoder de guitarra que reconstruye parcialmente audio en distribución, pero no generaliza a la voz, que queda fuera de la distribución de entrenamiento. La reutilización de la misma configuración para un modelo de batería no se transfirió limpiamente. Sobre el mismo diagnóstico, la línea base oficial ACIDS-IRCAM de percusión fue más responsiva que el modelo de batería del proyecto por más de dos órdenes de magnitud, situando la limitación en la receta de entrenamiento y no en la arquitectura BRAVE. Las contribuciones principales son una taxonomía de cinco modos de fallo para modelos de la familia RAVE en corpus pequeños, una calibración que expone una limitación de la métrica de correlación espectral, y una desambiguación mediante una línea base externa.
 \selectlanguage{english}%
 
 % --- Tables of contents, figures, tables -------------------------------------
@@ -725,7 +725,7 @@ A quantitative reconstruction test on the canonical checkpoint, using eight Guit
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../../figures/figure_5_4_spectrogram_in_dist.png}
-\caption{STFT magnitude spectrograms (log scale) for an in-distribution GuitarSet sample: input (left) and the canonical guitar\_v6 reconstruction (right). The reconstructed spectrogram preserves the harmonic structure and onset patterns of the input although it lacks fine spectral detail above approximately 4\,kHz.}
+\caption{STFT magnitude spectrograms (log scale) for an in-distribution GuitarSet sample: input (left) and the canonical guitar\_v6 reconstruction (right). The reconstruction reproduces the broad spectral envelope of the input but loses fine detail at higher frequencies.}
 \label{fig:spectrogram_in_dist}
 \end{figure}
 
@@ -856,7 +856,7 @@ Two practical implications follow. First, the iteration sequence's reliance on t
 
 \section{Summary of Findings}\label{sec:summary_findings}
 
-This thesis explored the feasibility of the streaming-causal BRAVE architecture for voice-driven instrument resynthesis with less than 10\,ms latency when trained on heterogeneous, limited-scale datasets. The study went through six versions of the guitar model (v1--v6) and two versions of drums (\texttt{drums\_v1}, \texttt{drums\_v2}). It was found that \texttt{guitar\_v6}, which used the official \texttt{v2.gin} and \texttt{causal.gin} configurations along with a smaller latent size of 16 and a longer Phase~1 of 1.5\,M steps, was the first iteration to partially reconstruct in-distribution input --- preserving harmonic structure and onsets, though with limited high-frequency detail (Chapter~\ref{chap:results}). On the other hand, the \texttt{drums\_v2} version was stopped prematurely as the Phase~2 discriminator dominance appeared to re-emerge even though an \texttt{update\_discriminator\_every=4} schedule had been implemented.
+This thesis explored the feasibility of the streaming-causal BRAVE architecture for voice-driven instrument resynthesis with less than 10\,ms latency when trained on heterogeneous, limited-scale datasets. The study went through six versions of the guitar model (v1--v6) and two versions of drums (\texttt{drums\_v1}, \texttt{drums\_v2}). It was found that \texttt{guitar\_v6}, which used the official \texttt{v2.gin} and \texttt{causal.gin} configurations along with a smaller latent size of 16 and a longer Phase~1 of 1.5\,M steps, was the first iteration to partially reconstruct in-distribution input (Chapter~\ref{chap:results}). On the other hand, the \texttt{drums\_v2} version was stopped prematurely as the Phase~2 discriminator dominance appeared to re-emerge even though an \texttt{update\_discriminator\_every=4} schedule had been implemented.
 
 It was concluded that voice remained an out-of-distribution (OOD) input across all the guitar checkpoints --- the main goal of the cross-modal resynthesis (musical instruments from voice). The encoder seemed to distinguish voice inputs, with differences in latents observed ranging from 1.27 to 6.89, but the decoder output was nearly the same in all cases, signalling a structural failure in associating voice latents with the trained guitar manifold. Moreover, the OOD restriction proved to be due to the training recipe rather than to a design flaw of BRAVE, as shown by the comparison with the IRCAM percussion baseline. The external baseline was substantially more reactive, with a forward difference of 1.75 versus 0.0045 in \texttt{drums\_v1} (more than two orders of magnitude greater responsiveness under this diagnostic), and produced output of approximately 0.001 when given silent input. Iterating through the training cycle repeatedly enabled the characterisation of five failure modes of RAVE-family models on small datasets: (i)~posterior collapse (v1), (ii)~latent underutilisation (v2), (iii)~discriminator dominance or generator mode collapse (v3, v4, \texttt{drums\_v2}), (iv)~discriminator collapse (v5), and (v)~OOD decoder behaviour (v6, \texttt{drums\_v1}).
 
@@ -950,7 +950,7 @@ Audio samples used and generated during the project are listed below. Sample fil
 
 \section{Iteration configuration files}
 
-The seven \texttt{.gin} configuration files used across the training iterations are listed in Table~\ref{tab:configs} of Chapter~\ref{chap:implementation}. The full text of each configuration is reproduced in the project repository under \texttt{configs/}.
+The custom \texttt{.gin} configuration files used across the training iterations are listed in Table~\ref{tab:configs} of Chapter~\ref{chap:implementation}. The full text of the five custom configurations is reproduced in the project repository under \texttt{config/}; the unmodified \texttt{c128\_r10.gin} baseline and the official \texttt{v2.gin} and \texttt{causal.gin} files on which the later iterations build ship with \texttt{acids-rave} and are not duplicated there.
 
 \section{Compatibility patches applied to acids-rave 2.3.1}
 
@@ -1087,6 +1087,43 @@ The phase schedule below therefore documents the \emph{active iteration cycle} r
 Initial (planning + setup + baseline run) & 2 weeks & $\sim$15\,\% & 24 March -- 5 April \\
 Execution (iterative training + analysis) & 7 weeks & $\sim$55\,\% & 6 April -- 21 May \\
 Final (writing + defence preparation) & 3 weeks & $\sim$30\,\% & 22 May -- 12 June \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Gantt Chart}\label{sec:gantt}
+
+Table~\ref{tab:gantt} renders the active iteration cycle of Table~\ref{tab:phases} as a Gantt chart, mapping the principal tasks to the twelve weeks between 24~March and 12~June 2026 and to the three project phases. Shaded cells indicate the weeks of active work on each task; phase boundaries are approximate at the weekly resolution shown.
+
+\begin{table}[H]
+\centering
+\caption{Gantt chart of the active iteration cycle (24~March -- 12~June 2026). Shaded cells mark weeks of active work on each task; the phase bands follow the schedule of Table~\ref{tab:phases}.}
+\label{tab:gantt}
+\footnotesize
+\setlength{\tabcolsep}{1.5pt}
+\renewcommand{\arraystretch}{1.25}
+\newcommand{\gb}{{\color{blue!55}\rule{4.6mm}{2.6mm}}}
+\begin{tabular}{@{}p{4.7cm}*{12}{c}@{}}
+\toprule
+ & \multicolumn{2}{c}{Initial} & \multicolumn{7}{c}{Execution} & \multicolumn{3}{c}{Final} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-10}\cmidrule(lr){11-13}
+\textbf{Task} & {\tiny W1} & {\tiny W2} & {\tiny W3} & {\tiny W4} & {\tiny W5} & {\tiny W6} & {\tiny W7} & {\tiny W8} & {\tiny W9} & {\tiny W10} & {\tiny W11} & {\tiny W12} \\
+\midrule
+Project Charter \& planning           & \gb &     &     &     &     &     &     &     &     &     &     &     \\
+Environment setup \& patches          & \gb & \gb &     &     &     &     &     &     &     &     &     &     \\
+Literature review (state of the art)  &     & \gb & \gb &     &     &     &     &     &     &     &     &     \\
+Dataset acquisition                   &     & \gb & \gb &     &     &     &     &     &     &     &     &     \\
+Preprocessing \& LMDB build           &     &     & \gb &     &     &     &     &     &     &     &     &     \\
+Diagnostic protocol design            &     &     & \gb &     &     &     &     &     &     &     &     &     \\
+Guitar v1--v2 (latent failures)       &     &     &     & \gb & \gb &     &     &     &     &     &     &     \\
+Guitar v3--v5 (adversarial failures)  &     &     &     &     &     & \gb & \gb &     &     &     &     &     \\
+Guitar v6 (partial reconstruction)    &     &     &     &     &     &     &     & \gb & \gb &     &     &     \\
+Drums v1--v2 case study               &     &     &     &     &     &     &     & \gb & \gb &     &     &     \\
+IRCAM baseline \& calibration studies &     &     &     &     &     &     &     &     & \gb &     &     &     \\
+Analysis \& figure generation         &     &     &     &     &     &     &     &     &     & \gb & \gb &     \\
+Memoir writing (Chapters 1--6)        &     &     &     &     &     &     &     &     &     & \gb & \gb & \gb \\
+\LaTeX\ migration \& defence prep     &     &     &     &     &     &     &     &     &     &     & \gb & \gb \\
+Submission (12~June)                  &     &     &     &     &     &     &     &     &     &     &     & \gb \\
 \bottomrule
 \end{tabular}
 \end{table}
