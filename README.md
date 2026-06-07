@@ -13,7 +13,7 @@ Bachelor's Thesis (TFG) — Grau en Enginyeria de Sistemes Audiovisuals, Univers
 
 A streaming-causal variational autoencoder (BRAVE) is trained to autoencode either guitar or drum audio at sub-10 ms latency and then driven, at inference time, with vocal input as a cross-modal excitation. The work is presented as a **diagnostic study**: six guitar training iterations and two drum iterations are systematically analysed for failure modes (posterior collapse, latent underutilisation, discriminator dominance, discriminator collapse, OOD decoder behaviour), an external IRCAM percussion checkpoint is used as a baseline, and the methodology is calibrated against measured outcomes rather than asserted.
 
-The submitted contribution is the **diagnostic framework, the failure-mode taxonomy, and a working in-distribution guitar autoencoder**, not a complete voice-to-instrument product. The thesis documents both the successful and the unsuccessful experiments honestly, including a methodological finding that the STFT-magnitude-correlation heuristic used in early evaluation does not robustly discriminate working from collapsed checkpoints.
+The submitted contribution is the **diagnostic framework, the failure-mode taxonomy, and a guitar autoencoder that partially reconstructs in-distribution audio**, not a complete voice-to-instrument product. The thesis documents both the successful and the unsuccessful experiments honestly, including a methodological finding that the STFT-magnitude-correlation heuristic used in early evaluation does not robustly discriminate working from collapsed checkpoints.
 
 ---
 
@@ -45,12 +45,12 @@ voice-to-guitar-brave/
 
 | Iteration | Status | Notes |
 |---|---|---|
-| guitar_v1 | Diagnostic | Posterior collapse identified — KL falls 0.5 → 0.25 |
+| guitar_v1 | Diagnostic | Posterior collapse identified — KL falls 0.83 → 0.25 |
 | guitar_v2 | Diagnostic | Latent underutilisation (KL/dim ≈ 0.005 nats) |
 | guitar_v3 | Diagnostic | Phase-2 generator collapse |
 | guitar_v4 | Diagnostic | Adversarial mode collapse |
 | guitar_v5 | Diagnostic | Discriminator collapse |
-| **guitar_v6** | **Canonical model** | Working in-distribution autoencoder; canonical checkpoint at epoch 1935 (mid Phase 2) |
+| **guitar_v6** | **Canonical model** | Partial in-distribution reconstruction; canonical checkpoint at epoch 1935 (mid Phase 2) |
 | drums_v1 | Diagnostic | Partial transient response, below demonstration threshold |
 | drums_v2 | Terminated | Discriminator dominance reproduced; terminated before completion |
 | VPT (Path A) | Preliminary | Vocal-percussion classifier; explored as future work, not pursued |
@@ -72,11 +72,17 @@ python scripts/setup.py
 
 Data, preprocessing, training, evaluation, and Pure Data deployment are described in detail in [`docs/scripts_and_pipeline.md`](docs/scripts_and_pipeline.md). The thesis's Chapter 4 (Implementation) lists the four `acids-rave 2.3.1` compatibility patches required for current PyTorch/scipy and the exact Pure Data + `nn~` configuration used.
 
-To compile the memoir from source:
+To compile the memoir from source (XeLaTeX is required for the Times New Roman font via `fontspec`):
 
 ```powershell
 cd docs\thesis
-pdflatex thesis ; biber thesis ; pdflatex thesis ; pdflatex thesis
+xelatex thesis ; biber thesis ; xelatex thesis ; xelatex thesis
+```
+
+Or build both the digital (one-side) and print (two-side) PDFs in one step:
+
+```powershell
+.\scripts\build_thesis.ps1
 ```
 
 ---

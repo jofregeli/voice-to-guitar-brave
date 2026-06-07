@@ -178,7 +178,7 @@ RQ1 and RQ3 are answered constructively across the iteration sequence reported i
 
 \section{Objectives and Scope}\label{sec:objectives}
 
-To address the research question, this project defines a general objective to design and evaluate a streaming neural resynthesis pipeline for expressive voice-driven instrumental synthesis. The investigation is organised according to the following specific objectives:
+To address the research questions, this project defines a general objective to design and evaluate a streaming neural resynthesis pipeline for expressive voice-driven instrumental synthesis. The investigation is organised according to the following specific objectives:
 
 \begin{itemize}
 \item Examine whether it is possible to keep the total latency below 10\,ms in a visual programming environment with a causal Variational Autoencoder (VAE) architecture.
@@ -876,7 +876,7 @@ Secondly, the assessment of audio quality and reactivity was done without using 
 
 Thirdly, the data sources were quite limited in size: the guitar dataset contained only about 16 hours and the drum dataset about 11 hours, which is considerably less than many community baselines for high-fidelity synthesis (\S\ref{sec:datasets_preprocessing}).
 
-Fourthly, the STFT magnitude correlation criterion proposed in \S\ref{sec:diagnostic_method} turned out to be insufficient as a discriminator between working and collapsed checkpoints (see \S\ref{sec:stft_calibration}). Near-silent outputs from collapsed models produced correlations comparable to or higher than the working \texttt{guitar\_v6} canonical checkpoint, because the metric captures shared general spectral shape rather than genuine reconstruction. Output amplitude and informal listening evaluation were therefore retained as the operational evaluators; future work should re-derive the reconstruction-validation threshold against both working and collapsed reference models in the target setup.
+Fourthly, the STFT magnitude correlation criterion proposed in \S\ref{sec:diagnostic_method} turned out to be insufficient as a discriminator between working and collapsed checkpoints (see \S\ref{sec:stft_calibration}). Near-silent outputs from collapsed models produced correlations comparable to or higher than the \texttt{guitar\_v6} canonical checkpoint, because the metric captures shared general spectral shape rather than genuine reconstruction. Output amplitude and informal listening evaluation were therefore retained as the operational evaluators; future work should re-derive the reconstruction-validation threshold against both working and collapsed reference models in the target setup.
 
 Lastly, the voice evaluation was done using only one voice, hence it is still unknown whether the model is capable of generalising to different speakers or different vocal characteristics.
 
@@ -995,7 +995,7 @@ These four patches total fewer than ten lines of changed code. Their effect is v
 
 \section{Project Charter}
 
-The full Project Charter is reproduced in the project repository under \texttt{docs/project\_charter.pdf}. Its main elements are summarised in this section.
+The main elements of the Project Charter are summarised in this section; the project planning documents are also tracked in the repository under \texttt{docs/} (\texttt{workplan.md}, \texttt{gantt.md}, \texttt{timeline\_and\_decisions.md}).
 
 \paragraph{Project identification.} Title: \emph{BRAVE-Based Real-Time Voice-to-Instrument Resynthesis}. Programme: \thesisDegree, \thesisInstitution, \thesisFaculty. Author: \thesisAuthor. Director: \thesisAdvisor. Period: December 2025 -- June 2026 (active iteration cycle: 24 March -- 12 June 2026; see \emph{Project history and scope reset} below). ECTS: 20 (approximately 500 hours of student work).
 
@@ -1005,7 +1005,7 @@ The full Project Charter is reproduced in the project repository under \texttt{d
 
 \paragraph{Scope.} In scope: monophonic audio resynthesis; instrument-domain autoencoder training; real-time deployment via Pure Data $+$ \texttt{nn\textasciitilde}; quantitative and informal qualitative evaluation; guitar and drums as case-study instruments. Out of scope: polyphonic modelling; offline batch processing; linguistic speech conversion; formal perceptual evaluation with controlled listener panels.
 
-\paragraph{Deliverables.} Project Charter and Gantt (this appendix); trained autoencoder checkpoints (TorchScript); diagnostic Python scripts; Pure Data deployment patches; failure taxonomy (\S\ref{sec:failure_taxonomy}); final memoir (this document); defence presentation; public Git repository.
+\paragraph{Deliverables.} Project Charter, Work Breakdown Structure and phase schedule (this appendix; Gantt chart tracked in \texttt{docs/gantt.md}); trained autoencoder checkpoints (TorchScript); diagnostic Python scripts; Pure Data deployment patches; failure taxonomy (\S\ref{sec:failure_taxonomy}); final memoir (this document); defence presentation; public Git repository.
 
 \paragraph{Stakeholders.} Author (implementation, evaluation, documentation); director (methodological guidance and milestone review); tribunal (final evaluation); future practitioners (secondary beneficiaries of the diagnostic methodology).
 
