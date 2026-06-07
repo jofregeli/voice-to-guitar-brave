@@ -79,7 +79,7 @@ cd docs\thesis
 xelatex thesis ; biber thesis ; xelatex thesis ; xelatex thesis
 ```
 
-Or build both the digital (one-side) and print (two-side) PDFs in one step:
+This produces the two-sided, template-compliant `thesis.pdf` (the submission file: blank versos, uppercase-Roman front matter opening on odd pages). To also generate a clean one-sided on-screen copy (`thesis_screen.pdf`), run:
 
 ```powershell
 .\scripts\build_thesis.ps1

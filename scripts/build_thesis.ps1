@@ -1,10 +1,11 @@
-# Build both digital (oneside) and print (twoside) versions of the thesis.
+# Build the thesis PDFs.
 # Run from the repository root:
 #   .\scripts\build_thesis.ps1
 #
 # Produces:
-#   docs/thesis/thesis.pdf        - oneside, continuous flow (digital submission)
-#   docs/thesis/thesis_print.pdf  - twoside, openright with blank versos (printed bound copy)
+#   docs/thesis/thesis.pdf         - two-sided, openright, blank versos, uppercase
+#                                    Roman front matter (TEMPLATE-COMPLIANT; submit this)
+#   docs/thesis/thesis_screen.pdf  - one-sided, continuous flow (clean on-screen copy)
 #
 # Requires XeLaTeX (MiKTeX) and biber on PATH.
 
@@ -30,19 +31,19 @@ function Invoke-Build {
     }
 }
 
-# 1. Oneside (canonical, already set in thesis.tex)
-Invoke-Build -Label "digital (oneside)" -OutputName "thesis.pdf" -RunBiber $true
+# 1. Two-sided template-compliant build (canonical, already set in thesis.tex)
+Invoke-Build -Label "submission (two-sided, template-compliant)" -OutputName "thesis.pdf" -RunBiber $true
 
-# 2. Twoside (temporary documentclass swap)
+# 2. One-sided screen copy (temporary documentclass swap)
 $content = Get-Content $thesisTex -Raw
-$swapped = $content -replace '\\documentclass\[a4paper,11pt,oneside,openany\]\{book\}', '\documentclass[a4paper,11pt,twoside,openright]{book}'
+$swapped = $content -replace '\\documentclass\[a4paper,11pt,twoside,openright\]\{book\}', '\documentclass[a4paper,11pt,oneside,openany]{book}'
 Set-Content -Path $thesisTex -Value $swapped -NoNewline
 try {
-    Invoke-Build -Label "print (twoside)" -OutputName "thesis_print.pdf" -RunBiber $false
+    Invoke-Build -Label "screen copy (one-sided)" -OutputName "thesis_screen.pdf" -RunBiber $false
 } finally {
     Set-Content -Path $thesisTex -Value $content -NoNewline
-    # Rebuild oneside once to restore thesis.pdf to canonical state
-    Invoke-Build -Label "restoring canonical thesis.pdf (oneside)" -OutputName "thesis.pdf" -RunBiber $false
+    # Rebuild canonical two-sided thesis.pdf to restore submission state
+    Invoke-Build -Label "restoring canonical thesis.pdf (two-sided)" -OutputName "thesis.pdf" -RunBiber $false
 }
 
-Write-Host "`nBoth PDFs ready in docs/thesis/" -ForegroundColor Green
+Write-Host "`nBoth PDFs ready in docs/thesis/  (submit thesis.pdf)" -ForegroundColor Green
