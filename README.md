@@ -79,7 +79,7 @@ cd docs\thesis
 xelatex thesis ; biber thesis ; xelatex thesis ; xelatex thesis
 ```
 
-This produces the two-sided, template-compliant `thesis.pdf` (the submission file: blank versos, uppercase-Roman front matter opening on odd pages). To also generate a clean one-sided on-screen copy (`thesis_screen.pdf`), run:
+This produces the template-compliant `thesis.pdf` (the submission file: one-sided continuous flow with no blank pages in the body, uppercase-Roman front matter, literal Times New Roman). Or run the build script:
 
 ```powershell
 .\scripts\build_thesis.ps1

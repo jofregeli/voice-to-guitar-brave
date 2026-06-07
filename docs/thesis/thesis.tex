@@ -11,7 +11,12 @@
 %  and ensure tfg_dtic_upf.cls and logo_upf.png are in the same folder.
 % ============================================================================
 
-\documentclass[a4paper,11pt,twoside,openright]{book}
+\documentclass[a4paper,11pt,oneside,openany]{book}
+
+% Emit /ActualText so copy-paste, search indexing and screen readers receive
+% correct Unicode (fixes XeTeX mapping the Times New Roman ';' glyph to the
+% Greek question mark U+037E in the PDF text layer).
+\XeTeXgenerateactualtext=1
 
 % --- Language (XeLaTeX reads UTF-8 natively; fontenc handled by fontspec) ---
 \usepackage[main=english,catalan,spanish]{babel}
@@ -91,7 +96,7 @@
 % --- Captions, paragraph spacing --------------------------------------------
 \captionsetup{font=small,labelfont=bf,format=plain}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt}
+\setlength{\parskip}{4pt plus 1pt minus 1pt}
 
 % --- Page style: page numbers at bottom-centre, no running headers ----------
 % Overrides book-class default 'headings' style; the template requires
@@ -568,37 +573,7 @@ The implementation details that operationalise this methodology --- software env
 % ============================================================================
 \chapter{Implementation}\label{chap:implementation}
 
-This chapter describes how the methodology of Chapter~\ref{chap:methodology} was operationalised in software and deployed for real-time use. Implementation choices are linked explicitly to the project's research objectives: sub-10\,ms latency, encoder responsiveness, and reproducible training.
-
-\section{Environment and Compatibility}\label{sec:env_compat}
-
-The BRAVE resynthesis pipeline \parencite{caillon2021rave} was deployed on a single workstation. The complete software and hardware stack is summarised in Table~\ref{tab:env}.
-
-\begin{table}[H]
-\centering
-\caption{Hardware and software environment used for all training and deployment in this project.}
-\label{tab:env}
-\begin{tabular}{ll}
-\toprule
-\textbf{Component} & \textbf{Version} \\
-\midrule
-Operating system & Windows 11 (build 26200+) \\
-Python & 3.14.3 \\
-PyTorch & 2.11.0+cu128 \\
-CUDA driver & 13.2 \\
-GPU & NVIDIA RTX 5080 (16\,GB VRAM) \\
-acids-rave & 2.3.1 \\
-pytorch-lightning & 2.6.1 \\
-scipy & $\geq$ 1.14 \\
-Audio tooling & librosa, soundfile, ffmpeg \\
-Real-time host & Pure Data 0.55 with the \texttt{nn\textasciitilde} external \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-During training, the RTX 5080 supported an observed throughput of 9--12 optimisation steps per second. Each full 3,000,000-step run therefore required 90--120 wall-clock hours, which made GPU capacity the primary constraint on iteration speed.
-
-A notable implementation challenge involved upstream library drift in acids-rave 2.3.1, which was originally authored against earlier SciPy and PyTorch Lightning ecosystems. Four compatibility patches were applied to the library source, grouped into three categories: two SciPy API updates (a relocated \texttt{scipy.signal.kaiser} import and a type-coerced \texttt{kaiserord} argument), one SciPy parameter rename (\texttt{firwin}'s \texttt{nyq} argument to \texttt{fs}), and one PyTorch Lightning 2.x API rename (\texttt{validation\_epoch\_end} to \texttt{on\_validation\_epoch\_end}). Together they total fewer than ten lines of changed code. The exact diffs are reproduced in Appendix-\ref{app:configs} and in the public repository to enable independent verification of the environment.
+This chapter describes how the methodology of Chapter~\ref{chap:methodology} was operationalised in software and deployed for real-time use. Implementation choices are linked explicitly to the project's research objectives: sub-10\,ms latency, encoder responsiveness, and reproducible training. The hardware and software environment, together with the four \texttt{acids-rave 2.3.1} compatibility patches required to run the toolchain on current SciPy and PyTorch Lightning releases, are documented in Appendix-\ref{app:configs}.
 
 \section{Training Pipeline}\label{sec:training_pipeline}
 
@@ -951,7 +926,33 @@ Audio samples used and generated during the project are listed below. Sample fil
 \item Synthetic drum samples used for the Path~A hybrid-pipeline preliminary exploration (kick, snare, hi-hat one-shots), generated procedurally by \texttt{scripts/vpt\_make\_samples.py}.
 \end{itemize}
 
-\chapter{Configurations and Compatibility Patches}\label{app:configs}
+\chapter{Environment, Configurations and Compatibility Patches}\label{app:configs}
+
+\section{Hardware and software environment}\label{sec:env_compat}
+
+The BRAVE resynthesis pipeline \parencite{caillon2021rave} was deployed on a single workstation. The complete software and hardware stack is summarised in Table~\ref{tab:env}. During training, the RTX 5080 supported an observed throughput of 9--12 optimisation steps per second, so each full 3,000,000-step run required 90--120 wall-clock hours, which made GPU capacity the primary constraint on iteration speed.
+
+\begin{table}[H]
+\centering
+\caption{Hardware and software environment used for all training and deployment in this project.}
+\label{tab:env}
+\begin{tabular}{ll}
+\toprule
+\textbf{Component} & \textbf{Version} \\
+\midrule
+Operating system & Windows 11 (build 26200+) \\
+Python & 3.14.3 \\
+PyTorch & 2.11.0+cu128 \\
+CUDA driver & 13.2 \\
+GPU & NVIDIA RTX 5080 (16\,GB VRAM) \\
+acids-rave & 2.3.1 \\
+pytorch-lightning & 2.6.1 \\
+scipy & $\geq$ 1.14 \\
+Audio tooling & librosa, soundfile, ffmpeg \\
+Real-time host & Pure Data 0.55 with the \texttt{nn\textasciitilde} external \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Iteration configuration files}
 
