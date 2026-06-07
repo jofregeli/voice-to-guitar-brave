@@ -152,9 +152,9 @@ Generates the five Chapter 5 figures at 300 DPI from existing TensorBoard logs a
 
 - **Figure 5.1** — KL trajectory of guitar_v1 (posterior collapse evidence)
 - **Figure 5.2** — Cross-iteration GAN logit gap evolution (guitar_v4 dominance vs guitar_v5 collapse vs guitar_v6 reversal)
-- **Figure 5.3** — drums_v2 Phase 2 GAN gap widening (9.8 → 21.9)
-- **Figure 5.4** — Input/output spectrogram comparison for guitar_v6 in-distribution reconstruction
-- **Figure 5.5** — Per-source noise-floor distribution boxplot (six recording paths, 35.8 dB spread)
+- **Figure 5.3** — Input/output spectrogram comparison for guitar_v6 in-distribution reconstruction
+- **Figure 5.4** — drums_v2 Phase 2 GAN gap widening (9.8 → 20.3)
+- **Figure 5.5** — Per-source noise-floor distribution boxplot (six recording paths, 35.9 dB spread)
 
 Outputs are saved to `figures/figure_5_*.png`. TensorBoard scalar extraction uses `tensorboard.backend.event_processing.event_accumulator`; noise-floor computation replicates `scripts/analyze_noise_floor.py` for direct consistency with §3.3 of the memoir.
 

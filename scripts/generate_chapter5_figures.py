@@ -125,44 +125,17 @@ def figure_5_2():
 
 
 # -------- Figure 5.3 --------
+# Figure numbering follows the order of appearance in thesis.tex: the
+# in-distribution spectrogram is Figure 5.3, the drums_v2 GAN plot is Figure 5.4.
 def figure_5_3():
-    """drums_v2 Phase 2 GAN gap widening."""
-    s_real, v_real = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_real")
-    s_fake, v_fake = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_fake")
-    if len(s_real) == 0:
-        print("[5.3] no drums_v2 GAN data; skipping")
-        return
-    common = np.intersect1d(s_real, s_fake)
-    idx_r = np.searchsorted(s_real, common)
-    idx_f = np.searchsorted(s_fake, common)
-    gap = v_real[idx_r] - v_fake[idx_f]
-
-    # Phase 1 ends around step 1.5M
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.plot(common / 1e6, gap, color="#7f8c8d", lw=0.4, alpha=0.3, label="raw")
-    ax.plot(common / 1e6, smooth(gap, alpha=0.98), color="#8e44ad", lw=1.8, label="smoothed")
-    ax.axvline(1.5, color="grey", lw=0.6, ls="--", label="Phase 2 begins")
-    ax.set_xlabel("Training step (millions)")
-    ax.set_ylabel("GAN logit gap (pred_real − pred_fake)")
-    ax.set_title("drums_v2 Phase 2 discriminator dominance reproduction")
-    ax.legend(loc="best")
-    ax.grid(True, alpha=0.3)
-    out = FIG_DIR / "figure_5_3_drums_v2_gan_widening.png"
-    fig.savefig(out)
-    plt.close(fig)
-    print(f"[5.3] saved {out}  (gap end-of-training = {gap[-1]:.2f})")
-
-
-# -------- Figure 5.4 --------
-def figure_5_4():
-    """Input vs guitar_v6 output spectrogram on a GuitarSet sample."""
+    """Input vs guitar_v6 output spectrogram on a GuitarSet sample (Fig 5.3)."""
     model_path = "models/guitar_v6_best.ts"
     if not Path(model_path).exists():
-        print(f"[5.4] model missing: {model_path}")
+        print(f"[5.3] model missing: {model_path}")
         return
     wavs = sorted(glob.glob("data/raw/guitarset/*_solo_mic.wav"))
     if not wavs:
-        print("[5.4] no GuitarSet samples available")
+        print("[5.3] no GuitarSet samples available")
         return
     rng = np.random.default_rng(42)
     sample = wavs[int(rng.integers(0, len(wavs)))]
@@ -197,10 +170,39 @@ def figure_5_4():
     axes[1].set_title("Output: guitar_v6 canonical reconstruction (epoch 1935)")
     fig.colorbar(im1, ax=axes[1], format="%+2.0f dB")
     fig.suptitle(f"In-distribution reconstruction example ({Path(sample).name})", y=1.02)
-    out = FIG_DIR / "figure_5_4_spectrogram_in_dist.png"
+    out = FIG_DIR / "figure_5_3_spectrogram_in_dist.png"
     fig.savefig(out)
     plt.close(fig)
-    print(f"[5.4] saved {out}  (sample = {Path(sample).name})")
+    print(f"[5.3] saved {out}  (sample = {Path(sample).name})")
+
+
+# -------- Figure 5.4 --------
+def figure_5_4():
+    """drums_v2 Phase 2 GAN gap widening (Fig 5.4)."""
+    s_real, v_real = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_real")
+    s_fake, v_fake = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_fake")
+    if len(s_real) == 0:
+        print("[5.4] no drums_v2 GAN data; skipping")
+        return
+    common = np.intersect1d(s_real, s_fake)
+    idx_r = np.searchsorted(s_real, common)
+    idx_f = np.searchsorted(s_fake, common)
+    gap = v_real[idx_r] - v_fake[idx_f]
+
+    # Phase 1 ends around step 1.5M
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    ax.plot(common / 1e6, gap, color="#7f8c8d", lw=0.4, alpha=0.3, label="raw")
+    ax.plot(common / 1e6, smooth(gap, alpha=0.98), color="#8e44ad", lw=1.8, label="smoothed")
+    ax.axvline(1.5, color="grey", lw=0.6, ls="--", label="Phase 2 begins")
+    ax.set_xlabel("Training step (millions)")
+    ax.set_ylabel("GAN logit gap (pred_real − pred_fake)")
+    ax.set_title("drums_v2 Phase 2 discriminator dominance reproduction")
+    ax.legend(loc="best")
+    ax.grid(True, alpha=0.3)
+    out = FIG_DIR / "figure_5_4_drums_v2_gan_widening.png"
+    fig.savefig(out)
+    plt.close(fig)
+    print(f"[5.4] saved {out}  (gap end-of-training = {gap[-1]:.2f})")
 
 
 # -------- Figure 5.5 --------

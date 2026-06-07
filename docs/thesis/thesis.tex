@@ -327,7 +327,7 @@ The performance of RAVE-family models strongly correlates with the quantity, var
 
 \paragraph{Groove MIDI Dataset.} \parencite{gillick2019groove} provides a percussive analogue to the guitar collections: approximately 13 hours of acoustic drum-kit performances by professional drummers with synchronised MIDI and audio across a wide range of styles and tempos. Beyond comfortably exceeding the lower bound for RAVE training, it also supports the secondary case study of this thesis.
 
-\paragraph{Dataset selection rationale and noise-floor heterogeneity.} After selection for compatible files (mono, 16-bit, 44.1\,kHz), the consolidated guitar corpus (GuitarSet, the Guitar-TECHS DI channel and the continuous-performance subsets of IDMT-SMT-Guitar) is approximately 16 hours. This duration lies within the recommended training window of \textcite{caillon2021rave} but introduces a well-known risk: mixing recording paths leads to inconsistency in background noise floors. The quantitative analysis presented in \S\ref{sec:noise_floor} reveals a 35.9\,dB range between the cleanest direct-input electric recordings and the loudest microphone-captured acoustic recordings. This range exceeds the typical dynamic variation within a single performance and may be encoded as a prominent latent feature, biasing the learned manifold toward recording-method discrimination rather than purely timbral content.
+\paragraph{Dataset selection rationale and noise-floor heterogeneity.} After selection for compatible files (mono, 16-bit, 44.1\,kHz), the consolidated guitar corpus (GuitarSet, the Guitar-TECHS DI channel and the continuous-performance subsets of IDMT-SMT-Guitar) is approximately 9 hours of raw audio, expanding to approximately 16 hours in the training database after RAVE's overlap segmentation (\S\ref{sec:datasets_preprocessing}). This duration lies within the recommended training window of \textcite{caillon2021rave} but introduces a well-known risk: mixing recording paths leads to inconsistency in background noise floors. The quantitative analysis presented in \S\ref{sec:noise_floor} reveals a 35.9\,dB range between the cleanest direct-input electric recordings and the loudest microphone-captured acoustic recordings. This range exceeds the typical dynamic variation within a single performance and may be encoded as a prominent latent feature, biasing the learned manifold toward recording-method discrimination rather than purely timbral content.
 
 \section{Research Gap and Motivation}\label{sec:research_gap}
 
@@ -724,7 +724,7 @@ A quantitative reconstruction test on the canonical checkpoint, using eight Guit
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_4_spectrogram_in_dist.png}
+\includegraphics[width=0.95\textwidth]{../../figures/figure_5_3_spectrogram_in_dist.png}
 \caption{STFT magnitude spectrograms (log scale) for an in-distribution GuitarSet sample: input (left) and the canonical guitar\_v6 reconstruction (right). The reconstruction reproduces the broad spectral envelope of the input but loses fine detail at higher frequencies.}
 \label{fig:spectrogram_in_dist}
 \end{figure}
@@ -773,7 +773,7 @@ The second iteration (\texttt{drums\_v2}) applied the configuration template est
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_3_drums_v2_gan_widening.png}
+\includegraphics[width=0.95\textwidth]{../../figures/figure_5_4_drums_v2_gan_widening.png}
 \caption{drums\_v2 GAN logit gap over the duration of training. Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in guitar\_v3/v4 despite the use of \texttt{update\_discriminator\_every=4}.}
 \label{fig:drums_v2_gan}
 \end{figure}
@@ -874,7 +874,7 @@ Several limitations of this study should be considered. First, the reported late
 
 Secondly, the assessment of audio quality and reactivity was done without using any formal auditory perceptual measures such as MUSHRA (Multiple Stimuli with Hidden Reference and Anchor) or MOS (Mean Opinion Score). All listening tests were informal and performed by a single author, introducing bias and affecting the generalisability of the qualitative results (Chapter~\ref{chap:results}).
 
-Thirdly, the data sources were quite limited in size: the guitar dataset contained only about 16 hours and the drum dataset about 11 hours, which is considerably less than many community baselines for high-fidelity synthesis (\S\ref{sec:datasets_preprocessing}).
+Thirdly, the data sources were quite limited in size: the guitar dataset contained only about 9 hours of raw audio (approximately 16 hours after overlap segmentation) and the drum dataset about 11 hours, which is considerably less than many community baselines for high-fidelity synthesis (\S\ref{sec:datasets_preprocessing}).
 
 Fourthly, the STFT magnitude correlation criterion proposed in \S\ref{sec:diagnostic_method} turned out to be insufficient as a discriminator between working and collapsed checkpoints (see \S\ref{sec:stft_calibration}). Near-silent outputs from collapsed models produced correlations comparable to or higher than the \texttt{guitar\_v6} canonical checkpoint, because the metric captures shared general spectral shape rather than genuine reconstruction. Output amplitude and informal listening evaluation were therefore retained as the operational evaluators; future work should re-derive the reconstruction-validation threshold against both working and collapsed reference models in the target setup.
 
