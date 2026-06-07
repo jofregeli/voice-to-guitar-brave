@@ -956,7 +956,7 @@ The custom \texttt{.gin} configuration files used across the training iterations
 
 Four patches were required to install and run acids-rave 2.3.1 on the project environment (Python 3.14, PyTorch 2.11, scipy $\geq$ 1.14, pytorch-lightning 2.6).
 
-\paragraph{Patch 1 --- \texttt{pqmf.py} line 10: \texttt{scipy.signal.kaiser} relocated.}
+\medskip\noindent\textbf{Patch 1 --- \texttt{pqmf.py} line 10: \texttt{scipy.signal.kaiser} relocated.}\par\nobreak
 \begin{lstlisting}[language=Python]
 # Before
 from scipy.signal import firwin, kaiser, kaiser_beta, kaiserord
@@ -965,7 +965,7 @@ from scipy.signal import firwin, kaiser_beta, kaiserord
 from scipy.signal.windows import kaiser
 \end{lstlisting}
 
-\paragraph{Patch 2 --- \texttt{pqmf.py} line 67: \texttt{kaiserord} argument type.}
+\medskip\noindent\textbf{Patch 2 --- \texttt{pqmf.py} line 67: \texttt{kaiserord} argument type.}\par\nobreak
 \begin{lstlisting}[language=Python]
 # Before
 N_, beta = kaiserord(atten, wc / np.pi)
@@ -973,7 +973,7 @@ N_, beta = kaiserord(atten, wc / np.pi)
 N_, beta = kaiserord(atten, float(np.asarray(wc).ravel()[0]) / np.pi)
 \end{lstlisting}
 
-\paragraph{Patch 3 --- \texttt{pqmf.py} line 70: \texttt{firwin} \texttt{nyq} parameter.}
+\medskip\noindent\textbf{Patch 3 --- \texttt{pqmf.py} line 70: \texttt{firwin} \texttt{nyq} parameter.}\par\nobreak
 \begin{lstlisting}[language=Python]
 # Before
 h = firwin(N, wc, window=('kaiser', beta), scale=False, nyq=np.pi)
@@ -981,7 +981,7 @@ h = firwin(N, wc, window=('kaiser', beta), scale=False, nyq=np.pi)
 h = firwin(N, wc, window=('kaiser', beta), scale=False, fs=2 * np.pi)
 \end{lstlisting}
 
-\paragraph{Patch 4 --- \texttt{model.py} line 445: PyTorch Lightning 2.x API rename.}
+\medskip\noindent\textbf{Patch 4 --- \texttt{model.py} line 445: PyTorch Lightning 2.x API rename.}\par\nobreak
 \begin{lstlisting}[language=Python]
 # Before
 def validation_epoch_end(self, out):
