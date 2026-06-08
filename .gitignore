@@ -40,9 +40,9 @@ lightning_logs/
 wandb/
 *.log
 
-# Transfer scratch (slim-runs bundle for moving figures to another machine)
+# Transfer scratch (bundles for moving data/models to another machine)
 runs_slim/
-runs_tfevents.zip
+*.zip
 
 # RAVE/BRAVE specific
 *.ckpt          # Model checkpoints (large)
