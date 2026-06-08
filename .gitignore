@@ -40,6 +40,10 @@ lightning_logs/
 wandb/
 *.log
 
+# Transfer scratch (slim-runs bundle for moving figures to another machine)
+runs_slim/
+runs_tfevents.zip
+
 # RAVE/BRAVE specific
 *.ckpt          # Model checkpoints (large)
 *.ts            # TorchScript exports (can be very large)
