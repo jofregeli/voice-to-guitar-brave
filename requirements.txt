@@ -14,6 +14,7 @@ numpy>=1.24.0
 tqdm>=4.65.0
 matplotlib>=3.7.0
 pandas>=2.0.0
+tensorboard>=2.14.0             # read training-log scalars for the Chapter 5 figures
 
 # Evaluation
 frechet-audio-distance>=0.2.0   # FAD metric (install: pip install frechet_audio_distance)
