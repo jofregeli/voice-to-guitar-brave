@@ -13,6 +13,10 @@ venv/
 data/raw/
 data/processed/
 data/rave_ready/
+data/test_preprocessed*/
+
+# LMDB databases (RAVE preprocessing) — preallocated huge/sparse, never commit
+*.mdb
 
 # Models — checkpoints can be large, store separately
 models/
