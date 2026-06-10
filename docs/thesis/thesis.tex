@@ -83,6 +83,16 @@
   pdfauthor={Jofre Geli de Fuenmayor}
 }
 
+% --- Project repository permalinks -------------------------------------------
+% Single point of truth for the public Git repository and the commit the
+% thesis links against. To re-pin every footnote permalink to a newer release
+% commit, change \repocommit only. \repofile{path} renders a typeset path that
+% links to the file at that commit; \repolink{path}{text} links arbitrary text.
+\newcommand{\repobase}{https://github.com/jofregeli/voice-to-guitar-brave}
+\newcommand{\repocommit}{36ddd4c7767be9e0b364fb0b6af7480256bd34bb}
+\newcommand{\repofile}[1]{\href{\repobase/blob/\repocommit/\detokenize{#1}}{\texttt{\detokenize{#1}}}}
+\newcommand{\repolink}[2]{\href{\repobase/blob/\repocommit/\detokenize{#1}}{#2}}
+
 % --- Metadata ----------------------------------------------------------------
 \newcommand{\thesisTitle}{BRAVE-Based Real-Time Voice-to-Instrument Resynthesis}
 \newcommand{\thesisSubtitle}{System Design, Training Diagnostics, and Failure Analysis}
@@ -136,18 +146,18 @@ The author would like to thank the project directors, \thesisAdvisor, for guidan
 % --- Abstracts ---------------------------------------------------------------
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-This thesis investigates whether the streaming-causal BRAVE architecture can deliver voice-driven instrument resynthesis at sub-10\,ms latency when trained on heterogeneous, limited-scale public datasets. Six guitar and two drum training iterations were evaluated under a custom diagnostic framework. The principal outcome is a guitar autoencoder that partially reconstructs in-distribution audio but does not generalise to voice, which lies outside the training distribution. Reusing the same configuration for a drums model did not transfer cleanly. On the same diagnostic, the official ACIDS-IRCAM percussion baseline was more responsive than the project's drums model by more than two orders of magnitude, locating the limitation in training recipe and data scale rather than in the BRAVE architecture. The principal contributions are a five-mode failure taxonomy for RAVE-family models on small corpora, a cross-checkpoint calibration exposing a limitation of the STFT-correlation diagnostic, and an external-baseline disentanglement of architectural from training-recipe failure.
+Neural audio synthesis models --- from autoregressive networks such as WaveNet to the real-time variational autoencoder RAVE and its streaming-causal successor BRAVE --- have made expressive timbre transfer feasible on consumer hardware, raising the prospect of driving a musical instrument directly with the human voice. This thesis investigates whether the streaming-causal BRAVE architecture can deliver voice-driven instrument resynthesis at sub-10\,ms latency when trained on heterogeneous (mixed-source, differing recording conditions), limited-scale public datasets of guitar and drum audio. Six guitar and two drum training iterations were evaluated under a custom diagnostic framework. The principal outcome is a guitar autoencoder that partially reconstructs in-distribution audio but does not generalise to voice, which lies outside the training distribution. Reusing the same configuration for a drums model did not transfer cleanly. On the same diagnostic, the official ACIDS-IRCAM percussion baseline was more responsive than the project's drums model by more than two orders of magnitude, locating the limitation in training recipe and data scale rather than in the BRAVE architecture. The principal contributions are a five-mode failure taxonomy for RAVE-family models on small corpora, a cross-checkpoint calibration exposing a limitation of the STFT-correlation diagnostic, and an external-baseline disentanglement of architectural from training-recipe failure.
 
 \chapter*{Resum}
 \addcontentsline{toc}{chapter}{Resum}
 \selectlanguage{catalan}%
-Aquesta tesi investiga si l'arquitectura BRAVE de tipus causal-streaming pot oferir resíntesi d'instruments controlada per veu amb una latència inferior a 10\,ms entrenada sobre conjunts de dades públics, heterogenis i de mida limitada. S'han avaluat sis iteracions de guitarra i dues de bateria sota un marc diagnòstic propi. El resultat principal és un autoencoder de guitarra que reconstrueix parcialment àudio en distribució, però no generalitza a la veu, que queda fora de la distribució d'entrenament. La reutilització de la mateixa configuració per a un model de bateria no es va transferir netament. Sobre el mateix diagnòstic, la línia base oficial ACIDS-IRCAM de percussió va ser més responsiva que el model de bateria del projecte per més de dos ordres de magnitud, situant la limitació en la recepta d'entrenament i no en l'arquitectura BRAVE. Les contribucions principals són una taxonomia de cinc modes de fallada per a models de la família RAVE en corpus petits, una calibració que exposa una limitació de la mètrica de correlació espectral, i una desambiguació mitjançant una línia base externa.
+Els models de síntesi neuronal d'àudio --- des de xarxes autoregressives com WaveNet fins a l'autoencoder variacional en temps real RAVE i el seu successor causal-streaming BRAVE --- han fet viable la transferència expressiva de timbre en maquinari de consum, obrint la possibilitat de controlar un instrument musical directament amb la veu humana. Aquesta tesi investiga si l'arquitectura BRAVE de tipus causal-streaming pot oferir resíntesi d'instruments controlada per veu amb una latència inferior a 10\,ms entrenada sobre conjunts de dades públics, heterogenis (de fonts diverses i amb condicions de gravació diferents) i de mida limitada. S'han avaluat sis iteracions de guitarra i dues de bateria sota un marc diagnòstic propi. El resultat principal és un autoencoder de guitarra que reconstrueix parcialment àudio en distribució, però no generalitza a la veu, que queda fora de la distribució d'entrenament. La reutilització de la mateixa configuració per a un model de bateria no es va transferir netament. Sobre el mateix diagnòstic, la línia base oficial ACIDS-IRCAM de percussió va ser més responsiva que el model de bateria del projecte per més de dos ordres de magnitud, situant la limitació en la recepta d'entrenament i no en l'arquitectura BRAVE. Les contribucions principals són una taxonomia de cinc modes de fallada per a models de la família RAVE en corpus petits, una calibració que exposa una limitació de la mètrica de correlació espectral, i una desambiguació mitjançant una línia base externa.
 \selectlanguage{english}%
 
 \chapter*{Resumen}
 \addcontentsline{toc}{chapter}{Resumen}
 \selectlanguage{spanish}%
-Esta tesis investiga si la arquitectura BRAVE de tipo causal-streaming puede ofrecer resíntesis de instrumentos controlada por voz con una latencia inferior a 10\,ms cuando se entrena sobre conjuntos de datos públicos, heterogéneos y de tamaño limitado. Se evaluaron seis iteraciones de guitarra y dos de batería bajo un marco diagnóstico propio. El resultado principal es un autoencoder de guitarra que reconstruye parcialmente audio en distribución, pero no generaliza a la voz, que queda fuera de la distribución de entrenamiento. La reutilización de la misma configuración para un modelo de batería no se transfirió limpiamente. Sobre el mismo diagnóstico, la línea base oficial ACIDS-IRCAM de percusión fue más responsiva que el modelo de batería del proyecto por más de dos órdenes de magnitud, situando la limitación en la receta de entrenamiento y no en la arquitectura BRAVE. Las contribuciones principales son una taxonomía de cinco modos de fallo para modelos de la familia RAVE en corpus pequeños, una calibración que expone una limitación de la métrica de correlación espectral, y una desambiguación mediante una línea base externa.
+Los modelos de síntesis neuronal de audio --- desde redes autorregresivas como WaveNet hasta el autoencoder variacional en tiempo real RAVE y su sucesor causal-streaming BRAVE --- han hecho viable la transferencia expresiva de timbre en hardware de consumo, abriendo la posibilidad de controlar un instrumento musical directamente con la voz humana. Esta tesis investiga si la arquitectura BRAVE de tipo causal-streaming puede ofrecer resíntesis de instrumentos controlada por voz con una latencia inferior a 10\,ms cuando se entrena sobre conjuntos de datos públicos, heterogéneos (de fuentes diversas y con condiciones de grabación diferentes) y de tamaño limitado. Se evaluaron seis iteraciones de guitarra y dos de batería bajo un marco diagnóstico propio. El resultado principal es un autoencoder de guitarra que reconstruye parcialmente audio en distribución, pero no generaliza a la voz, que queda fuera de la distribución de entrenamiento. La reutilización de la misma configuración para un modelo de batería no se transfirió limpiamente. Sobre el mismo diagnóstico, la línea base oficial ACIDS-IRCAM de percusión fue más responsiva que el modelo de batería del proyecto por más de dos órdenes de magnitud, situando la limitación en la receta de entrenamiento y no en la arquitectura BRAVE. Las contribuciones principales son una taxonomía de cinco modos de fallo para modelos de la familia RAVE en corpus pequeños, una calibración que expone una limitación de la métrica de correlación espectral, y una desambiguación mediante una línea base externa.
 \selectlanguage{english}%
 
 % --- Generative AI disclosure ------------------------------------------------
@@ -179,7 +189,30 @@ Currently, in the world of live electronic music performance, there is a tendenc
 
 Neural audio synthesis is now advancing thanks to key models such as WaveNet \parencite{vandenoord2016wavenet}, NSynth \parencite{engel2017nsynth}, and DDSP \parencite{engel2020ddsp}. However, these initial models are not very suitable for live use. Autoregressive models require a lot of computing power, and on the other hand, early differentiable signal processing models often have to focus on explicit tone tracking or processing in windows that can cause noticeable lag.
 
-The launch of RAVE \parencite{caillon2021rave} became highly influential, facilitating high-quality synthesis even on widely accessible CPU hardware. BRAVE \parencite{caspe2025brave} goes a step further with a streaming-causal architecture aimed at creating interactive and responsive music in real-time. However, converting voice to instrument is quite difficult when the source and destination timbres are very different acoustically. For example, plucked string instruments, such as the guitar, have a sharp percussive attack and an exponentially decaying envelope, which is very different from the sustained, formant-rich structure of the human voice. This work investigates whether streaming-causal systems can achieve voice-to-guitar resynthesis that is subjectively plausible as guitar, at a target latency of 10\,ms or less so it is usable in live performance. Addressing this cross-modal mismatch is crucial to the enhancement of music interfaces that enable human vocal intuition to be the foundation for machine synthesis.
+The launch of RAVE \parencite{caillon2021rave} became highly influential, facilitating high-quality synthesis even on widely accessible CPU hardware. BRAVE \parencite{caspe2025brave} goes a step further with a streaming-causal architecture aimed at creating interactive and responsive music in real-time. However, converting voice to instrument is quite difficult when the source and destination timbres are very different acoustically. For example, plucked string instruments, such as the guitar, have a sharp percussive attack and an exponentially decaying envelope, which is very different from the sustained, formant-rich structure of the human voice. This work investigates whether streaming-causal systems can achieve voice-to-guitar resynthesis that is subjectively plausible as guitar, at a target latency of 10\,ms or less so it is usable in live performance. Addressing this cross-modal mismatch is crucial to the enhancement of music interfaces that enable human vocal intuition to be the foundation for machine synthesis. The central idea, and the cross-modal challenge it raises, is summarised in Figure~\ref{fig:concept}.
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+    font=\small,
+    node distance=1.0cm and 1.3cm,
+    io/.style={rectangle, draw, rounded corners=2pt, minimum height=1.2cm, minimum width=2.4cm, align=center},
+    model/.style={rectangle, draw, rounded corners=3pt, minimum height=1.7cm, minimum width=3.6cm, align=center, fill=blue!8},
+    arrow/.style={-{Latex[length=2.5mm]}, very thick}
+]
+\node[io, fill=orange!12] (voice) {Human voice\\[2pt]\footnotesize vocal excitation};
+\node[model, right=of voice] (brave) {BRAVE\\ causal autoencoder\\[2pt]\footnotesize trained on instrument\\\footnotesize audio only};
+\node[io, fill=green!12, right=of brave] (inst) {Instrument timbre\\[2pt]\footnotesize guitar / drums};
+\draw[arrow] (voice) -- (brave);
+\draw[arrow] (brave) -- (inst);
+\node[font=\footnotesize\itshape, below=0.55cm of brave, align=center, text width=7cm]
+  {Target end-to-end latency $<10$\,ms for live use.\\
+   Voice is \emph{out-of-distribution}: the model never sees it during training.};
+\end{tikzpicture}}
+\caption{Conceptual overview of the voice-to-instrument resynthesis task addressed in this thesis. The human voice drives a streaming-causal autoencoder (BRAVE) that is trained only on instrument audio; the system must render the vocal input in the target instrument's timbre, in real time, even though voice is an out-of-distribution input for the trained model. The technical signal path is detailed later in Figure~\ref{fig:block_diagram}.}
+\label{fig:concept}
+\end{figure}
 
 \section{Research Questions}\label{sec:research_questions}
 
@@ -262,7 +295,47 @@ Whereas WaveNet and DDSP improve reconstruction by operating directly on the raw
 
 \textbf{Multi-band decomposition for real-time inference.} To enable real-time inference on typical CPU hardware, RAVE uses a 16-band frequency decomposition based on a Pseudo-Quadrature Mirror Filter (PQMF) bank \parencite{cruzroldan2002pqmf}. This decomposes the signal into sixteen subbands, effectively reducing the per-band processing rate prior to the encoding step \parencite{caillon2021rave}.
 
-\textbf{Adversarial stabilisation techniques.} Stability of the adversarial phase depends on additional techniques from the generative-modelling literature: spectral normalisation of the discriminator \parencite{miyato2018spectralnorm}, multi-period discriminators inherited from HiFi-GAN \parencite{kong2020hifigan}, and multi-scale spectral losses computed over different STFT window sizes \parencite{engel2020ddsp}. Together, these strategies have established RAVE as one of the most widely adopted neural timbre-transfer architectures for interactive applications.
+\textbf{Adversarial stabilisation techniques.} Stability of the adversarial phase depends on additional techniques from the generative-modelling literature: spectral normalisation of the discriminator \parencite{miyato2018spectralnorm}, multi-period discriminators inherited from HiFi-GAN \parencite{kong2020hifigan}, and multi-scale spectral losses computed over different STFT window sizes \parencite{engel2020ddsp}. Together, these strategies have established RAVE as one of the most widely adopted neural timbre-transfer architectures for interactive applications. The overall encoder--decoder structure and its two-phase training are shown in Figure~\ref{fig:rave_arch}.
+
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    font=\small,
+    node distance=0.6cm and 0.7cm,
+    box/.style={rectangle, draw, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center},
+    enc/.style={rectangle, draw, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center, fill=blue!10},
+    dec/.style={rectangle, draw, rounded corners=2pt, minimum height=1.0cm, minimum width=1.7cm, align=center, fill=green!10},
+    lat/.style={rectangle, draw, rounded corners=2pt, minimum height=1.0cm, minimum width=1.6cm, align=center, fill=blue!20},
+    disc/.style={rectangle, draw, rounded corners=2pt, minimum height=1.0cm, minimum width=2.4cm, align=center, fill=red!10},
+    arrow/.style={-{Latex[length=2mm]}, thick}
+]
+\node[box] (in) {Input\\audio $x$};
+\node[box, right=of in] (pqmf) {PQMF\\analysis\\\footnotesize 16 bands};
+\node[enc, right=of pqmf] (enc) {Causal\\encoder};
+\node[lat, right=of enc] (z) {Latent\\$z\in\mathbb{R}^{16}$};
+\node[dec, right=of z] (dec) {Causal\\decoder};
+\node[box, right=of dec] (synth) {PQMF\\synthesis};
+\node[box, right=of synth] (out) {Output\\audio $\hat{x}$};
+
+\draw[arrow] (in) -- (pqmf);
+\draw[arrow] (pqmf) -- (enc);
+\draw[arrow] (enc) -- (z);
+\draw[arrow] (z) -- (dec);
+\draw[arrow] (dec) -- (synth);
+\draw[arrow] (synth) -- (out);
+
+\node[draw, dashed, rounded corners=3pt, fit=(enc)(z)(dec), inner sep=0.3cm,
+      label={[font=\footnotesize\itshape]above:Phase~1: multi-scale STFT reconstruction loss $+$ KL regularisation}] {};
+
+\node[disc, below=1.6cm of dec] (disc) {Multi-scale\\discriminator};
+\draw[arrow] (synth.south) |- (disc.east);
+\draw[arrow, dashed] (in.south) |- (disc.west);
+\node[font=\footnotesize\itshape, below=0.15cm of disc, align=center] {real vs.\ generated\\(Phase~2, encoder frozen)};
+\end{tikzpicture}}
+\caption{Simplified RAVE/BRAVE architecture and two-phase training. Input audio is split into 16 frequency bands by a PQMF analysis bank, encoded by a causal convolutional encoder into a low-dimensional Gaussian latent $z$, and reconstructed by a causal decoder followed by PQMF synthesis. In Phase~1 the encoder--decoder pair is trained to minimise a multi-scale STFT reconstruction loss with KL regularisation of the latent; in Phase~2 the encoder is frozen and the decoder is fine-tuned adversarially against a multi-scale discriminator. BRAVE differs from standard RAVE chiefly in using causal convolutions and a reduced compression ratio to enable sub-10\,ms streaming inference.}
+\label{fig:rave_arch}
+\end{figure}
 
 \subsection*{Streaming-Causal Extension: BRAVE}
 
@@ -420,7 +493,7 @@ The real-time resynthesis pipeline operates as a low-latency end-to-end stream f
 \label{fig:block_diagram}
 \end{figure}
 
-The principal design constraint is an end-to-end latency below 10\,ms, which lies within the approximate range identified by \textcite{wessel2002intimate} as the threshold for intimate musical control. The system uses Pure Data (Pd) combined with the \texttt{nn\textasciitilde} external \parencite{caillon2021rave}.
+The principal design constraint is an end-to-end latency below 10\,ms, which lies within the approximate range identified by \textcite{wessel2002intimate} as the threshold for intimate musical control. The system uses Pure Data (Pd)\footnote{Pure Data, a real-time visual programming environment for audio: \url{https://puredata.info}.} combined with the \texttt{nn\textasciitilde} external\footnote{\texttt{nn\textasciitilde}, the ACIDS-IRCAM neural-inference external for Pure Data and Max: \url{https://github.com/acids-ircam/nn_tilde}.} \parencite{caillon2021rave}.
 
 \paragraph{Design rationale: host environment.} Pure Data and \texttt{nn\textasciitilde} were chosen after evaluating an alternative based on a custom C++ audio engine using the Torch C++ API (LibTorch). Although a custom engine offers higher optimisation potential, it would have required substantial development time for audio I/O and interface management. Pure Data was adopted because it is a stable deployment target for RAVE-family models \parencite{caillon2021rave} and provides immediate access to standard DSP operations (gain multipliers, limiters) that proved essential given the low raw output level of early model iterations.
 
@@ -452,7 +525,7 @@ The estimated total of approximately 7\,ms falls within the latency range discus
 
 Training is divided into two phases that decouple the learning of a compact latent representation from the synthesis of perceptually plausible waveforms.
 
-\paragraph{Phase 1: representation learning.} In the first phase, the model operates as a standard Variational Autoencoder \parencite{kingma2013vae}. The encoder and decoder are trained jointly to minimise a multi-scale Short-Time Fourier Transform (STFT) reconstruction loss comparing magnitude spectrograms of input and output at multiple temporal resolutions \parencite{engel2020ddsp,caillon2021rave}. The spectral loss is motivated by perceptual considerations: subtle phase variations are largely inaudible to human listeners, so the model is not penalised for them. The latent space is regularised through a Kullback--Leibler (KL) divergence term that encourages the posterior distribution to match a standard Gaussian prior \parencite{kingma2013vae}.
+\paragraph{Phase 1: representation learning.} In the first phase, the model operates as a standard Variational Autoencoder \parencite{kingma2013vae}. The encoder and decoder are trained jointly to minimise a multi-scale Short-Time Fourier Transform (STFT) reconstruction loss comparing magnitude spectrograms of input and output at multiple temporal resolutions \parencite{engel2020ddsp,caillon2021rave}. The spectral loss is motivated by perceptual considerations: subtle phase variations of steady-state harmonic content are largely inaudible to human listeners, so the model is not penalised for them. This simplification has a known limit, however: phase coherence does matter for the faithful reconstruction of sharp transients and attack onsets --- precisely the plucked-string and percussive events most relevant to this work --- so a purely magnitude-based objective can leave audible smearing of transients that a phase-aware loss would better preserve. The same magnitude-only assumption carries over to the SMC reconstruction metric defined in \S\ref{sec:diagnostic_method}, which is by construction phase-invariant. The latent space is regularised through a Kullback--Leibler (KL) divergence term that encourages the posterior distribution to match a standard Gaussian prior \parencite{kingma2013vae}. The relative weight of this KL term is set by a coefficient $\beta$; the strength of the resulting (weighted) regularisation --- referred to throughout this thesis as the \emph{KL pressure} --- governs how strongly the encoder is pushed toward the prior at the expense of reconstruction fidelity. Applying a high KL pressure before the model has learned a useful representation is the direct cause of the posterior-collapse failure analysed below, which makes the scheduling of $\beta$ a central design decision.
 
 \paragraph{Phase 2: adversarial fine-tuning.} Once the reconstruction loss converges, the encoder is frozen and the decoder is fine-tuned as the generator component of a Generative Adversarial Network \parencite{goodfellow2014gan}. Freezing the encoder is consistent with established RAVE practice \parencite{caillon2021rave} and aims to stabilise the latent representation learned in Phase~1 by preventing adversarial gradients from destabilising the bottleneck structure. A discriminator network distinguishes between real audio samples and the decoder's reconstructions. The adversarial objective is intended to recover high-frequency textural detail and transient information that the GAN-vocoder literature reports as smoothed over by purely spectral losses \parencite{kong2020hifigan}.
 
@@ -473,7 +546,7 @@ Training is divided into two phases that decouple the learning of a compact late
 
 \paragraph{Checkpoint selection.} Checkpoints are saved every 10,000 training steps. RAVE's built-in \texttt{best.ckpt} mechanism tracks the lowest validation reconstruction loss across each run segment. For iterations in which the final-epoch model degraded after Phase~2 (notably guitar\_v6), the canonical checkpoint was selected manually based on listening comparison against intermediate epochs, as detailed in Chapter~\ref{chap:results}.
 
-\paragraph{Reproducibility.} All configuration files, preprocessing scripts and evaluation utilities used in the experiments were version-controlled throughout development and will be released alongside the thesis as a public Git repository, together with the diagnostic Python scripts and the Pure Data deployment patches.
+\paragraph{Reproducibility.} All configuration files, preprocessing scripts and evaluation utilities used in the experiments were version-controlled throughout development and are released alongside the thesis as a public Git repository,\footnote{Project repository: \url{https://github.com/jofregeli/voice-to-guitar-brave}. All script permalinks in this thesis are pinned to a fixed commit of this repository.} together with the diagnostic Python scripts and the Pure Data deployment patches.
 
 \section{Datasets and Preprocessing}\label{sec:datasets_preprocessing}
 
@@ -502,7 +575,7 @@ IDMT-SMT-Guitar dataset~4 \parencite{kehling2014idmt} & Mixed: acoustic\_mic, ac
 
 \paragraph{Drums corpus.} The drums corpus is drawn from the Groove MIDI Dataset \parencite{gillick2019groove}, totalling approximately 10.86 hours after stereo-to-mono conversion. Groove substantially exceeds the dataset scales used in several published RAVE and BRAVE demonstrations, reducing the risk of dataset-size-induced training instabilities; the inclusion of diverse tempos and rhythmic patterns across multiple professional drummers is also designed to improve the robustness of the learned latent representation across transient-rich percussive events.
 
-\paragraph{Preprocessing pipeline.} A five-stage Python pipeline was implemented using \texttt{librosa} and \texttt{soundfile}:
+\paragraph{Preprocessing pipeline.} A five-stage Python pipeline was implemented using \texttt{librosa}\footnote{\texttt{librosa}, a Python library for audio analysis: \url{https://librosa.org}.} and \texttt{soundfile}\footnote{\texttt{python-soundfile}, audio file I/O built on libsndfile: \url{https://python-soundfile.readthedocs.io}.}:
 \begin{enumerate}
 \item \textbf{Validation.} Each input file is loaded with \texttt{librosa.load}. Files that fail to load or contain no audio are discarded.
 \item \textbf{Mono conversion.} Stereo files are downmixed to a single channel.
@@ -511,7 +584,14 @@ IDMT-SMT-Guitar dataset~4 \parencite{kehling2014idmt} & Mixed: acoustic\_mic, ac
 \item \textbf{LMDB construction.} The processed WAV files are pre-decoded into a Lightning Memory-Mapped Database (LMDB) using \texttt{rave preprocess --no-lazy}, reducing disk I/O overhead during training.
 \end{enumerate}
 
-\paragraph{Noise-floor analysis.} To characterise the heterogeneity of the guitar corpus, a noise-floor analysis was performed. For each file, the Root Mean Square (RMS) energy was computed in non-overlapping 100\,ms windows, and the 5th percentile of these RMS values was taken as the noise-floor estimate, converted to dBFS. Per-source aggregates (median and inter-quartile range) characterise the spread across the corpus. The full results, presented in \S\ref{sec:noise_floor}, show a 35.9\,dB spread between the cleanest electric DI sources and the loudest microphone-captured acoustic sources, which informs the interpretation of latent-space behaviour later in the thesis.
+\paragraph{Noise-floor analysis.} To characterise the heterogeneity of the guitar corpus, a noise-floor analysis was performed. For each file, the Root Mean Square (RMS) energy was computed in non-overlapping 100\,ms windows, and the 5th percentile of these RMS values was taken as the noise-floor estimate and converted to dBFS:
+\begin{equation}
+\mathrm{NF}_{\mathrm{dBFS}} = 20\log_{10}\!\Big(P_{5}\big\{\,\mathrm{RMS}_w : w = 1,\dots,W\,\big\}\Big),
+\qquad
+\mathrm{RMS}_w = \sqrt{\tfrac{1}{N}\sum_{n=1}^{N} x_w[n]^2},
+\label{eq:noisefloor}
+\end{equation}
+where $x_w$ is the $w$-th non-overlapping 100\,ms window ($N = 4410$ samples at 44.1\,kHz), $W$ the number of such windows in the file, and $P_5\{\cdot\}$ the 5th percentile of the per-window RMS values. Per-source aggregates (median and inter-quartile range) characterise the spread across the corpus. The full results, presented in \S\ref{sec:noise_floor}, show a 35.9\,dB spread between the cleanest electric DI sources and the loudest microphone-captured acoustic sources, which informs the interpretation of latent-space behaviour later in the thesis.
 
 \paragraph{Task-specific difficulty considerations.} Beyond dataset composition, the two case studies differ in intrinsic task difficulty in ways that bear directly on the analysis of Chapter~\ref{chap:results}. Compared with drum resynthesis, guitar resynthesis imposes greater demands on latent continuity and harmonic precision because guitar signals are sustained, pitch-structured, and dominated by stable harmonic relationships, micro-dynamic articulations, and long-duration resonances. Percussive audio, by contrast, is dominated by transient events and broader spectral envelopes that are comparatively forgiving of small latent perturbations. Dataset heterogeneity, latent underutilisation, and adversarial instability are therefore expected to manifest more severely in the guitar case, both because the target signal requires finer-grained representational fidelity and because the cross-modal mapping from voice to guitar spans a larger acoustic gap than voice to drums.
 
@@ -545,7 +625,14 @@ In this thesis, \textit{failure modes} refer to systematic deviations that preve
 \item \textbf{Output amplitude.} The mean absolute amplitude for tonal inputs should fall within $[0.05, 0.3]$, ensuring that the model produces an audible signal without clipping.
 \end{itemize}
 
-\paragraph{Reconstruction validation.} A final diagnostic feeds in-distribution guitar audio drawn from GuitarSet through the trained autoencoder. Two measures are computed: the input/output amplitude ratio (target close to 1.0) and the magnitude-STFT correlation between input and output. As no widely standardised threshold exists in the published literature for ``perceptually acceptable'' neural audio reconstruction expressed as STFT magnitude correlation, this thesis adopts a value above 0.3 as an empirical heuristic, derived from informal listening comparisons against checkpoints with lower correlations. This is treated as a pragmatic working threshold rather than a normative claim, and its limitations are quantified by the cross-checkpoint calibration in \S\ref{sec:stft_calibration}.
+\paragraph{Reconstruction validation.} A final diagnostic feeds in-distribution guitar audio drawn from GuitarSet through the trained autoencoder. Two measures are computed: the input/output amplitude ratio (target close to 1.0) and the \emph{STFT Magnitude Correlation} (SMC) between input and output. The SMC is the Pearson correlation coefficient between the flattened magnitude spectrograms of the input $x$ and the reconstruction $\hat{x}$:
+\begin{equation}
+\mathrm{SMC}(x,\hat{x}) =
+\frac{\displaystyle\sum_{k,t}\big(|X|_{k,t}-\overline{|X|}\big)\big(|\hat{X}|_{k,t}-\overline{|\hat{X}|}\big)}
+{\sqrt{\displaystyle\sum_{k,t}\big(|X|_{k,t}-\overline{|X|}\big)^{2}}\;\sqrt{\displaystyle\sum_{k,t}\big(|\hat{X}|_{k,t}-\overline{|\hat{X}|}\big)^{2}}},
+\label{eq:smc}
+\end{equation}
+where $|X|_{k,t}=|\mathrm{STFT}(x)|_{k,t}$ is the magnitude of frequency bin $k$ at frame $t$ (parameters \texttt{n\_fft}$=2048$, hop$=512$), $|\hat{X}|$ is the magnitude STFT of the reconstruction, and $\overline{\,\cdot\,}$ denotes the mean over all bins and frames. A time-aligned variant, $\mathrm{SMC}_{\text{aligned}}$, reports the maximum of Equation~\eqref{eq:smc} over small frame shifts ($\pm 8$ frames) to absorb the model's group delay. The SMC is phase-invariant by construction, consistent with the phase-agnostic spectral training loss. As no widely standardised threshold exists in the published literature for ``perceptually acceptable'' neural audio reconstruction expressed as SMC, this thesis adopts a value above 0.3 as an empirical heuristic, derived from informal listening comparisons against checkpoints with lower correlations. This is treated as a pragmatic working threshold rather than a normative claim, and its limitations are quantified by the cross-checkpoint calibration in \S\ref{sec:stft_calibration}.
 
 \paragraph{Rationale for the spectral-correlation metric, and why it was later calibrated.} The STFT magnitude correlation was chosen initially for three practical reasons: it is phase-invariant (so it is not penalised by the inaudible phase differences that the spectral training loss also ignores), it is cheap to compute over many candidate checkpoints, and it yields a single bounded scalar that is convenient for ranking. These properties made it attractive as a first-pass automated screen during the iteration sequence, when many checkpoints had to be compared quickly. The need for calibration arose empirically: when the metric was eventually applied across the \emph{full} iteration sequence rather than to a handful of hand-picked checkpoints, it failed to separate working from collapsed models, because the near-silent output of a collapsed decoder still shares the broad low-frequency-dominated spectral envelope of natural audio and therefore correlates trivially with the input. This motivated the cross-checkpoint calibration of \S\ref{sec:stft_calibration}, after which output amplitude and informal listening were retained as the operational evaluators. The episode is reported in full because the failure of an initially reasonable metric is itself one of the principal contributions of this work (\S\ref{sec:contributions}).
 
@@ -569,7 +656,7 @@ The methodology described in this chapter rests on a number of working assumptio
 
 \paragraph{Dataset scale.} The guitar corpus (\textasciitilde 9~h raw, \textasciitilde 16~h after RAVE's overlap segmentation) is small by contemporary generative-audio standards; several published RAVE demonstrations use corpora an order of magnitude larger. Whether the failure modes observed in this work persist at greater dataset scale is not investigated, and replication on larger corpora is identified as future work (\S\ref{sec:future_work}).
 
-\paragraph{Dataset heterogeneity.} The guitar corpus mixes microphone-captured acoustic, pickup-captured acoustic, and direct-input electric recordings. The noise-floor analysis of \S\ref{sec:noise_floor} quantifies a 35.9\,dB spread between source conditions. The work does not control for this heterogeneity by restricting training to a single capture path, and the resulting latent representation is likely to encode recording method as a salient feature, although this was not verified through a controlled latent-clustering experiment.
+\paragraph{Dataset heterogeneity.} The guitar corpus mixes microphone-captured acoustic, pickup-captured acoustic, and direct-input electric recordings. The noise-floor analysis of \S\ref{sec:noise_floor} quantifies a 35.9\,dB spread \emph{between} the median estimated noise floors of different source conditions --- that is, a corpus-level inconsistency across recording paths, not a within-signal peak-to-noise-floor (signal-to-noise) ratio of any single file. The work does not control for this heterogeneity by restricting training to a single capture path, and the resulting latent representation is likely to encode recording method as a salient feature, although this was not verified through a controlled latent-clustering experiment.
 
 \paragraph{Single-evaluator perceptual judgments.} As stated at the head of \S\ref{sec:diagnostic_method}, listening evaluation was conducted informally by the author. Claims of ``working'' or ``recognisable'' reconstruction throughout Chapter~\ref{chap:results} reflect a single trained ear rather than statistically validated perceptual quality. Formal perceptual evaluation with multiple listeners is identified as future work (\S\ref{sec:future_work}).
 
@@ -611,7 +698,7 @@ drums\_v2 & \texttt{drums\_v2\_overrides.gin} & Apply the \texttt{guitar\_v6} co
 \end{tabularx}
 \end{table}
 
-To manage interruptions during multi-day runs, each iteration is launched through a Windows \texttt{.bat} script. The script invokes PowerShell to find the most recent checkpoint matching the run name; if one is found, training resumes via the \texttt{--ckpt} flag, otherwise it starts fresh. This made the pipeline safely interruptible and was used multiple times after both planned and unplanned system restarts.
+To manage interruptions during multi-day runs, each iteration is launched through a Windows \texttt{.bat} script.\footnote{Representative launcher for the final guitar iteration: \url{https://github.com/jofregeli/voice-to-guitar-brave/blob/36ddd4c7767be9e0b364fb0b6af7480256bd34bb/scripts/train_guitar_v6.bat}. The launchers for the other iterations sit alongside it under \texttt{scripts/}.} The script invokes PowerShell to find the most recent checkpoint matching the run name; if one is found, training resumes via the \texttt{--ckpt} flag, otherwise it starts fresh. This made the pipeline safely interruptible and was used multiple times after both planned and unplanned system restarts.
 
 The checkpointing strategy used \texttt{--val\_every 10000}, saving model state every ten thousand optimisation steps. Three redundant levels are maintained: the RAVE-native \texttt{best.ckpt} (selected by lowest validation reconstruction loss), epoch-tagged files (e.g. \texttt{epoch=2511.ckpt}), and fixed snapshots every 500,000 steps. As discussed in \S\ref{sec:training_paradigm}, this redundancy proved important for guitar\_v6, where reconstruction quality peaked around epoch 1935 during Phase~2 and degraded slightly toward the final epoch. The canonical model \texttt{guitar\_v6\_best.ts} is therefore the mid-trajectory Phase~2 checkpoint rather than the final one.
 
@@ -619,7 +706,7 @@ The checkpointing strategy used \texttt{--val\_every 10000}, saving model state 
 
 \section{Real-Time Deployment}\label{sec:rt_deployment}
 
-Model deployment followed the standard acids-rave export workflow. The command \texttt{rave export --run <RUN\_DIR> --name <NAME>} compiles the trained PyTorch graph into a TorchScript \texttt{.ts} file that bundles the learned weights with the cached convolutional state required for incremental inference.
+All training, preprocessing and export in this project were carried out with \texttt{acids-rave}, the official open-source RAVE implementation released by ACIDS-IRCAM \parencite{caillon2021rave},\footnote{\texttt{acids-rave} (the \texttt{rave} command-line tool used for \texttt{preprocess}, \texttt{train} and \texttt{export}): \url{https://github.com/acids-ircam/RAVE}. Version 2.3.1 was used here, with the four compatibility patches of Appendix-\ref{app:configs}.} which provides the \texttt{rave} command-line interface together with the \texttt{.gin} configuration system used throughout Chapters~\ref{chap:methodology} and~\ref{chap:implementation}. Model deployment followed the standard \texttt{acids-rave} export workflow: the command \texttt{rave export --run <RUN\_DIR> --name <NAME>} compiles the trained PyTorch graph into a TorchScript \texttt{.ts} file that bundles the learned weights with the cached convolutional state required for incremental inference.
 
 The inference environment uses the \texttt{nn\textasciitilde} Pure Data external, chosen for two reasons that connect directly to the project's research objectives. First, \texttt{nn\textasciitilde} provides a stable, community-maintained deployment target that allows the sub-10\,ms latency budget defined in \S\ref{sec:system_architecture} to be achieved without the development overhead of a custom C++ audio engine. Second, Pure Data integrates standard DSP blocks (gain, limiters, filtering) natively, which makes it straightforward to compensate for the trained model's idiosyncrasies without inserting additional inference stages on the audio path.
 
@@ -636,7 +723,7 @@ A reference block diagram is provided in Figure~\ref{fig:block_diagram}. The mic
 
 \section{Evaluation Tooling}\label{sec:eval_tooling}
 
-Several diagnostic tools were implemented to quantify model behaviour beyond informal listening. A custom Python script, \texttt{scripts/analyze\_noise\_floor.py}, computes the 5th percentile of 100\,ms RMS windows for each audio file in the guitar corpus and aggregates the results per source. Running this script across all 919 source recordings produced the per-source noise-floor distribution discussed in \S\ref{sec:noise_floor}, including the 35.9\,dB spread between electric DI and microphone-captured acoustic sources.
+Several diagnostic tools were implemented to quantify model behaviour beyond informal listening. A custom Python script, \repofile{scripts/analyze_noise_floor.py}, computes the 5th percentile of 100\,ms RMS windows for each audio file in the guitar corpus and aggregates the results per source. Running this script across all 919 source recordings produced the per-source noise-floor distribution discussed in \S\ref{sec:noise_floor}, including the 35.9\,dB spread between electric DI and microphone-captured acoustic sources.
 
 The responsiveness of each candidate checkpoint was measured by a separate synthetic-input test. The script passes five spectrally distinct signals --- silence, three sine tones (220, 440 and 880\,Hz), a frequency sweep, and white Gaussian noise --- through the model and computes pairwise mean absolute differences in latent vectors and audio outputs. These differences are compared against the health thresholds defined in \S\ref{sec:diagnostic_method}. The thresholds were selected empirically after comparing responsive and collapsed checkpoints across early exploratory runs. Collapsed models produced pairwise latent differences below 0.2 and pairwise output differences below 0.005, whereas functionally responsive checkpoints consistently exceeded 0.5 and 0.01 respectively. The same script flagged the early collapsed iterations --- guitar\_v1 (output difference $=0.006$) and guitar\_v2 (output difference $=0.003$) --- as well as the partial-response state of guitar\_v3 (output difference $=0.042$).
 
@@ -651,11 +738,36 @@ Combined, these tools turned the implementation from a trial-and-error process o
 
 This chapter assesses the strengths and weaknesses of the BRAVE-based resynthesis pipeline when used in real-time situations. The study concentrates on the stability of latent representations, the behaviour of adversarial training, and the ability to generalise out-of-distribution (OOD) across the guitar and drum resynthesis tasks. Results are examined both quantitatively and perceptually in an attempt to identify the main obstacles to efficient streaming neural audio resynthesis.
 
-The investigation is divided into two main case studies: a six-iteration development arc for guitar resynthesis and an additional evaluation of drum-kit resynthesis. As described in Chapter~\ref{chap:methodology}, pipeline performance was measured against diagnostic criteria for encoder separation (pairwise latent difference greater than 0.5), decoder sensitivity (pairwise output difference greater than 0.01), and energy conservation (output level within $[0.05, 0.3]$). In-distribution reconstruction was checked by a STFT magnitude correlation rule of greater than 0.3. All live experiments were conducted within a Pure Data environment using the \texttt{nn\textasciitilde} external with an estimated end-to-end delay of approximately 7\,ms.
+The investigation is divided into two main case studies: a six-iteration development arc for guitar resynthesis and an additional evaluation of drum-kit resynthesis. As described in Chapter~\ref{chap:methodology}, pipeline performance was measured against diagnostic criteria for encoder separation (pairwise latent difference greater than 0.5), decoder sensitivity (pairwise output difference greater than 0.01), and energy conservation (output level within $[0.05, 0.3]$). In-distribution reconstruction was checked by an STFT Magnitude Correlation (SMC, Equation~\eqref{eq:smc}) rule of greater than 0.3. All live experiments were conducted within a Pure Data environment using the \texttt{nn\textasciitilde} external with an estimated end-to-end delay of approximately 7\,ms.
 
 \section{Guitar: Six-Iteration Arc}\label{sec:guitar_arc}
 
-The guitar example focused on upgrading the training procedure step by step, starting from the baseline settings and progressing to the official RAVE v2 architecture. Each step was instrumented through the diagnostic Python scripts described in Chapter~\ref{chap:implementation}.
+The guitar example focused on upgrading the training procedure step by step, starting from the baseline settings and progressing to the official RAVE v2 architecture. Each step was instrumented through the diagnostic Python scripts described in Chapter~\ref{chap:implementation}. Before the per-iteration narrative, Table~\ref{tab:diagnostics} gathers the principal quantitative diagnostic values for every model --- the six guitar iterations, the two drums iterations, and the IRCAM external baseline --- in one place, so that the figures cited individually in the discussion below can be read against each other at a glance.
+
+\begin{table}[H]
+\centering
+\caption{Consolidated synthetic-input diagnostic measurements across the six guitar iterations, the two drums iterations, and the IRCAM external baseline. Values are drawn from the per-model analyses of \S\ref{sec:guitar_arc}--\S\ref{sec:ircam_baseline}; ``---'' marks a quantity not reported for that model. Encoder and forward (output) differences are pairwise mean absolute differences over the synthetic-input probe set (\S\ref{sec:diagnostic_method}); the health thresholds are encoder difference $>0.5$ and forward difference $>0.01$. Output RMS is the mean output energy on the GuitarSet reconstruction set (input RMS $\approx 0.065$). This quantitative overview complements the qualitative failure-mode summary in Table~\ref{tab:failure_summary}.}
+\label{tab:diagnostics}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.5cm}ccc>{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Model} & \textbf{Enc.\ diff.} & \textbf{Fwd.\ diff.} & \textbf{Out RMS} & \textbf{Training signature and diagnostic outcome} \\
+\midrule
+guitar\_v1 & 1.25 & 0.006 & 0.005 & KL falls $0.83\!\to\!0.25$ --- posterior collapse \\
+guitar\_v2 & 0.79 & 0.003 & 0.003 & KL/dim $\approx 0.005$ nats --- latent underutilisation \\
+guitar\_v3 & --- & 0.042 & 0.004 & Forward diff.\ peaks, then degrades --- Phase-2 generator collapse \\
+guitar\_v4 & --- & --- & 0.021 & GAN gap $=5.65$ (\texttt{pred\_real} $3.34$, \texttt{pred\_fake} $-2.31$) --- adversarial mode collapse \\
+guitar\_v5 & --- & --- & 0.024 & GAN gap $=0.80$ (\texttt{pred\_real} $-0.90$) --- discriminator collapse \\
+guitar\_v6 (best) & 1.27--6.89\textsuperscript{a} & --- & 0.024 & GAN-gap reversal; SMC $=0.16$ --- partial in-distribution reconstruction \\
+drums\_v1 & --- & 0.0045 & --- & Below tonal threshold --- partial transient response; voice OOD \\
+drums\_v2 & --- & --- & --- & GAN gap widens $9.8\!\to\!20.3$ --- terminated (discriminator dominance) \\
+IRCAM percussion\textsuperscript{b} & --- & 1.75 & 0.001\textsuperscript{c} & External baseline --- responsive to OOD voice \\
+\bottomrule
+\end{tabularx}\\[3pt]
+{\footnotesize \textsuperscript{a}\,Encoder differences for guitar\_v6 are measured on out-of-distribution \emph{voice} inputs. \quad\textsuperscript{b}\,Official ACIDS-IRCAM checkpoint used as the external baseline (\S\ref{sec:ircam_baseline}). \quad\textsuperscript{c}\,Output amplitude for silent input.}
+\end{table}
 
 \subsection{Iterations v1--v2: Latent Space Failures}\label{sec:guitar_v1v2}
 
@@ -709,7 +821,7 @@ v6 & Official RAVE v2 base & Partial in-distribution reconstruction & STFT corr.
 
 The final iteration (\texttt{guitar\_v6}) was based on the RAVE v2 official architecture and \texttt{causal.gin} overrides. In Phase~2 the GAN logit gap was observed to reverse for the first time in the series, suggesting that an adversarial equilibrium had been reached. Listening tests indicated perceptually recognisable reconstruction of in-distribution guitar audio at epoch 1935 (mid-Phase-2), and this checkpoint was therefore selected as canonical. The final epoch (2511) showed slightly degraded performance under the same listening criteria. Under the operational diagnostic of \S\ref{sec:diagnostic_method}, output amplitude rose from the near-silent levels of the collapsed checkpoints v1--v3 (output RMS $\approx 0.003$--$0.005$) to RMS $\approx 0.024$ on the canonical guitar\_v6 checkpoint and 0.041 on the Phase~1 reconstruction-only state, which together suggest a meaningful recovery of decoder responsiveness.
 
-A quantitative reconstruction test on the canonical checkpoint, using eight GuitarSet solo-microphone samples of five seconds each (STFT parameters: \texttt{n\_fft}$=2048$, hop$=512$), yielded a mean STFT magnitude correlation of 0.16 (0.17 with time-shift alignment). This value falls below the 0.3 heuristic proposed initially in \S\ref{sec:diagnostic_method}. To understand whether this gap reflects a limitation of the model or of the metric, the same evaluation was applied to every preceding checkpoint in the iteration sequence; the results are reported in \S\ref{sec:stft_calibration}. Anticipating the finding of that calibration: the STFT magnitude correlation does not differentiate working from collapsed checkpoints in the expected direction, and the operational evaluation of guitar\_v6 as a partially-reconstructing in-distribution autoencoder therefore rests on the combined evidence of (i)~listening tests, (ii)~output amplitude recovery, and (iii)~Phase~2 GAN gap reversal.
+A quantitative reconstruction test on the canonical checkpoint, using eight GuitarSet solo-microphone samples of five seconds each (STFT parameters: \texttt{n\_fft}$=2048$, hop$=512$), yielded a mean SMC of 0.16 (0.17 with time-shift alignment). This value falls below the 0.3 heuristic proposed initially in \S\ref{sec:diagnostic_method}. To understand whether this gap reflects a limitation of the model or of the metric, the same evaluation was applied to every preceding checkpoint in the iteration sequence; the results are reported in \S\ref{sec:stft_calibration}. Anticipating the finding of that calibration: the SMC does not differentiate working from collapsed checkpoints in the expected direction, and the operational evaluation of guitar\_v6 as a partially-reconstructing in-distribution autoencoder therefore rests on the combined evidence of (i)~listening tests, (ii)~output amplitude recovery, and (iii)~Phase~2 GAN gap reversal.
 
 \begin{figure}[H]
 \centering
@@ -722,17 +834,17 @@ The same in-distribution success did not transfer to voice input, which is out-o
 
 \subsection{Calibration of the STFT-Magnitude-Correlation Diagnostic}\label{sec:stft_calibration}
 
-To assess whether the STFT magnitude correlation criterion of \S\ref{sec:diagnostic_method} robustly discriminates working autoencoders from collapsed ones, the same in-distribution reconstruction test was applied to every checkpoint in the iteration sequence. Eight GuitarSet solo-microphone samples of five seconds each were evaluated against each checkpoint with identical STFT parameters (\texttt{n\_fft}$=2048$, hop$=512$). Results are summarised in Table~\ref{tab:stft_calibration}.
+To assess whether the STFT magnitude correlation criterion of \S\ref{sec:diagnostic_method} robustly discriminates working autoencoders from collapsed ones, the same in-distribution reconstruction test was applied to every checkpoint in the iteration sequence.\footnote{Calibration script: \url{https://github.com/jofregeli/voice-to-guitar-brave/blob/36ddd4c7767be9e0b364fb0b6af7480256bd34bb/scripts/guitar_v6_stft_correlation.py}.} Eight GuitarSet solo-microphone samples of five seconds each were evaluated against each checkpoint with identical STFT parameters (\texttt{n\_fft}$=2048$, hop$=512$). Results are summarised in Table~\ref{tab:stft_calibration}.
 
 \begin{table}[H]
 \centering
-\caption{Cross-checkpoint calibration of the STFT-magnitude-correlation diagnostic. All values are means across $N=8$ GuitarSet samples. Output RMS reflects the energy of the model output relative to the input (mean input RMS $\approx 0.065$).}
+\caption{Cross-checkpoint calibration of the STFT Magnitude Correlation (SMC, Equation~\eqref{eq:smc}) diagnostic. All values are means across $N=8$ GuitarSet samples. Output RMS reflects the energy of the model output relative to the input (mean input RMS $\approx 0.065$).}
 \label{tab:stft_calibration}
 \footnotesize
 \setlength{\tabcolsep}{6pt}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{4.6cm}>{\raggedright\arraybackslash}XS[table-format=1.3]S[table-format=1.2]S[table-format=1.2]@{}}
 \toprule
-\textbf{Checkpoint} & \textbf{Diagnostic state} & {\textbf{Output RMS}} & {\textbf{STFT (raw)}} & {\textbf{STFT (aligned)}} \\
+\textbf{Checkpoint} & \textbf{Diagnostic state} & {\textbf{Output RMS}} & {\textbf{SMC (raw)}} & {\textbf{SMC (aligned)}} \\
 \midrule
 guitar\_v1 & Posterior collapse & 0.005 & 0.16 & 0.16 \\
 guitar\_v2 & Latent underutilisation & 0.003 & 0.24 & 0.25 \\
@@ -805,7 +917,7 @@ As the IRCAM baseline comparison (\S\ref{sec:ircam_baseline}, \S\ref{sec:ircam_h
 
 \section{Noise-Floor Heterogeneity in the Guitar Corpus}\label{sec:noise_floor}
 
-Chapter~\ref{chap:methodology}, \S\ref{sec:datasets_preprocessing} introduced the heterogeneity concern that arises from combining recordings captured through different paths into a single training corpus. To characterise that heterogeneity quantitatively, the noise-floor methodology defined in \S\ref{sec:datasets_preprocessing} was applied to every source recording of the consolidated guitar corpus (919 files across six recording paths). For each file, the Root Mean Square energy was computed in non-overlapping 100\,ms windows; the 5th percentile of these RMS values was taken as the noise-floor estimate and converted to dBFS. Per-source aggregates are reported in Table~\ref{tab:noise_floor} and visualised in Figure~\ref{fig:noise_floor}. The analysis was performed on the source recordings; the 52 Guitar-TECHS files measured here were reduced to 32 in the final training corpus of Table~\ref{tab:guitar_corpus} (899 files in total) after 20 stereo files were removed during the mono-conversion stage, so the two totals differ only by that filtering step.
+Chapter~\ref{chap:methodology}, \S\ref{sec:datasets_preprocessing} introduced the heterogeneity concern that arises from combining recordings captured through different paths into a single training corpus. To characterise that heterogeneity quantitatively, the noise-floor methodology defined in \S\ref{sec:datasets_preprocessing} was applied to every source recording of the consolidated guitar corpus (919 files across six recording paths) by the script \repofile{scripts/analyze_noise_floor.py}. For each file, the Root Mean Square energy was computed in non-overlapping 100\,ms windows; the 5th percentile of these RMS values was taken as the noise-floor estimate and converted to dBFS, following Equation~\eqref{eq:noisefloor}. This estimator assumes that at least the quietest 5\,\% of a recording corresponds to inter-note gaps, decay tails, or pre/post-roll silence rather than to sustained signal; the assumption is therefore content-dependent and is most reliable for the sparse, note-by-note and solo material that dominates the guitar corpus, and would over-estimate the floor for continuously dense or heavily rhythmic passages. It is used here as a comparative measure across sources captured under fixed conditions rather than as an absolute acoustic noise-floor figure. Per-source aggregates are reported in Table~\ref{tab:noise_floor} and visualised in Figure~\ref{fig:noise_floor}. The analysis was performed on the source recordings; the 52 Guitar-TECHS files measured here were reduced to 32 in the final training corpus of Table~\ref{tab:guitar_corpus} (899 files in total) after 20 stereo files were removed during the mono-conversion stage, so the two totals differ only by that filtering step.
 
 \begin{table}[H]
 \centering
@@ -845,9 +957,16 @@ Two practical implications follow. First, the iteration sequence's reliance on t
 
 \section{Summary of Findings}\label{sec:summary_findings}
 
-This thesis explored the feasibility of the streaming-causal BRAVE architecture for voice-driven instrument resynthesis with less than 10\,ms latency when trained on heterogeneous, limited-scale datasets. The study went through six versions of the guitar model (v1--v6) and two versions of drums (\texttt{drums\_v1}, \texttt{drums\_v2}). It was found that \texttt{guitar\_v6}, which used the official \texttt{v2.gin} and \texttt{causal.gin} configurations along with a smaller latent size of 16 and a longer Phase~1 of 1.5\,M steps, was the first iteration to partially reconstruct in-distribution input (Chapter~\ref{chap:results}). On the other hand, the \texttt{drums\_v2} version was stopped prematurely as the Phase~2 discriminator dominance appeared to re-emerge even though an \texttt{update\_discriminator\_every=4} schedule had been implemented.
+This thesis explored the feasibility of the streaming-causal BRAVE architecture for voice-driven instrument resynthesis with less than 10\,ms latency when trained on heterogeneous, limited-scale datasets, across six guitar iterations (v1--v6) and two drums iterations (\texttt{drums\_v1}, \texttt{drums\_v2}). The principal findings, organised by research question, are the following.
 
-It was concluded that voice remained an out-of-distribution (OOD) input across all the guitar checkpoints --- the main goal of the cross-modal resynthesis (musical instruments from voice). The encoder seemed to distinguish voice inputs, with differences in latents observed ranging from 1.27 to 6.89, but the decoder output was nearly the same in all cases, signalling a structural failure in associating voice latents with the trained guitar manifold. Moreover, the OOD restriction appears attributable to the training recipe rather than to a design flaw of BRAVE, as suggested by the comparison with the IRCAM percussion baseline. The external baseline was substantially more reactive, with a forward difference of 1.75 versus 0.0045 in \texttt{drums\_v1} (more than two orders of magnitude greater responsiveness under this diagnostic), and produced output of approximately 0.001 when given silent input. Iterating through the training cycle repeatedly enabled the characterisation of five failure modes of RAVE-family models on small datasets: (i)~posterior collapse (v1), (ii)~latent underutilisation (v2), (iii)~discriminator dominance or generator mode collapse (v3, v4, \texttt{drums\_v2}), (iv)~discriminator collapse (v5), and (v)~OOD decoder behaviour (v6, \texttt{drums\_v1}).
+\begin{itemize}
+\item \textbf{In-distribution feasibility (RQ1).} \texttt{guitar\_v6} --- built on the official \texttt{v2.gin} and \texttt{causal.gin} configurations with a reduced latent size of 16 and a longer Phase~1 of 1.5\,M steps --- was the first iteration to partially reconstruct in-distribution guitar audio (\S\ref{sec:guitar_v6}). The drums case was weaker: \texttt{drums\_v1} produced only a partial transient response and \texttt{drums\_v2} was stopped prematurely when Phase~2 discriminator dominance re-emerged despite an \texttt{update\_discriminator\_every=4} schedule.
+\item \textbf{Cross-modal generalisation (RQ2).} Voice remained an out-of-distribution (OOD) input across all guitar checkpoints. The encoder distinguished vocal inputs (latent differences from 1.27 to 6.89), but the decoder output was near-identical across them --- a structural failure to associate voice latents with the trained guitar manifold rather than a failure of the encoder.
+\item \textbf{Architecture versus training recipe (RQ2).} The OOD limitation appears attributable to the training recipe and data scale rather than to a design flaw of BRAVE. The IRCAM percussion baseline was far more reactive (forward difference 1.75 versus 0.0045 for \texttt{drums\_v1}, more than two orders of magnitude), while respecting silence (output $\approx 0.001$ for silent input).
+\item \textbf{Failure-mode taxonomy (RQ3).} Iterating through the training cycle characterised five failure modes of RAVE-family models on small datasets: (i)~posterior collapse (v1), (ii)~latent underutilisation (v2), (iii)~discriminator dominance / generator mode collapse (v3, v4, \texttt{drums\_v2}), (iv)~discriminator collapse (v5), and (v)~OOD decoder behaviour (v6, \texttt{drums\_v1}).
+\end{itemize}
+
+\paragraph{The decisive role of the datasets.} A recurring thread runs through all of the findings above: the quantity and homogeneity of the training data, more than the specific architecture or any single hyperparameter, governed what each model could and could not do. Three independent lines of evidence point the same way. First, the early latent failures (v1--v2) were tied to a corpus too small to support a 128-dimensional latent, and were only relieved once the latent was matched to the data scale. Second, the noise-floor analysis (\S\ref{sec:noise_floor}) measured a 35.9\,dB spread across recording paths in the guitar corpus, a heterogeneity the encoder is well positioned to encode as a salient feature at the expense of timbral discrimination --- a dimension along which a single-source, curated corpus would not penalise the model. Third, and most directly, the IRCAM percussion baseline --- presumably trained on a larger and more curated corpus --- was responsive to OOD voice on the identical diagnostic where the project's drums model was not, despite sharing the same architecture family. Taken together, these observations reframe the central limitation of this work as a data problem rather than an architectural one: the BRAVE family appears capable of the target behaviour, but realising it depends on a training corpus of sufficient scale and, critically, recorded under sufficiently uniform conditions. This conclusion directly motivates the larger-corpus and homogeneity-controlled replication identified in \S\ref{sec:future_work}, and it is the reason dataset curation --- not further architectural tuning --- is argued here to be the highest-leverage next step.
 
 \section{Contributions}\label{sec:contributions_summary}
 
@@ -875,7 +994,7 @@ Beyond these specific points, three limitations of experimental rigour apply to 
 
 Future research should involve calibrated loopback latency measurements. This testing will replace the current analytical estimates with empirical data, providing a definite confirmation of BRAVE's performance within the Pure Data environment and checking that the latency lies within the bounds discussed by \textcite{wessel2002intimate} for intimate musical interaction.
 
-Besides, a proper perceptual evaluation (e.g.\ MUSHRA or MOS) should be carried out to assess the in-distribution reconstruction quality of \texttt{guitar\_v6}. This would enable a statistically valid evaluation of the model's sound quality against original recordings and other real-time synthesis methods.
+Besides, a proper perceptual evaluation should be carried out to assess the in-distribution reconstruction quality of \texttt{guitar\_v6}. The design of such a test is itself non-trivial for this task. A full MUSHRA protocol requires a hidden reference and a low-quality anchor; for in-distribution guitar reconstruction the clean source recording is a natural reference, but a principled anchor is harder to define, since the conventional 3.5\,kHz low-pass anchor does not represent the failure modes (transient smearing, near-silent collapse) characteristic of these models --- a low-amplitude or earlier-collapsed checkpoint would arguably be a more meaningful anchor. Given this difficulty, and the fact that voice-driven output is out-of-distribution and has no ground-truth target at all, a lighter paired-comparison protocol (AB or ABX between checkpoints, or between model output and reference) would be a more tractable first step than a full MUSHRA panel, and would already yield a statistically grounded comparison of reconstruction quality across iterations and against other real-time synthesis methods.
 
 In the pursuit of better quality cross-domain resynthesis, the RAVE v3 architecture should be investigated. This involves Snake activations, a Descript-style discriminator, and Adaptive Instance Normalisation (AdaIN) for explicit style transfer. However, this kind of training requires hardware with at least 32\,GB of VRAM, whereas only 16\,GB were used in this project (Chapter~\ref{chap:implementation}).
 
