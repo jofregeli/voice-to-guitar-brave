@@ -106,7 +106,13 @@
 % --- Captions, paragraph spacing --------------------------------------------
 \captionsetup{font=small,labelfont=bf,format=plain}
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{4pt plus 1pt minus 1pt}
+\setlength{\parskip}{2pt plus 1pt minus 0.5pt}
+% Tighter vertical spacing around floats and captions to keep the main body
+% within the page budget without removing director-requested figures/tables.
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
 
 % --- Page style: page numbers at bottom-centre, no running headers ----------
 % Overrides book-class default 'headings' style; the template requires
@@ -193,7 +199,7 @@ The launch of RAVE \parencite{caillon2021rave} became highly influential, facili
 
 \begin{figure}[H]
 \centering
-\resizebox{0.95\textwidth}{!}{%
+\resizebox{0.78\textwidth}{!}{%
 \begin{tikzpicture}[
     font=\small,
     node distance=1.0cm and 1.3cm,
@@ -299,7 +305,7 @@ Whereas WaveNet and DDSP improve reconstruction by operating directly on the raw
 
 \begin{figure}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{0.88\textwidth}{!}{%
 \begin{tikzpicture}[
     font=\small,
     node distance=0.6cm and 0.7cm,
@@ -446,7 +452,7 @@ The real-time resynthesis pipeline operates as a low-latency end-to-end stream f
 
 \begin{figure}[H]
 \centering
-\resizebox{\textwidth}{!}{%
+\resizebox{0.88\textwidth}{!}{%
 \begin{tikzpicture}[
     node distance=0.45cm and 0.45cm,
     box/.style={rectangle, draw, rounded corners=2pt, minimum width=1.6cm, minimum height=0.95cm, align=center, font=\small},
@@ -597,14 +603,7 @@ where $x_w$ is the $w$-th non-overlapping 100\,ms window ($N = 4410$ samples at 
 
 \section{Diagnostic Methodology}\label{sec:diagnostic_method}
 
-\paragraph{What the evaluation can and cannot establish.} Before describing the diagnostic protocols, it is important to state plainly what evaluation evidence this work does and does not produce. The evaluation framework is built from three classes of measurement: (i)~in-training scalar metrics tracked through TensorBoard, (ii)~synthetic-input responsiveness probes computed on each candidate checkpoint, and (iii)~reconstruction comparison on in-distribution audio. These three classes establish whether the optimisation is healthy, whether the encoder differentiates inputs, and whether the decoder produces audible non-degenerate output. They do not establish, by themselves, whether the resulting audio is perceptually convincing. Two design choices in particular shape the strength of the perceptual claims that can be made:
-
-\begin{enumerate}
-\item \textbf{No formal listening test was conducted.} Listening evaluation at each checkpoint was performed informally by the author. No MUSHRA, MOS, ABX, or panel-based comparison with multiple participants was administered. Where the text refers to ``working'', ``perceptually recognisable'', or ``degraded'' reconstruction, this reflects single-evaluator judgments rather than population-level perceptual quality.
-\item \textbf{The STFT-magnitude-correlation criterion is empirical, not validated.} A magnitude-STFT correlation above 0.3 is adopted as a working heuristic, derived from informal listening on a small set of checkpoints rather than from a published normative threshold. \S\ref{sec:stft_calibration} shows that this metric in fact does not robustly discriminate working autoencoders from collapsed ones across the full iteration sequence; output amplitude and listening assessment retain the operational role.
-\end{enumerate}
-
-These limitations are not relegated to the conclusions: they constrain how the results in Chapter~\ref{chap:results} should be read, and the contribution claimed by this work (Principal Contribution~2, \S\ref{sec:contributions}) consists in part of stating and quantifying the limit of the STFT-correlation criterion rather than concealing it. The remainder of this section describes the protocols themselves.
+\paragraph{What the evaluation can and cannot establish.} The framework rests on three classes of measurement --- in-training scalar metrics, synthetic-input responsiveness probes, and reconstruction comparison on in-distribution audio --- which together establish whether the optimisation is healthy, whether the encoder differentiates inputs, and whether the decoder produces audible non-degenerate output. They do not, by themselves, establish that the output is perceptually convincing, for two reasons that bound the perceptual claims made here: no formal listening test (MUSHRA, MOS, ABX) was conducted, so judgments of ``working'' or ``recognisable'' reconstruction are single-evaluator; and the SMC acceptance threshold of 0.3 is an empirical heuristic which \S\ref{sec:stft_calibration} shows does not robustly separate working from collapsed checkpoints. These limits constrain how Chapter~\ref{chap:results} should be read and are revisited in \S\ref{sec:method_limitations}; quantifying the SMC limitation is itself Principal Contribution~2 (\S\ref{sec:contributions}).
 
 \medskip
 
@@ -618,14 +617,7 @@ In this thesis, \textit{failure modes} refer to systematic deviations that preve
 \item \texttt{loss\_dis}: total discriminator loss, used to check whether the discriminator has not collapsed entirely.
 \end{itemize}
 
-Figure~\ref{fig:tensorboard} shows these five scalars for the canonical \texttt{guitar\_v6} run, illustrating the healthy pattern against which collapsed iterations are diagnosed in Chapter~\ref{chap:results}: a low, stable KL term, a multi-band spectral distance that decreases through Phase~1 and recovers after the Phase~2 transient, and discriminator logits that remain close rather than diverging.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{../../figures/figure_tensorboard_scalars.png}
-\caption{Example TensorBoard training scalars for the canonical \texttt{guitar\_v6} run: KL regularisation, multi-band spectral distance, the two discriminator logits (\texttt{pred\_real}, \texttt{pred\_fake}) and the total discriminator loss. The dashed vertical line marks the Phase~1$\rightarrow$Phase~2 transition ($\sim$1.5\,M steps); faint traces are the raw scalars and solid traces an exponential moving average. This is the dashboard view from which the diagnostic signatures of Chapter~\ref{chap:results} are read.}
-\label{fig:tensorboard}
-\end{figure}
+These five scalars are illustrated for the canonical \texttt{guitar\_v6} run in Figure~\ref{fig:tensorboard} (Appendix-\ref{app:configs}), which shows the healthy pattern against which the collapsed iterations of Chapter~\ref{chap:results} are diagnosed: a low, stable KL term, a multi-band spectral distance that decreases through Phase~1 and recovers after the Phase~2 transient, and discriminator logits that remain close rather than diverging.
 
 \paragraph{Post-training evaluation metrics.} For each candidate checkpoint, a Python script runs a synthetic-input responsiveness test using five spectrally distinct inputs: silence; sine waves at 220, 440 and 880\,Hz; a linear frequency sweep from 100 to 2000\,Hz; and white Gaussian noise. The following criteria are applied:
 \begin{itemize}
@@ -643,37 +635,21 @@ Figure~\ref{fig:tensorboard} shows these five scalars for the canonical \texttt{
 \end{equation}
 where $|X|_{k,t}=|\mathrm{STFT}(x)|_{k,t}$ is the magnitude of frequency bin $k$ at frame $t$ (parameters \texttt{n\_fft}$=2048$, hop$=512$), $|\hat{X}|$ is the magnitude STFT of the reconstruction, and $\overline{\,\cdot\,}$ denotes the mean over all bins and frames. A time-aligned variant, $\mathrm{SMC}_{\text{aligned}}$, reports the maximum of Equation~\eqref{eq:smc} over small frame shifts ($\pm 8$ frames) to absorb the model's group delay. The SMC is phase-invariant by construction, consistent with the phase-agnostic spectral training loss. As no widely standardised threshold exists in the published literature for ``perceptually acceptable'' neural audio reconstruction expressed as SMC, this thesis adopts a value above 0.3 as an empirical heuristic, derived from informal listening comparisons against checkpoints with lower correlations. This is treated as a pragmatic working threshold rather than a normative claim, and its limitations are quantified by the cross-checkpoint calibration in \S\ref{sec:stft_calibration}.
 
-\paragraph{Rationale for the spectral-correlation metric, and why it was later calibrated.} The STFT magnitude correlation was chosen initially for three practical reasons: it is phase-invariant (so it is not penalised by the inaudible phase differences that the spectral training loss also ignores), it is cheap to compute over many candidate checkpoints, and it yields a single bounded scalar that is convenient for ranking. These properties made it attractive as a first-pass automated screen during the iteration sequence, when many checkpoints had to be compared quickly. The need for calibration arose empirically: when the metric was eventually applied across the \emph{full} iteration sequence rather than to a handful of hand-picked checkpoints, it failed to separate working from collapsed models, because the near-silent output of a collapsed decoder still shares the broad low-frequency-dominated spectral envelope of natural audio and therefore correlates trivially with the input. This motivated the cross-checkpoint calibration of \S\ref{sec:stft_calibration}, after which output amplitude and informal listening were retained as the operational evaluators. The episode is reported in full because the failure of an initially reasonable metric is itself one of the principal contributions of this work (\S\ref{sec:contributions}).
+\paragraph{Rationale for the spectral-correlation metric, and why it was later calibrated.} The SMC was chosen initially because it is phase-invariant (consistent with the phase-agnostic training loss), cheap to compute over many candidate checkpoints, and a single bounded scalar convenient for ranking --- attractive properties for a first-pass automated screen. The need for calibration arose empirically: applied across the \emph{full} iteration sequence rather than a few hand-picked checkpoints, it failed to separate working from collapsed models, because a collapsed decoder's near-silent output still shares the broad spectral envelope of natural audio and so correlates trivially with the input. This motivated the cross-checkpoint calibration of \S\ref{sec:stft_calibration}; the failure of an initially reasonable metric is itself one of the principal contributions of this work (\S\ref{sec:contributions}).
 
-\paragraph{Validity limitations of the diagnostic framework.} Four caveats apply to the framework presented above and are acknowledged here rather than relegated to the conclusions.
-
-Firstly, synthetic sine-wave probing is a structural test of input differentiation and does not in itself establish perceptual realism of the output; it only verifies that the network's internal mappings are non-degenerate.
-
-Secondly, the STFT magnitude correlation criterion is subject to two interrelated limitations. First, it measures only spectral envelope similarity and does not account for phase-dependent effects, micro-temporal modulations, or other features known to influence perceptual quality. Second, cross-checkpoint calibration reported in \S\ref{sec:stft_calibration} reveals that the metric does not robustly discriminate working autoencoders from collapsed ones: near-silent outputs from collapsed checkpoints exhibit STFT magnitudes whose general spectral shape (low-frequency dominance, high-frequency attenuation) correlates with the input through trivial shared structure rather than through genuine reconstruction. The 0.3 threshold proposed initially as a working heuristic was therefore found in retrospect to be insufficient as a discriminator, and listening evaluation in Chapter~\ref{chap:results} became the primary perceptual evaluator for canonical-checkpoint selection.
-
-Thirdly, the $[0.05, 0.3]$ amplitude band used as a sanity check is an engineering heuristic chosen to flag clipping and silent-output failures; it is not derived from a perceptual model of loudness.
-
-Fourthly, no formal perceptual evaluation (such as MUSHRA or MOS testing) was conducted, due to the exploratory and iterative nature of the experiments and because many intermediate models failed basic reconstruction criteria before formal perceptual comparison would have been meaningful. Listening evaluation was conducted informally by the author at each checkpoint.
-
-Together, these protocols allow each training iteration in Chapter~\ref{chap:results} to be evaluated against consistent quantitative criteria, while remaining transparent about what those criteria do and do not measure.
+\paragraph{Validity limitations of the diagnostic framework.} Four caveats apply and are noted here so the results of Chapter~\ref{chap:results} are read in context; they are developed further in \S\ref{sec:method_limitations}. (i)~Synthetic sine-wave probing is a structural test of input differentiation, not of perceptual realism: it verifies only that the network's internal mappings are non-degenerate. (ii)~The SMC criterion measures spectral-envelope similarity alone --- ignoring phase, micro-temporal modulation, and other perceptual cues --- and the calibration of \S\ref{sec:stft_calibration} shows it does not robustly separate working from collapsed checkpoints, since a near-silent output still shares the broad spectral envelope of natural audio; listening evaluation therefore became the primary perceptual evaluator. (iii)~The $[0.05, 0.3]$ amplitude band is an engineering sanity check for clipping and silent-output failures, not a perceptual loudness model. (iv)~No formal perceptual test (MUSHRA, MOS) was conducted; listening evaluation was informal and single-author. Together, these protocols allow each iteration to be evaluated against consistent quantitative criteria while remaining transparent about what those criteria do and do not measure.
 
 \section{Methodological Assumptions and Limitations}\label{sec:method_limitations}
 
 The methodology described in this chapter rests on a number of working assumptions whose limits delimit the scope of the claims that Chapter~\ref{chap:results} can support. These are stated up front rather than deferred to the conclusions, complementing the evaluation caveats already given in \S\ref{sec:diagnostic_method}.
 
-\paragraph{Cross-modal generalisation assumption.} The system is trained as an instrument-domain autoencoder and is required to generalise to a categorically different excitation signal (voice) at inference time. There is no theoretical guarantee that an autoencoder trained only on guitar or drums will represent vocal input meaningfully in latent space. The project proceeds under the working assumption that learned latent representations carry sufficient spectral-temporal generality to admit at least partial cross-modal mapping. The failure of this assumption on the small open corpora used here is itself one of the documented findings (\S\ref{sec:drums}, \S\ref{sec:ircam_baseline}).
+\textbf{Cross-modal generalisation assumption.} The system is trained only on instrument audio yet is required to generalise to a categorically different excitation (voice) at inference time; there is no theoretical guarantee that it will represent vocal input meaningfully, and the project proceeds on the working assumption that learned latent representations carry enough spectral-temporal generality for at least partial cross-modal mapping. The failure of this assumption on small open corpora is itself one of the documented findings (\S\ref{sec:drums}, \S\ref{sec:ircam_baseline}).
 
-\paragraph{Dataset scale.} The guitar corpus (\textasciitilde 9~h raw, \textasciitilde 16~h after RAVE's overlap segmentation) is small by contemporary generative-audio standards; several published RAVE demonstrations use corpora an order of magnitude larger. Whether the failure modes observed in this work persist at greater dataset scale is not investigated, and replication on larger corpora is identified as future work (\S\ref{sec:future_work}).
+\textbf{Dataset scale and heterogeneity.} The guitar corpus ($\sim$9~h raw, $\sim$16~h after overlap segmentation) is small by contemporary standards, and it mixes capture paths: the noise-floor analysis of \S\ref{sec:noise_floor} measures a 35.9\,dB spread \emph{between} the median noise floors of different source conditions --- a corpus-level inconsistency across recording paths, not a within-signal signal-to-noise ratio. The work neither tests whether the observed failure modes persist at larger scale nor controls for this heterogeneity, so the latent representation is likely to encode recording method as a salient feature (not verified by a controlled latent-clustering experiment); larger, more homogeneous corpora are identified as future work (\S\ref{sec:future_work}).
 
-\paragraph{Dataset heterogeneity.} The guitar corpus mixes microphone-captured acoustic, pickup-captured acoustic, and direct-input electric recordings. The noise-floor analysis of \S\ref{sec:noise_floor} quantifies a 35.9\,dB spread \emph{between} the median estimated noise floors of different source conditions --- that is, a corpus-level inconsistency across recording paths, not a within-signal peak-to-noise-floor (signal-to-noise) ratio of any single file. The work does not control for this heterogeneity by restricting training to a single capture path, and the resulting latent representation is likely to encode recording method as a salient feature, although this was not verified through a controlled latent-clustering experiment.
+\textbf{Evaluation and reproducibility limits.} Listening evaluation was informal and single-author (no MUSHRA/MOS panel); the end-to-end latency of Table~\ref{tab:latency_budget} is an analytic sum of component latencies, not a calibrated loopback measurement; and each configuration was trained once, so seed-to-seed variation --- to which adversarial training is known to be sensitive --- was not characterised. Each observed outcome should therefore be read as one realisation rather than a population statistic. These points are revisited in \S\ref{sec:limitations}.
 
-\paragraph{Single-evaluator perceptual judgments.} As stated at the head of \S\ref{sec:diagnostic_method}, listening evaluation was conducted informally by the author. Claims of ``working'' or ``recognisable'' reconstruction throughout Chapter~\ref{chap:results} reflect a single trained ear rather than statistically validated perceptual quality. Formal perceptual evaluation with multiple listeners is identified as future work (\S\ref{sec:future_work}).
-
-\paragraph{Analytic rather than calibrated latency.} The end-to-end latency reported in Table~\ref{tab:latency_budget} is an analytic sum of component latencies (block size, model forward, reported driver buffers), not a calibrated loopback measurement. The estimate is internally consistent with the pipeline design but should not be taken as a precise empirical figure; calibrated loopback measurement is identified as future work.
-
-\paragraph{Single workstation, single trial per configuration.} Each configuration was trained once. Stochastic variation across seeds was not characterised. Where this matters --- particularly for adversarial training, which is known to be seed-sensitive --- the observed outcomes should be read as representative of the configuration under one realisation rather than as a population statistic.
-
-The implementation details that operationalise this methodology --- software environment, compatibility patches, training scripts, and Pure Data deployment patches --- are described in the following chapter.
+The implementation details that operationalise this methodology are described in the following chapter.
 
 % ============================================================================
 %  CHAPTER 4 -- IMPLEMENTATION
@@ -755,7 +731,7 @@ The guitar example focused on upgrading the training procedure step by step, sta
 
 \begin{table}[H]
 \centering
-\caption{Consolidated synthetic-input diagnostic measurements across the six guitar iterations, the two drums iterations, and the IRCAM external baseline. Values are drawn from the per-model analyses of \S\ref{sec:guitar_arc}--\S\ref{sec:ircam_baseline}; ``---'' marks a quantity not reported for that model. Encoder and forward (output) differences are pairwise mean absolute differences over the synthetic-input probe set (\S\ref{sec:diagnostic_method}); the health thresholds are encoder difference $>0.5$ and forward difference $>0.01$. Output RMS is the mean output energy on the GuitarSet reconstruction set (input RMS $\approx 0.065$). This quantitative overview complements the qualitative failure-mode summary in Table~\ref{tab:failure_summary}.}
+\caption{Consolidated synthetic-input diagnostic measurements across the six guitar iterations, the two drums iterations, and the IRCAM external baseline. Values are drawn from the per-model analyses of \S\ref{sec:guitar_arc}--\S\ref{sec:ircam_baseline}; ``---'' marks a quantity not reported for that model. Encoder and forward (output) differences are pairwise mean absolute differences over the synthetic-input probe set (\S\ref{sec:diagnostic_method}); the health thresholds are encoder difference $>0.5$ and forward difference $>0.01$. Output RMS is the mean output energy on the GuitarSet reconstruction set (input RMS $\approx 0.065$). The final column names the failure mode of each iteration; the five-mode taxonomy these populate is set out in \S\ref{sec:failure_taxonomy}.}
 \label{tab:diagnostics}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -784,7 +760,7 @@ The first version (\texttt{guitar\_v1}) was based on the \texttt{c128\_r10.gin} 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{../../figures/figure_5_1_guitar_v1_posterior_collapse.png}
+\includegraphics[width=0.72\textwidth]{../../figures/figure_5_1_guitar_v1_posterior_collapse.png}
 \caption{KL divergence trajectory for guitar\_v1 during Phase~1 training. The KL term falls from approximately 0.83 at step zero to 0.25 by step 1.24\,M. A decreasing KL coupled with a decoder forward difference of 0.006 (below the 0.01 health threshold) constitutes the diagnostic signature of posterior collapse (mode~1 of the failure taxonomy, \S\ref{sec:failure_taxonomy}).}
 \label{fig:kl_v1}
 \end{figure}
@@ -797,34 +773,15 @@ The third and fourth iterations explored how dataset composition affected the mo
 
 \texttt{guitar\_v4} attempted to remedy this by using a cleaner, microphone-only dataset (3.05\,h compared to v3's 5.79\,h). Counter-intuitively, the reduction in data volume worsened the failure, leading to adversarial mode collapse. TensorBoard scalars revealed clear discriminator dominance: \texttt{pred\_real} reached 3.34 while \texttt{pred\_fake} fell to $-2.31$, producing a logit gap of 5.65 (Figure~\ref{fig:gan_gap_comparison}). Under these conditions the decoder produced a silence amplitude larger than the signal amplitude.
 
-A focused experiment aimed at balancing the adversarial game was conducted in \texttt{guitar\_v5} by halving the discriminator's capacity. This produced the inverse failure: discriminator collapse. The \texttt{pred\_real} logit fell to $-0.90$, indicating that the discriminator was assigning negative scores to real audio, and the gap narrowed to 0.80. These findings, summarised in Table~\ref{tab:failure_summary}, indicated that no simple parameter scaling of the custom architecture could resolve the dominance/collapse axis.
+A focused experiment aimed at balancing the adversarial game was conducted in \texttt{guitar\_v5} by halving the discriminator's capacity. This produced the inverse failure: discriminator collapse. The \texttt{pred\_real} logit fell to $-0.90$, indicating that the discriminator was assigning negative scores to real audio, and the gap narrowed to 0.80. These findings, consolidated with the other iterations in Table~\ref{tab:diagnostics}, indicated that no simple parameter scaling of the custom architecture could resolve the dominance/collapse axis.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_2_gan_gap_comparison.png}
+\includegraphics[width=0.8\textwidth]{../../figures/figure_5_2_gan_gap_comparison.png}
 \caption{Adversarial dynamics across the three Phase-2 iterations: guitar\_v4 exhibits a widening GAN logit gap (peaks at 5.65, discriminator dominance); guitar\_v5 collapses to a narrow gap of approximately 0.80 (discriminator collapse); guitar\_v6 is the first checkpoint where the gap reverses direction during Phase~2, indicating an approximate adversarial equilibrium.}
 \label{fig:gan_gap_comparison}
 \end{figure}
 
-\begin{table}[H]
-\centering
-\caption{Summary of failure modes across the guitar development iterations.}
-\label{tab:failure_summary}
-\footnotesize
-\setlength{\tabcolsep}{5pt}
-\begin{tabularx}{\textwidth}{@{}c>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
-\toprule
-\textbf{Iter.} & \textbf{Configuration} & \textbf{Failure mode} & \textbf{Diagnostic signature} \\
-\midrule
-v1 & Baseline \texttt{c128\_r10.gin} & Posterior collapse & KL falls $0.83\!\rightarrow\!0.25$; forward diff $0.006$ \\
-v2 & $\beta$ warmup applied & Latent underutilisation & KL/dim $\approx 0.005$ nats; forward diff $0.003$ \\
-v3 & \texttt{LATENT\_SIZE}$\rightarrow 16$ & Phase~2 collapse & Forward diff peaks at $0.042$ then degrades \\
-v4 & Mic-only data ($3.05$\,h) & Adversarial mode collapse & Gap $=5.65$; silence amp.\ $>$ signal amp.\ \\
-v5 & Halved discriminator & Discriminator collapse & \texttt{pred\_real}$=-0.90$; gap $=0.80$ \\
-v6 & Official RAVE v2 base & Partial in-distribution reconstruction & STFT corr.\ calibrated in Table~\ref{tab:stft_calibration}; GAN-gap reversal \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 \subsection{Iteration v6: Partial In-Distribution Reconstruction}\label{sec:guitar_v6}
 
@@ -834,7 +791,7 @@ A quantitative reconstruction test on the canonical checkpoint, using eight Guit
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_3_spectrogram_in_dist.png}
+\includegraphics[width=0.82\textwidth]{../../figures/figure_5_3_spectrogram_in_dist.png}
 \caption{STFT magnitude spectrograms (log scale) for an in-distribution GuitarSet sample: input (left) and the canonical guitar\_v6 reconstruction (right). The reconstruction reproduces the broad spectral envelope of the input but loses fine detail at higher frequencies.}
 \label{fig:spectrogram_in_dist}
 \end{figure}
@@ -879,14 +836,8 @@ The drum-kit evaluation aimed to apply the BRAVE streaming-causal recipe of \tex
 
 The initial drum iteration (\texttt{drums\_v1}), using the \texttt{c16\_r10\_beta\_fixed.gin} configuration, resulted in a forward difference of 0.0045. This was below the 0.01 threshold defined for tonal responsiveness. Initial informal listening tests suggested that voice consonants and beatbox transients gave rise to recognisable drum-like timbres in Pure Data, although subsequent re-listening at a later date with the same test setup did not reproduce a perceptually compelling voice-to-drum mapping. The numerical diagnostic indicates that a ``working voice-to-drums'' claim cannot be substantiated on spectral evidence alone.
 
-The second iteration (\texttt{drums\_v2}) applied the configuration template established in \texttt{guitar\_v6} (the official \texttt{v2.gin} architectural baseline with the project's \texttt{causal} overrides) to the Groove corpus and was trained for approximately 95 hours ($\approx 2.28$\,M steps). Phase~1 concluded with healthy validation scores (\texttt{val} $\approx 4.1$, \texttt{mb\_spec} $\approx 3.7$). However, Phase~2 exhibited a monotonic widening of the GAN gap from 9.8 to 20.3 over 800,000 steps (Figure~\ref{fig:drums_v2_gan}), while the validation loss plateaued around 7.5. Training was terminated before the scheduled time as discriminator dominance reproduced despite the \texttt{update\_discriminator\_every=4} safeguard provided by the v2 architecture. This indicates that the \texttt{guitar\_v6} configuration template did not transfer cleanly from the guitar dataset to the drum dataset under these specific training constraints.
+The second iteration (\texttt{drums\_v2}) applied the configuration template established in \texttt{guitar\_v6} (the official \texttt{v2.gin} architectural baseline with the project's \texttt{causal} overrides) to the Groove corpus and was trained for approximately 95 hours ($\approx 2.28$\,M steps). Phase~1 concluded with healthy validation scores (\texttt{val} $\approx 4.1$, \texttt{mb\_spec} $\approx 3.7$). However, Phase~2 exhibited a monotonic widening of the GAN gap from 9.8 to 20.3 over 800,000 steps (Figure~\ref{fig:drums_v2_gan}, Appendix-\ref{app:configs}), while the validation loss plateaued around 7.5. Training was terminated before the scheduled time as discriminator dominance reproduced despite the \texttt{update\_discriminator\_every=4} safeguard provided by the v2 architecture. This indicates that the \texttt{guitar\_v6} configuration template did not transfer cleanly from the guitar dataset to the drum dataset under these specific training constraints.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_4_drums_v2_gan_widening.png}
-\caption{drums\_v2 GAN logit gap over the duration of training. Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in guitar\_v3/v4 despite the use of \texttt{update\_discriminator\_every=4}.}
-\label{fig:drums_v2_gan}
-\end{figure}
 
 \section{External Baseline: IRCAM Percussion}\label{sec:ircam_baseline}
 
@@ -948,7 +899,7 @@ IDMT Ibanez 2820 & 128 & Electric direct input & $-71.5$ & 11.3 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../../figures/figure_5_5_noise_floor.png}
+\includegraphics[width=0.82\textwidth]{../../figures/figure_5_5_noise_floor.png}
 \caption{Per-source noise-floor distribution across the source recordings of the consolidated guitar corpus (boxplots; $n=360, 52, 128, 128, 123, 128$ files respectively). Median noise floors range from $-82.4$\,dBFS (IDMT Career SG DI) to $-46.5$\,dBFS (GuitarSet mic-captured acoustic), a 35.9\,dB spread that exceeds typical within-performance dynamic variation.}
 \label{fig:noise_floor}
 \end{figure}
@@ -979,11 +930,7 @@ This thesis explored the feasibility of the streaming-causal BRAVE architecture 
 
 \section{Contributions}\label{sec:contributions_summary}
 
-One of the major contributions was documenting a step-by-step empirical method for uncovering RAVE-family training failures. This approach includes comparing responsive checkpoints with collapsed ones and, through this, setting concrete thresholds for verifying the model's internal representations (\S\ref{sec:diagnostic_method}). Measuring pairwise differences in both the latent vectors and the audio outputs allows for an evaluation that goes far beyond informal listening tests alone.
-
-The second major contribution is a failure taxonomy arranged in five modes. This thesis interprets each TensorBoard signature --- for example, KL drift, logit gaps between real and fake, and output amplitude degeneration --- and connects it to the corresponding optimisation issue (Chapter~\ref{chap:results}). It is therefore recommended that this failure-mode classification serve as a troubleshooting guide for researchers working with RAVE training on small or heterogeneous data sets, where training failure leading to loss of stability is a frequent challenge.
-
-A third significant contribution is that the system was benchmarked externally. The restricted reaction to OOD vocal inputs observed in this study was due to the choice of training data and hyperparameter settings rather than to an inherent weakness of the BRAVE architecture (Chapter~\ref{chap:results}). In other words, with further refinement of the training recipe, the cross-modal gap may be reduced further.
+The principal contributions of this work are enumerated in full in \S\ref{sec:contributions}; in the light of the results they can be summarised under three headings. First, a reproducible diagnostic methodology: a step-by-step procedure that compares responsive and collapsed checkpoints, with concrete latent- and output-difference thresholds, to verify a model's internal representations beyond informal listening (\S\ref{sec:diagnostic_method}). Second, a five-mode failure taxonomy that maps each TensorBoard signature (KL drift, real/fake logit gaps, output-amplitude degeneration) to its underlying optimisation cause, intended as a troubleshooting guide for RAVE-family training on small or heterogeneous corpora. Third, an external-baseline benchmarking that locates the OOD limitation in training data and recipe rather than in the BRAVE architecture, implying that the cross-modal gap can be narrowed with a better training corpus rather than a new model.
 
 \section{Limitations}\label{sec:limitations}
 
@@ -1015,7 +962,7 @@ Finally, the validity of these findings should be confirmed on a larger, more ho
 
 \section{Closing Reflection}\label{sec:closing}
 
-The original goal of this project was to build a voice-to-guitar working prototype. Halfway through, however, it was redirected toward a documented case-study and failure-analysis project. This shift occurred when it became apparent that, although recognisable in-distribution reconstruction was achievable, expressive OOD control via the human voice remained elusive under the tested training conditions. The final effort was geared towards providing a reusable diagnostic framework and a systematic failure taxonomy rather than an unverifiable demonstration. The framework established here, it is suggested, provides a more robust foundation for future real-time neural synthesis research than an isolated successful demo could afford.
+The project began as an attempt to build a working voice-to-guitar prototype and was redirected mid-way into a documented case study and failure analysis, once it became clear that recognisable in-distribution reconstruction was achievable but expressive out-of-distribution control via voice was not, under the tested training conditions. The reusable diagnostic framework and the systematic failure taxonomy that resulted are argued here to be a more robust foundation for future real-time neural-synthesis research than an isolated successful demonstration would have been.
 
 % ============================================================================
 %  BIBLIOGRAPHY
@@ -1092,6 +1039,24 @@ Real-time host & Pure Data 0.55 with the \texttt{nn\textasciitilde} external \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{Example training dashboard}
+
+Figure~\ref{fig:tensorboard} reproduces the five primary TensorBoard scalars (\S\ref{sec:diagnostic_method}) for the canonical \texttt{guitar\_v6} run, as a reference for the diagnostic signatures discussed throughout Chapter~\ref{chap:results}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../../figures/figure_tensorboard_scalars.png}
+\caption{Example TensorBoard training scalars for the canonical \texttt{guitar\_v6} run: KL regularisation, multi-band spectral distance, the two discriminator logits (\texttt{pred\_real}, \texttt{pred\_fake}) and the total discriminator loss. The dashed vertical line marks the Phase~1$\rightarrow$Phase~2 transition ($\sim$1.5\,M steps); faint traces are the raw scalars and solid traces an exponential moving average. This is the dashboard view from which the diagnostic signatures of Chapter~\ref{chap:results} are read.}
+\label{fig:tensorboard}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{../../figures/figure_5_4_drums_v2_gan_widening.png}
+\caption{drums\_v2 GAN logit gap over the duration of training (referenced from \S\ref{sec:drums}). Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in guitar\_v3/v4 despite the use of \texttt{update\_discriminator\_every=4}.}
+\label{fig:drums_v2_gan}
+\end{figure}
 
 \section{Iteration configuration files}
 
