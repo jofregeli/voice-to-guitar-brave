@@ -562,7 +562,7 @@ The performance of RAVE-family models depends heavily on the quantity, diversity
 
 \begin{table}[H]
 \centering
-\caption{Composition of the guitar training corpus after format filtering (mono, 16-bit PCM, 44.1\,kHz). The IDMT-SMT-Guitar dataset~2 was set aside during this research phase to keep the pipeline restricted to natively 16-bit source material; although converting its 24-bit files would have been straightforward, this was not pursued in order to avoid introducing a re-quantisation step into the corpus. After preprocessing, the resulting LMDB reports \texttt{n\_seconds = 57665} ($\sim$16\,h); the higher figure reflects overlapping segmentation rather than additional source audio.}
+\caption{Composition of the guitar training corpus after format filtering (mono, 16-bit PCM, 44.1\,kHz). The IDMT-SMT-Guitar dataset~2 was deliberately set aside to hold every training source at a single native bit depth (16-bit PCM) and so avoid introducing a re-quantisation, and possible dithering, step into the corpus during baseline calibration. After preprocessing, the resulting LMDB reports \texttt{n\_seconds = 57665} ($\sim$16\,h); the higher figure reflects overlapping segmentation rather than additional source audio.}
 \label{tab:guitar_corpus}
 \footnotesize
 \setlength{\tabcolsep}{5pt}
@@ -1054,7 +1054,7 @@ Figure~\ref{fig:tensorboard} reproduces the five primary TensorBoard scalars (\S
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{../../figures/figure_5_4_drums_v2_gan_widening.png}
-\caption{drums\_v2 GAN logit gap over the duration of training (referenced from \S\ref{sec:drums}). Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in guitar\_v3/v4 despite the use of \texttt{update\_discriminator\_every=4}.}
+\caption{drums\_v2 GAN logit gap over the duration of training (referenced from \S\ref{sec:drums}). Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in iterations guitar\_v3 and guitar\_v4 despite the use of \texttt{update\_discriminator\_every=4}.}
 \label{fig:drums_v2_gan}
 \end{figure}
 
