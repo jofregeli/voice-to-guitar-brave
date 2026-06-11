@@ -52,7 +52,9 @@ runs_slim/
 *.wav
 *.mp3
 *.ogg
-!examples/**/*.wav    # Allow example audio files if any
+# Allow example audio files (committed for the thesis audio-sample links)
+!examples/*.wav
+!examples/**/*.wav
 
 # Secrets
 .env
