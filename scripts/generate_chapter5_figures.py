@@ -1,6 +1,6 @@
 """Generate the five Chapter 5 figures from existing TensorBoard logs and data.
 
-Output: figures/figure_5_*.png at 300 DPI.
+Output: figures/figure_5_*.png and figures/figure_C2_*.png at 300 DPI.
 
 Figures produced:
   5.1  KL trajectory of guitar_v1 showing posterior collapse
@@ -176,13 +176,13 @@ def figure_5_3():
     print(f"[5.3] saved {out}  (sample = {Path(sample).name})")
 
 
-# -------- Figure 5.4 --------
-def figure_5_4():
-    """drums_v2 Phase 2 GAN gap widening (Fig 5.4)."""
+# -------- Figure C.2 (Appendix C) --------
+def figure_c2():
+    """drums_v2 Phase 2 GAN gap widening (Fig C.2, Appendix C)."""
     s_real, v_real = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_real")
     s_fake, v_fake = load_scalars("runs/drums_v2_bbcc6d36c3", "pred_fake")
     if len(s_real) == 0:
-        print("[5.4] no drums_v2 GAN data; skipping")
+        print("[C.2] no drums_v2 GAN data; skipping")
         return
     common = np.intersect1d(s_real, s_fake)
     idx_r = np.searchsorted(s_real, common)
@@ -199,14 +199,14 @@ def figure_5_4():
     ax.set_title("drums_v2 Phase 2 discriminator dominance reproduction")
     ax.legend(loc="best")
     ax.grid(True, alpha=0.3)
-    out = FIG_DIR / "figure_5_4_drums_v2_gan_widening.png"
+    out = FIG_DIR / "figure_C2_drums_v2_gan_widening.png"
     fig.savefig(out)
     plt.close(fig)
-    print(f"[5.4] saved {out}  (gap end-of-training = {gap[-1]:.2f})")
+    print(f"[C.2] saved {out}  (gap end-of-training = {gap[-1]:.2f})")
 
 
-# -------- Figure 5.5 --------
-def figure_5_5():
+# -------- Figure 5.4 --------
+def figure_5_4():
     """Noise floor distribution per source. Computed via the same method as
     scripts/analyze_noise_floor.py: 5th percentile of 100ms RMS windows, in dBFS."""
     sources = {
@@ -240,7 +240,7 @@ def figure_5_5():
     for label, pattern in sources.items():
         files = glob.glob(pattern, recursive=True)
         if not files:
-            print(f"[5.5] no files for {label}")
+            print(f"[5.4] no files for {label}")
             continue
         vals = []
         for f in files:  # full per-source set, matching analyze_noise_floor.py
@@ -257,10 +257,10 @@ def figure_5_5():
                 continue
         if vals:
             data[label] = vals
-            print(f"[5.5] {label}: n={len(vals)}, median={np.median(vals):.1f} dB")
+            print(f"[5.4] {label}: n={len(vals)}, median={np.median(vals):.1f} dB")
 
     if not data:
-        print("[5.5] no data; skipping")
+        print("[5.4] no data; skipping")
         return
 
     fig, ax = plt.subplots(figsize=(9, 5))
@@ -274,10 +274,10 @@ def figure_5_5():
     ax.set_ylabel("Noise floor (dBFS, 5th percentile of 100 ms RMS)")
     ax.set_title("Noise-floor distribution per recording source")
     ax.grid(True, axis="y", alpha=0.3)
-    out = FIG_DIR / "figure_5_5_noise_floor.png"
+    out = FIG_DIR / "figure_5_4_noise_floor.png"
     fig.savefig(out)
     plt.close(fig)
-    print(f"[5.5] saved {out}")
+    print(f"[5.4] saved {out}")
 
 
 def main():
@@ -288,7 +288,7 @@ def main():
     figure_5_2()
     figure_5_3()
     figure_5_4()
-    figure_5_5()
+    figure_c2()
     print()
     print(f"All done. Figures saved to: {FIG_DIR.resolve()}")
 

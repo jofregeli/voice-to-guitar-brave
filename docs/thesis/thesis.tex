@@ -697,7 +697,7 @@ The inference environment uses the \texttt{nn\textasciitilde} Pure Data external
 
 The deployed signal chain follows a linear path:
 \begin{center}
-\texttt{adc\textasciitilde\ 1 $\rightarrow$ nn\textasciitilde\ <model>.ts forward $\rightarrow$ *\textasciitilde\ <gain> $\rightarrow$ dac\textasciitilde}
+{\footnotesize\texttt{adc\textasciitilde\ 1 $\rightarrow$ nn\textasciitilde\ <model>.ts forward $\rightarrow$ *\textasciitilde\ <gain> $\rightarrow$ dac\textasciitilde}}
 \end{center}
 
 A reference block diagram is provided in Figure~\ref{fig:block_diagram}. The microphone input is mapped to the model's \texttt{forward} method, which receives a tensor of shape $(1, 1, 64)$ for each audio block.
@@ -742,7 +742,7 @@ The guitar example focused on upgrading the training procedure step by step, sta
 \midrule
 guitar\_v1 & 1.25 & 0.006 & 0.005 & KL falls $0.83\!\to\!0.25$ --- posterior collapse \\
 guitar\_v2 & 0.79 & 0.003 & 0.003 & KL/dim $\approx 0.005$ nats --- latent underutilisation \\
-guitar\_v3 & --- & 0.042 & 0.004 & Forward diff.\ peaks, then degrades --- Phase-2 generator collapse \\
+guitar\_v3 & 26.4 & 0.042 & 0.004 & Forward diff.\ peaks, then degrades --- Phase-2 generator collapse \\
 guitar\_v4 & --- & --- & 0.021 & GAN gap $=5.65$ (\texttt{pred\_real} $3.34$, \texttt{pred\_fake} $-2.31$) --- adversarial mode collapse \\
 guitar\_v5 & --- & --- & 0.024 & GAN gap $=0.80$ (\texttt{pred\_real} $-0.90$) --- discriminator collapse \\
 guitar\_v6 (best) & 1.27--6.89\textsuperscript{a} & --- & 0.024 & GAN-gap reversal; SMC $=0.16$ --- partial in-distribution reconstruction \\
@@ -785,7 +785,7 @@ A focused experiment aimed at balancing the adversarial game was conducted in \t
 
 \subsection{Iteration v6: Partial In-Distribution Reconstruction}\label{sec:guitar_v6}
 
-The final iteration (\texttt{guitar\_v6}) was based on the RAVE v2 official architecture and \texttt{causal.gin} overrides. In Phase~2 the GAN logit gap was observed to reverse for the first time in the series, suggesting that an adversarial equilibrium had been reached. Listening tests indicated perceptually recognisable reconstruction of in-distribution guitar audio at epoch 1935 (mid-Phase-2), and this checkpoint was therefore selected as canonical.\footnote{Representative input/output audio pairs for in-distribution guitar reconstruction (\texttt{\_input\_guitar.wav}, \texttt{\_recon\_guitar\_v6.wav}, and three further \texttt{v6\_final} pairs) are provided in the repository so that the reconstruction quality described here can be heard directly: \url{https://github.com/jofregeli/voice-to-guitar-brave/tree/main/examples}. These complement the spectrogram of Figure~\ref{fig:spectrogram_in_dist}, since the magnitude-only diagnostics of this chapter cannot convey perceptual quality on their own.} The final epoch (2511) showed slightly degraded performance under the same listening criteria. Under the operational diagnostic of \S\ref{sec:diagnostic_method}, output amplitude rose from the near-silent levels of the collapsed checkpoints v1--v3 (output RMS $\approx 0.003$--$0.005$) to RMS $\approx 0.024$ on the canonical guitar\_v6 checkpoint and 0.041 on the Phase~1 reconstruction-only state, which together suggest a meaningful recovery of decoder responsiveness.
+The final iteration (\texttt{guitar\_v6}) was based on the RAVE v2 official architecture and \texttt{causal.gin} overrides. In Phase~2 the GAN logit gap was observed to reverse for the first time in the series, suggesting that an adversarial equilibrium had been reached. Listening tests indicated perceptually recognisable reconstruction of in-distribution guitar audio at epoch 1935 (mid-Phase-2), and this checkpoint was therefore selected as canonical.\footnote{Representative input/output audio pairs for in-distribution guitar reconstruction (\texttt{\_input\_guitar.wav}, \texttt{\_recon\_guitar\_v6.wav}, and three further \texttt{v6\_final} pairs) are provided in the repository so that the reconstruction quality described here can be heard directly: \url{https://github.com/jofregeli/voice-to-guitar-brave/tree/36ddd4c7767be9e0b364fb0b6af7480256bd34bb/examples}. These complement the spectrogram of Figure~\ref{fig:spectrogram_in_dist}, since the magnitude-only diagnostics of this chapter cannot convey perceptual quality on their own.} The final epoch (2511) showed slightly degraded performance under the same listening criteria. Under the operational diagnostic of \S\ref{sec:diagnostic_method}, output amplitude rose from the near-silent levels of the collapsed checkpoints v1--v3 (output RMS $\approx 0.003$--$0.005$) to RMS $\approx 0.024$ on the canonical guitar\_v6 checkpoint and 0.041 on the Phase~1 reconstruction-only state, which together suggest a meaningful recovery of decoder responsiveness.
 
 A quantitative reconstruction test on the canonical checkpoint, using eight GuitarSet solo-microphone samples of five seconds each (STFT parameters: \texttt{n\_fft}$=2048$, hop$=512$), yielded a mean SMC of 0.16 (0.17 with time-shift alignment). This value falls below the 0.3 heuristic proposed initially in \S\ref{sec:diagnostic_method}. To understand whether this gap reflects a limitation of the model or of the metric, the same evaluation was applied to every preceding checkpoint in the iteration sequence; the results are reported in \S\ref{sec:stft_calibration}. Anticipating the finding of that calibration: the SMC does not differentiate working from collapsed checkpoints in the expected direction, and the operational evaluation of guitar\_v6 as a partially-reconstructing in-distribution autoencoder therefore rests on the combined evidence of (i)~listening tests, (ii)~output amplitude recovery, and (iii)~Phase~2 GAN gap reversal.
 
@@ -899,7 +899,7 @@ IDMT Ibanez 2820 & 128 & Electric direct input & $-71.5$ & 11.3 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{../../figures/figure_5_5_noise_floor.png}
+\includegraphics[width=0.82\textwidth]{../../figures/figure_5_4_noise_floor.png}
 \caption{Per-source noise-floor distribution across the source recordings of the consolidated guitar corpus (boxplots; $n=360, 52, 128, 128, 123, 128$ files respectively). Median noise floors range from $-82.4$\,dBFS (IDMT Career SG DI) to $-46.5$\,dBFS (GuitarSet mic-captured acoustic), a 35.9\,dB spread that exceeds typical within-performance dynamic variation.}
 \label{fig:noise_floor}
 \end{figure}
@@ -991,7 +991,7 @@ The Pure Data audio engine must be configured at exactly 44,100\,Hz (\texttt{Med
 \section{Patch reference}
 The patches \texttt{examples/test\_guitar\_v6.pd}, \texttt{examples/test\_drums.pd}, and \texttt{examples/test\_ircam\_percussion.pd} ship with the project repository and follow the linear signal chain
 \begin{center}
-\texttt{adc\textasciitilde\ 1 $\rightarrow$ nn\textasciitilde\ <model>.ts forward $\rightarrow$ *\textasciitilde\ <gain> $\rightarrow$ dac\textasciitilde}
+{\footnotesize\texttt{adc\textasciitilde\ 1 $\rightarrow$ nn\textasciitilde\ <model>.ts forward $\rightarrow$ *\textasciitilde\ <gain> $\rightarrow$ dac\textasciitilde}}
 \end{center}
 with model-specific gain multipliers ($\times 20$--$\times 50$) tuned empirically against output amplitude.
 
@@ -1053,7 +1053,7 @@ Figure~\ref{fig:tensorboard} reproduces the five primary TensorBoard scalars (\S
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{../../figures/figure_5_4_drums_v2_gan_widening.png}
+\includegraphics[width=0.82\textwidth]{../../figures/figure_C2_drums_v2_gan_widening.png}
 \caption{drums\_v2 GAN logit gap over the duration of training (referenced from \S\ref{sec:drums}). Phase~1 (steps 0--1.5\,M) maintains a near-zero adversarial gap. From Phase~2 onset onward, the gap widens monotonically from approximately 9.8 to over 20, reproducing the discriminator-dominance pattern previously observed in iterations guitar\_v3 and guitar\_v4 despite the use of \texttt{update\_discriminator\_every=4}.}
 \label{fig:drums_v2_gan}
 \end{figure}
@@ -1173,7 +1173,7 @@ The main elements of the Project Charter are summarised in this section; the pro
   \begin{enumerate}
   \item LaTeX migration from Word/Google Docs draft
   \item Final memoir review and proofreading
-  \item Public repository release (post-deadline)
+  \item Public repository release (public at submission; permalinks pinned to the submission commit)
   \item Defence presentation preparation and live demonstration setup
   \end{enumerate}
 \end{enumerate}

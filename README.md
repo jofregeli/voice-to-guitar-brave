@@ -4,7 +4,7 @@ Bachelor's Thesis (TFG) — Grau en Enginyeria de Sistemes Audiovisuals, Univers
 
 **Author:** Jofre Geli de Fuenmayor
 **Directors:** Lonce Wyse & Xavier Lizarraga
-**Submission:** 12 June 2026
+**Submission:** 14 June 2026
 **Memoir:** [`docs/thesis/thesis.pdf`](docs/thesis/thesis.pdf) ([source](docs/thesis/thesis.tex))
 
 ---
