@@ -58,10 +58,8 @@
 \usepackage[backend=biber,style=apa,sortcites=true,sorting=nyt]{biblatex}
 \addbibresource{references.bib}
 
-% --- Indexing and appendices --------------------------------------------------
-\usepackage{makeidx}
+% --- Appendices --------------------------------------------------------------
 \usepackage[titletoc]{appendix}
-\makeindex
 
 % --- Chapter heading format: inline number, no "Chapter N" stacked preamble --
 \usepackage{titlesec}
@@ -82,6 +80,9 @@
   pdftitle={BRAVE-Based Real-Time Voice-to-Instrument Resynthesis},
   pdfauthor={Jofre Geli de Fuenmayor}
 }
+
+% --- Official UPF institutional cover (included as page 1) -------------------
+\usepackage{pdfpages}
 
 % --- Project repository permalinks -------------------------------------------
 % Single point of truth for the public Git repository and the commit the
@@ -121,6 +122,10 @@
 
 % ============================================================================
 \begin{document}
+
+% --- Official UPF institutional cover: physical page 1, unnumbered ----------
+\includepdf[pages=1]{CoverTFG2025.pdf}
+
 \frontmatter
 \pagenumbering{Roman}  % uppercase Roman numerals for front matter (template requirement)
 \pagestyle{plain}
@@ -374,7 +379,7 @@ WaveNet (2016) & No & Yes & Minutes per second of audio & Optional (linguistic) 
 NSynth (2017) & No & Yes & Minutes per second of audio & None & 16-D temporal embedding & Restricted to isolated notes \\
 DDSP (2020) & Yes & No & Real-time; bounded by pitch tracker & Explicit F0 + loudness & Explicit DSP control parameters & External pitch tracker on critical path \\
 TimbreTron (2018) & No & No & Offline (CQT + WaveNet vocoder) & Implicit via CQT & CQT spectrogram & Spectrogram-domain inference too slow \\
-RAVE (2021) & Yes & No & $\sim$50\,ms reported & Implicit & Learned VAE latent & Non-causal context limits perceptual immediacy \\
+RAVE (2021) & Yes & No & Tens of ms, config-dependent & Implicit & Learned VAE latent & Non-causal context limits perceptual immediacy \\
 \textbf{BRAVE (2025)} & \textbf{Yes} & \textbf{Yes} & $<10$\,ms reported & Implicit & Learned VAE latent (causal) & Shorter temporal context can degrade pitch at extremes \\
 Diffusion family (2023--2024) & No & No & Seconds to minutes per second of audio & Text / class / melody & Latent diffusion & Inference cost prohibits streaming use \\
 \bottomrule
@@ -421,7 +426,7 @@ The performance of RAVE-family models strongly correlates with the quantity, var
 
 \paragraph{IDMT-SMT-Guitar.} \parencite{kehling2014idmt} adds timbral diversity through six guitars (five electric, one acoustic) played by three musicians, recorded through both microphone and DI capture paths. The dataset is divided into isolated notes (datasets 1, 2) and continuous performance excerpts (datasets 3, 4); only the latter are relevant for the current work.
 
-\paragraph{Groove MIDI Dataset.} \parencite{gillick2019groove} provides a percussive analogue to the guitar collections: approximately 13 hours of acoustic drum-kit performances by professional drummers with synchronised MIDI and audio across a wide range of styles and tempos. Beyond comfortably exceeding the lower bound for RAVE training, it also supports the secondary case study of this thesis.
+\paragraph{Groove MIDI Dataset.} \parencite{gillick2019groove} provides a percussive analogue to the guitar collections: approximately 13 hours of acoustic drum-kit performances by professional drummers with synchronised MIDI and audio across a wide range of styles and tempos; the portion retained for this project after preprocessing is approximately 10.86 hours (\S\ref{sec:datasets_preprocessing}). Beyond comfortably exceeding the lower bound for RAVE training, it also supports the secondary case study of this thesis.
 
 \paragraph{Dataset selection rationale and noise-floor heterogeneity.} After selection for compatible files (mono, 16-bit, 44.1\,kHz), the consolidated guitar corpus (GuitarSet, the Guitar-TECHS DI channel and the continuous-performance subsets of IDMT-SMT-Guitar) is approximately 9 hours of raw audio, expanding to approximately 16 hours in the training database after RAVE's overlap segmentation (\S\ref{sec:datasets_preprocessing}). This duration lies within the recommended training window of \textcite{caillon2021rave} but introduces a well-known risk: mixing recording paths leads to inconsistency in background noise floors. The quantitative analysis presented in \S\ref{sec:noise_floor} reveals a 35.9\,dB range between the cleanest direct-input electric recordings and the loudest microphone-captured acoustic recordings. This range exceeds the typical dynamic variation within a single performance and may be encoded as a prominent latent feature, biasing the learned manifold toward recording-method discrimination rather than purely timbral content.
 
@@ -434,7 +439,7 @@ Most previous contributions emphasise success demonstrations and treat failure a
 \begin{itemize}
 \item \textbf{The pitch realisation of plucked-string instruments.} A saxophone can sustain a sound by modulating breath pressure, whereas a guitar note is struck sharply and decays exponentially. The interplay between such temporal dynamics and a streaming-causal encoder with restricted temporal context is one of the issues not covered in earlier BRAVE work \parencite{caspe2025brave}.
 \item \textbf{The acoustic difference between voice and guitar.} Voice formants and guitar body resonance occupy substantially different regions of acoustic feature space. Whether a VAE manifold trained only on guitar can be steered to accept voice as an in-distribution input, or whether voice is naturally an outlier of the trained manifold, has not been answered quantitatively in the prior literature.
-\item \textbf{Training on multiple sources under very different recording conditions.} The consequence of mixing acoustic and electric guitar recordings, with the 35.9\,dB noise-floor spread reported in \S\ref{sec:noise_floor}, for BRAVE's latent space is the topic of this work and has not been addressed by prior studies.
+\item \textbf{Training on multiple sources under very different recording conditions.} The consequence of mixing acoustic and electric guitar recordings, with the 35.9\,dB noise-floor spread reported in \S\ref{sec:noise_floor}, for BRAVE's latent space is the topic of this work and was not identified in the literature reviewed for this thesis.
 \end{itemize}
 
 These observations serve as the foundation for the present investigation of real-time voice-to-instrument cross-modal conversion. They motivate the methodological decisions in the choice of BRAVE for deployment and the experimental design presented in the next chapter.
@@ -503,7 +508,7 @@ The principal design constraint is an end-to-end latency below 10\,ms, which lie
 
 \paragraph{Design rationale: host environment.} Pure Data and \texttt{nn\textasciitilde} were chosen after evaluating an alternative based on a custom C++ audio engine using the Torch C++ API (LibTorch). Although a custom engine offers higher optimisation potential, it would have required substantial development time for audio I/O and interface management. Pure Data was adopted because it is a stable deployment target for RAVE-family models \parencite{caillon2021rave} and provides immediate access to standard DSP operations (gain multipliers, limiters) that proved essential given the low raw output level of early model iterations.
 
-\paragraph{Architectural backbone: streaming-causal RAVE.} The synthesis engine is BRAVE (Bravely Realtime Audio Variational autoEncoder). Whereas standard RAVE uses non-causal convolutions and reports a buffering delay of approximately 50\,ms \parencite{caillon2021rave}, BRAVE adopts a streaming-causal layout \parencite{caspe2025brave}. By restricting the model's temporal context to current and past samples, latency is determined almost entirely by the processing block size and the cost of a single model inference. Table~\ref{tab:latency_budget} breaks down the estimated end-to-end latency.
+\paragraph{Architectural backbone: streaming-causal RAVE.} The synthesis engine is BRAVE (Bravely Realtime Audio Variational autoEncoder). Whereas standard RAVE uses non-causal convolutions and reports a buffering delay on the order of tens of milliseconds (configuration-dependent) \parencite{caillon2021rave}, BRAVE adopts a streaming-causal layout \parencite{caspe2025brave}. By restricting the model's temporal context to current and past samples, latency is determined almost entirely by the processing block size and the cost of a single model inference. Table~\ref{tab:latency_budget} breaks down the estimated end-to-end latency.
 
 \begin{table}[H]
 \centering
@@ -540,7 +545,7 @@ Training is divided into two phases that decouple the learning of a compact late
 
 \textit{Theoretical motivation.} A recognised stabilisation strategy in the VAE literature is to anneal the KL term gradually, allowing the encoder to discover salient input features before being forced to compress them toward the prior \parencite{bowman2016vaeannealing}.
 
-\textit{Adopted solution.} All subsequent runs (v2--v6) employ a log-space warmup in which beta initialises at $1\times10^{-4}$, providing effectively zero pressure, and ramps exponentially to 0.1 over the first one million steps.
+\textit{Adopted solution.} All subsequent runs (v2--v6) replace the constant beta with a log-space KL warmup that begins at effectively zero pressure and ramps gradually toward its target over Phase~1. Iterations v2--v4 initialise beta at $1\times10^{-4}$ and ramp to 0.1 over the first one million steps; v5 lowers the target to the RAVE\,v2 default of 0.05 over 1.5\,M steps, and v6 inherits the official \texttt{v2.gin} schedule ($1\times10^{-6}$ initial, 0.05 target, a $20{,}000$-step warmup). The exact per-iteration values are those of the \texttt{.gin} configuration files listed in Table~\ref{tab:configs}.
 
 \textit{Observed outcome.} No posterior collapse was observed in subsequent runs, and Phase~1 produced stable rising KL trajectories in all five iterations using the warmup schedule, as documented in Chapter~\ref{chap:results}.
 
@@ -1173,7 +1178,7 @@ The main elements of the Project Charter are summarised in this section; the pro
   \begin{enumerate}
   \item LaTeX migration from Word/Google Docs draft
   \item Final memoir review and proofreading
-  \item Public repository release (public at submission; permalinks pinned to the submission commit)
+  \item Public repository release (public at submission; permalinks pinned to a fixed release commit)
   \item Defence presentation preparation and live demonstration setup
   \end{enumerate}
 \end{enumerate}
@@ -1239,7 +1244,5 @@ Submission (14~June)                  &     &     &     &     &     &     &     
 \end{table}
 
 \end{appendices}
-
-\printindex
 
 \end{document}

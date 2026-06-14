@@ -88,3 +88,14 @@ data/user_calibration/
 /-
 /10
 /5$)
+/20pt
+docs/thesis/20pt
+
+# Old/stray PDF builds and local reference copies (not part of the public release).
+# NB: do NOT use a global *.pdf rule -- docs/thesis/thesis.pdf is the tracked submission file.
+/thesis-v2.pdf
+/plantillaTFG_loremipsum3capitols.docx.pdf
+/plantillaTFG_loremipsum3capitols.docx.pdf.pdf
+/TFG-guia-seguiment-avaluacio-2012.pdf
+# Root copy of the cover is a duplicate; the build asset is docs/thesis/CoverTFG2025.pdf
+/CoverTFG2025.pdf
