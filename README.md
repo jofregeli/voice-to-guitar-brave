@@ -35,7 +35,6 @@ voice-to-guitar-brave/
 ├── src/vpt/                 # VPT classifier source (1D-CNN on AVP dataset)
 ├── examples/                # Pure Data demo patches (.pd)
 ├── PDF Thesis Draft/        # Earlier chapter drafts retained for review history
-├── References/              # Bibliographic PDFs cited by the memoir
 └── runs/, models/, data/    # Training artefacts (gitignored)
 ```
 
